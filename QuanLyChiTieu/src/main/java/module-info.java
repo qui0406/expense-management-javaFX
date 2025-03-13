@@ -5,4 +5,6 @@ module com.qlct.quanlychitieu {
 
     opens com.qlct.quanlychitieu to javafx.fxml;
     exports com.qlct.quanlychitieu;
+    exports com.qlct.pojo;
+    exports com.qlct.services;
 }

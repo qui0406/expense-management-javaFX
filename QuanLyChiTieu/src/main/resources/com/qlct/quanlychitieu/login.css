@@ -1,0 +1,8 @@
+
+.BtnLogin {
+    -fx-background-color: greenyellow;
+}
+
+.BtnLogin:hover {
+    -fx-background-color: aliceblue;
+}
