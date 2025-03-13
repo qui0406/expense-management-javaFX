@@ -1,18 +1,15 @@
 package com.qlct.quanlychitieu;
 
-import com.qlct.pojo.JdbcUtils;
 import com.qlct.services.LoginServices;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
@@ -27,15 +24,16 @@ public class HomeController implements Initializable{
     @FXML private PasswordField txtPasswordRegister;
     @FXML private PasswordField txtCofirmPassword;
     @FXML private TextField txtEmail;
+    @FXML private CheckBox ckValid;
     @FXML private Button btnRegister;
     
     
     @FXML
     private void checkLogin() throws SQLException{
-        String username = txtUsername.getText().toString();
-        String password = txtPassword.getText().toString();
+        String username = txtUsername.getText();
+        String password = txtPassword.getText();
         
-        if(LoginServices.saveUser(username, password)){
+        if(LoginServices.checkUserAuth(username, password)){
             showAlertLogin("Login successful", null, "Successful");
         }
         else {
@@ -44,20 +42,22 @@ public class HomeController implements Initializable{
     }
     
     @FXML
-    private void switchRegister(){
-        
+    private void switchRegister() throws IOException{
+        App.setRoot("register");
     }
     
     @FXML
     private void btnRegisterHandler() throws SQLException{
-        String username = txtUsernameRegister.getText().toString();
-        String password = txtPasswordRegister.getText().toString();
-        String confirmPassword = txtCofirmPassword.getText().toString();
-        String email = txtEmail.getText().toString();
+        String username = txtUsernameRegister.getText();
+        String password = txtPasswordRegister.getText();
+        String confirmPassword = txtCofirmPassword.getText();
+        String email = txtEmail.getText();
+        
+        // Kiem tra username da ton tai chua
+        
         
         LoginServices.registerUser(username, password, email);
     }
-    
     
     
     private void showAlertLogin(String info, String header, String title){
@@ -68,11 +68,6 @@ public class HomeController implements Initializable{
     }
     
     
-    
-    @FXML
-    private void switchToSecondary() throws IOException {
-        App.setRoot("secondary");
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {

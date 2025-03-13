@@ -15,7 +15,7 @@ import java.sql.SQLException;
  * @author QUI
  */
 public class LoginServices {
-    public static boolean saveUser(String username, String password) throws SQLException{
+    public static boolean checkUserAuth(String username, String password) throws SQLException{
         String sql= "Select * from user where username = ? and password = ?";
         boolean checkUser = false;
         try(Connection conn = JdbcUtils.getConn()){
@@ -24,10 +24,26 @@ public class LoginServices {
             stm.setString(2, password);
             
             ResultSet rs = stm.executeQuery();
-            if(rs.isFirst()){
+            if(rs.next()){
                 checkUser = true;
             }
         }
         return checkUser;
+    }
+    
+    public static boolean registerUser(String username, String password, String email) throws SQLException {
+        String sql = "INSERT INTO user (username, email, password, createdDate) VALUES (?, ?, ?, NOW())";
+
+        try (Connection conn = JdbcUtils.getConn()){
+            PreparedStatement stm= conn.prepareCall(sql);
+            stm.setString(1, username);
+            stm.setString(2, email);
+            stm.setString(3, password);
+            int affectedRows = stm.executeUpdate(); // Sử dụng executeUpdate() thay vì executeQuery()
+            return affectedRows > 0;
+
+        } catch (SQLException e) {
+            return false;
+        }
     }
 }

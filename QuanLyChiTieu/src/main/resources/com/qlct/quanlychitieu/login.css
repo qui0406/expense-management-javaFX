@@ -6,3 +6,12 @@
 .BtnLogin:hover {
     -fx-background-color: aliceblue;
 }
+
+.BtnSwitchRegister {
+    -fx-background-color: greenyellow;
+}
+
+.BtnSwitchRegister:hover {
+     -fx-background-color: aliceblue;
+
+}
