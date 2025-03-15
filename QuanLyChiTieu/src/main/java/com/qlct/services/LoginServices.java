@@ -9,6 +9,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javafx.scene.control.Alert;
+
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -16,34 +19,48 @@ import java.sql.SQLException;
  */
 public class LoginServices {
     public static boolean checkUserAuth(String username, String password) throws SQLException{
-        String sql= "Select * from user where username = ? and password = ?";
-        boolean checkUser = false;
-        try(Connection conn = JdbcUtils.getConn()){
-            PreparedStatement stm = conn.prepareCall(sql);
+        String sql = "SELECT password FROM user WHERE username = ?";
+
+        try (Connection conn = JdbcUtils.getConn()){
+            PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, username);
-            stm.setString(2, password);
-            
             ResultSet rs = stm.executeQuery();
-            if(rs.next()){
-                checkUser = true;
+            if (rs.next()) {
+                String storedHash = rs.getString("password");
+                return BCrypt.checkpw(password, storedHash);  
             }
         }
-        return checkUser;
+        return false;
     }
     
     public static boolean registerUser(String username, String password, String email) throws SQLException {
-        String sql = "INSERT INTO user (username, email, password, createdDate) VALUES (?, ?, ?, NOW())";
+        String sql = "INSERT INTO user (username, password, email, createdDate) VALUES (?, ?, ?, NOW())";
+        
+        // Băm mật khẩu bằng BCrypt
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12));
 
-        try (Connection conn = JdbcUtils.getConn()){
-            PreparedStatement stm= conn.prepareCall(sql);
+        try (Connection conn = JdbcUtils.getConn()) {
+            PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, username);
-            stm.setString(2, email);
-            stm.setString(3, password);
-            int affectedRows = stm.executeUpdate(); // Sử dụng executeUpdate() thay vì executeQuery()
-            return affectedRows > 0;
+            stm.setString(2, hashedPassword);
+            stm.setString(3, email);
+
+            int affectedRows = stm.executeUpdate(); 
+            return affectedRows > 0; // Trả về true nếu lưu thành công
 
         } catch (SQLException e) {
+            e.printStackTrace(); // In lỗi ra console để debug
             return false;
         }
+   
     }
+    
+    private void showAlertLogin(String info, String header, String title){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setContentText(info);
+        alert.setHeaderText(header);
+        alert.showAndWait();
+    }
+    
+    
 }

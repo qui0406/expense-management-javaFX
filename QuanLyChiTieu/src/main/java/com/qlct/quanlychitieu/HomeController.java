@@ -53,12 +53,40 @@ public class HomeController implements Initializable{
         String confirmPassword = txtCofirmPassword.getText();
         String email = txtEmail.getText();
         
-        // Kiem tra username da ton tai chua
-        
-        
+        isValidPassword(password, confirmPassword);
         LoginServices.registerUser(username, password, email);
+        showAlertLogin("Lưu thành công", null, "Lưu thành công");
     }
     
+    public static boolean isValidPassword(String password, String confirmPassword) {
+        // Kiểm tra null hoặc rỗng
+        if (password == null || confirmPassword == null || password.isEmpty() || confirmPassword.isEmpty()) {
+            System.out.println("Mật khẩu không được để trống!");
+            return false;
+        }
+
+        // Kiểm tra độ dài
+        if (password.length() < 8) {
+            System.out.println("Mật khẩu phải có ít nhất 8 ký tự!");
+            return false;
+        }
+
+        // Kiểm tra có ít nhất 1 chữ hoa, 1 chữ thường, 1 số, 1 ký tự đặc biệt
+        String passwordPattern = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+        if (!password.matches(passwordPattern)) {
+            System.out.println("Mật khẩu phải có ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt!");
+            return false;
+        }
+
+        // Kiểm tra password và confirmPassword có giống nhau không
+        if (!password.equals(confirmPassword)) {
+            System.out.println("Mật khẩu xác nhận không khớp!");
+            return false;
+        }
+
+        // Nếu tất cả điều kiện đều đúng
+        return true;
+    }
     
     private void showAlertLogin(String info, String header, String title){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
