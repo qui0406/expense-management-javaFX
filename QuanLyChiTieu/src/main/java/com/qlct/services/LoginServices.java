@@ -20,7 +20,6 @@ import org.mindrot.jbcrypt.BCrypt;
 public class LoginServices {
     public static boolean checkUserAuth(String username, String password) throws SQLException{
         String sql = "SELECT password FROM user WHERE username = ?";
-
         try (Connection conn = JdbcUtils.getConn()){
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, username);
@@ -33,9 +32,9 @@ public class LoginServices {
         return false;
     }
     
-    public static boolean registerUser(String username, String password, String email) throws SQLException {
-        String sql = "INSERT INTO user (username, password, email, createdDate) VALUES (?, ?, ?, NOW())";
-        
+    public static boolean registerUser(String firstName, String lastName, String username, String password, String email) throws SQLException {
+        String sql = "INSERT INTO user (username, password, email, firstName, lastName, createdDate) VALUES (?, ?, ?,  ? , ?, NOW())";
+         
         // Băm mật khẩu bằng BCrypt
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12));
 
@@ -44,15 +43,15 @@ public class LoginServices {
             stm.setString(1, username);
             stm.setString(2, hashedPassword);
             stm.setString(3, email);
-
-            int affectedRows = stm.executeUpdate(); 
+            stm.setString(4, firstName);
+            stm.setString(5, lastName);
+            int affectedRows = stm.executeUpdate();
             return affectedRows > 0; // Trả về true nếu lưu thành công
 
-        } catch (SQLException e) {
-            e.printStackTrace(); // In lỗi ra console để debug
+        } catch (SQLException e) { // In lỗi ra console để debug
+            // In lỗi ra console để debug
             return false;
         }
-   
     }
     
     private void showAlertLogin(String info, String header, String title){

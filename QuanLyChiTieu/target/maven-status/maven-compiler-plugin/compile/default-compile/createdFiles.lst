@@ -1,6 +1,7 @@
 com\qlct\quanlychitieu\SecondaryController.class
 com\qlct\services\LoginServices.class
-com\qlct\quanlychitieu\HomeController.class
 module-info.class
 com\qlct\quanlychitieu\App.class
 com\qlct\pojo\JdbcUtils.class
+com\qlct\pojo\User.class
+com\qlct\quanlychitieu\AuthController.class
