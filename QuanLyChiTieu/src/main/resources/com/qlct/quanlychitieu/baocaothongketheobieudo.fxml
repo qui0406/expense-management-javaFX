@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright (c) 2015, 2019, Gluon and/or its affiliates.
+  All rights reserved. Use is subject to license terms.
+
+  This file is available and licensed under the following license:
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the distribution.
+  - Neither the name of Oracle Corporation nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.chart.StackedBarChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="646.0" prefWidth="904.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Line endX="-108.80001831054688" endY="526.1000366210938" layoutX="278.0" layoutY="80.0" startX="-108.80001831054688" startY="-19.49999237060547" stroke="#c7b4b4" />
+      <Label layoutX="355.0" layoutY="14.0" text="Báo cáo thống kê">
+         <font>
+            <Font size="31.0" />
+         </font>
+      </Label>
+      <ComboBox layoutX="696.0" layoutY="80.0" prefHeight="25.0" prefWidth="163.0" promptText="Thống kê theo biểu đồ" />
+      <StackedBarChart layoutX="204.0" layoutY="411.0" prefHeight="174.0" prefWidth="655.0" style="-fx-background-color: greenyellow;">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </StackedBarChart>
+      <PieChart layoutX="204.0" layoutY="128.0" prefHeight="225.0" prefWidth="289.0" style="-fx-background-color: pink;">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </PieChart>
+      <LineChart layoutX="554.0" layoutY="123.0" prefHeight="235.0" prefWidth="305.0" style="-fx-background-color: yellow;">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </LineChart>
+      <DatePicker layoutX="243.0" layoutY="80.0" />
+      <DatePicker layoutX="498.0" layoutY="80.0" />
+      <Label layoutX="183.0" layoutY="84.0" text="Từ ngày" />
+      <Label layoutX="439.0" layoutY="84.0" text="Đến ngày" />
+      <Label layoutX="257.0" layoutY="362.0" text="Thống kê danh mục đã tiêu">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label layoutX="416.0" layoutY="597.0" text="Biểu đồ tổng chi tiêu theo các tháng">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Label layoutX="603.0" layoutY="362.0" text="Thống kê danh mục đã tiêu">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Label>
+      <Pane prefHeight="646.0" prefWidth="163.0" style="-fx-background-color: skyblue;">
+         <children>
+            <ImageView fitHeight="58.0" fitWidth="59.0" layoutX="37.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@Screenshot%202025-03-15%20150924.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="31.0" layoutY="72.0" text="Username">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Button layoutX="5.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="153.0" text="Button" />
+            <Button layoutX="5.0" layoutY="158.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="153.0" text="Button" />
+            <Button layoutX="5.0" layoutY="198.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="153.0" text="Báo cáo thống kê" />
+         </children>
+      </Pane>
+   </children>
+</Pane>

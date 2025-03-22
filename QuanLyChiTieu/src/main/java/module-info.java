@@ -4,7 +4,6 @@ module com.qlct.quanlychitieu {
     requires java.sql;
    
 
-
     opens com.qlct.quanlychitieu to javafx.fxml;
     exports com.qlct.quanlychitieu;
     exports com.qlct.pojo;
