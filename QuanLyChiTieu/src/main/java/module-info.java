@@ -9,4 +9,5 @@ module com.qlct.quanlychitieu {
     exports com.qlct.pojo;
     exports com.qlct.services;
     requires jbcrypt;
+    requires java.base;
 }
