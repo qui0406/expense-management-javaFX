@@ -33,6 +33,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 /**
@@ -66,13 +67,7 @@ public class FXTransactionsController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         CategoryServices catService = new CategoryServices();
         cbType.setItems(FXCollections.observableArrayList("Chi", "Thu"));
-        cbType.getSelectionModel().selectFirst();
-//        try {
-//            this.cbCates.setItems(FXCollections.observableList(catService.getCatetogires()));
-//        } catch (SQLException ex) {
-//            Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        cbType.setOnAction(event -> updateCategoryCombobox());
+
         btDate.setValue(LocalDate.now());
         this.loadColumns();
         this.loadTableData();
@@ -110,60 +105,95 @@ public class FXTransactionsController implements Initializable {
     }
 
     public void loadColumns() {
-        TableColumn colAmount = new TableColumn("So tien");
-        colAmount.setCellValueFactory(new PropertyValueFactory("amount"));
+        TableColumn<Transaction, Double> colAmount = new TableColumn<>("Số tiền");
+        colAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
         colAmount.setPrefWidth(100);
 
-        TableColumn colNote = new TableColumn("Ghi chu");
-        colNote.setCellValueFactory(new PropertyValueFactory("note"));
+        TableColumn<Transaction, String> colNote = new TableColumn<>("Ghi chú");
+        colNote.setCellValueFactory(new PropertyValueFactory<>("note"));
         colNote.setPrefWidth(150);
 
-        TableColumn colDate = new TableColumn("Ngay");
-        colDate.setCellValueFactory(new PropertyValueFactory("date"));
-        colDate.setPrefWidth(150);
+        TableColumn<Transaction, LocalDate> colDate = new TableColumn<>("Ngày");
+        colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+        colDate.setPrefWidth(130);
 
-        TableColumn colCate = new TableColumn("Danh muc");
-        colCate.setCellValueFactory(new PropertyValueFactory("categoryId"));
+        TableColumn<Transaction, Integer> colCate = new TableColumn<>("Danh mục");
+        colCate.setCellValueFactory(new PropertyValueFactory<>("categoryId"));
         colCate.setPrefWidth(150);
-        TableColumn colAction = new TableColumn();
-        colAction.setCellFactory(e -> {
-            Button btn = new Button("Xóa");
-            btn.setOnAction(evt -> {
-//                int id = (int) ((TableRow)((Button) evt.getSource()).getParent().getParent()).getItem();
-                Transaction tran = (Transaction) ((TableRow)((Button) evt.getSource()).getParent().getParent()).getItem();
-                int id = tran.getIdTran();
-                TransactionServices ts = new TransactionServices();
-                ts.deleteTransaction(id);
-                Utils.getAlert("Delete successful!").show();
-                loadTableData();
-            });
-            
-            TableCell cell = new TableCell();
-            cell.setGraphic(btn);
-            return cell;
-        });
-//        TransactionServices ts = new TransactionServices();
 
-//        TableColumn<Transaction, Void> colAction = new TableColumn<>();
-//        colAction.setCellFactory(col -> new TableCell<Transaction, Void>() {
-//            Button btn = new Button("Xóa");
-//
-//            {
-//                btn.setOnAction(event -> {
-//                    Transaction tran = getTableView().getItems().get(getIndex());
-//                    if (tran != null) {
-//                        ts.deleteTransaction(tran.getIdTran());
-//                        Utils.getAlert("Delete successful!").show();
-//                        loadTableData();
-//                    }
-//
-//                });
-//
-//            }
-//
-//        }
-      
+        TableColumn<Transaction, Void> colAction = new TableColumn<>();
+        colAction.setCellFactory(tc -> new TableCell<>() {
+            final Button btnDelete = new Button("Xóa");
+            final Button btnEdit = new Button("Sửa");
+            final HBox btnGroup = new HBox(5, btnEdit, btnDelete);
+
+            {
+                btnDelete.setOnAction(evt -> {
+                    Transaction tran = getTableView().getItems().get(getIndex());
+                    int id = tran.getIdTran();
+                    TransactionServices ts = new TransactionServices();
+                    ts.deleteTransaction(id);
+                    Utils.getAlert("Xóa thành công!").show();
+                    loadTableData();
+                });
+
+                btnEdit.setOnAction(evt -> {
+                    Transaction tran = getTableView().getItems().get(getIndex());
+                    txtAmount.setText(String.valueOf(tran.getAmount()));
+                    txtNote.setText(tran.getNote());
+                    btDate.setValue(tran.getDate());
+
+                    // Chọn danh mục phù hợp
+                    cbCates.getSelectionModel().select(new Category(tran.getCategoryId()));
+
+                    // Gán sự kiện cập nhật
+                    btnSave.setOnAction(event -> updateTransaction(tran.getIdTran()));
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnGroup);
+                }
+            }
+        });
+
         tbTransaction.getColumns().addAll(colCate, colAmount, colNote, colDate, colAction);
+    }
+
+    private void updateTransaction(int transactionId) {
+        try {
+            double amount = Double.parseDouble(txtAmount.getText());
+            String note = txtNote.getText();
+            LocalDate date = btDate.getValue();
+            Category selectedCategory = cbCates.getSelectionModel().getSelectedItem();
+
+            if (amount <= 0 || amount > 1_000_000_000_000.0) {
+                Utils.getAlert("Số tiền phải lớn hơn 0 và không vượt quá 1,000,000,000,000!").show();
+                return;
+            }
+            if (date.isAfter(LocalDate.now())) {
+                Utils.getAlert("Ngày giao dịch không được vượt quá ngày hiện tại!").show();
+                return;
+            }
+            if (date == null || selectedCategory == null) {
+                Utils.getAlert("Vui lòng điền đầy đủ thông tin!").show();
+                return;
+            }
+
+            TransactionServices ts = new TransactionServices();
+            ts.updateTransaction(transactionId, amount, selectedCategory.getId(), date, note);
+
+            Utils.getAlert("Cập nhật thành công!").show();
+            clearForm();
+            loadTableData();
+        } catch (NumberFormatException ex) {
+            Utils.getAlert("Số tiền phải là một số hợp lệ!").show();
+        }
     }
 
     public void addHandler(ActionEvent e) {
@@ -173,6 +203,14 @@ public class FXTransactionsController implements Initializable {
             LocalDate date = btDate.getValue();
             Category selectedCategory = cbCates.getSelectionModel().getSelectedItem();
 
+            if (amount <= 0 || amount > 1_000_000_000_000.0) {
+                Utils.getAlert("Số tiền phải lớn hơn 0 và không vượt quá 1,000,000,000,000!").show();
+                return;
+            }
+            if (date.isAfter(LocalDate.now())) {
+                Utils.getAlert("Ngày giao dịch không được vượt quá ngày hiện tại!").show();
+                return;
+            }
             if (date == null || selectedCategory == null) {
                 Utils.getAlert("Vui lòng điền đầy đủ thông tin!").show();
                 return;

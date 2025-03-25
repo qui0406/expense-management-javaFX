@@ -8,9 +8,11 @@ import com.qlct.pojo.Category;
 import com.qlct.pojo.JdbcUtils;
 import com.qlct.pojo.Transaction;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -51,7 +53,23 @@ public class TransactionServices {
             Logger.getLogger(TransactionServices.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+    public void updateTransaction(int id, double amount, int categoryId, LocalDate date, String note) {
+    String sql = "UPDATE transactions SET amount = ?, category_id = ?, date = ?, note = ? WHERE id = ?";
+
+    try (Connection conn = JdbcUtils.getConn();
+        PreparedStatement stm = conn.prepareStatement(sql)) {
+        stm.setDouble(1, amount);
+        stm.setInt(2, categoryId);
+        stm.setDate(3, Date.valueOf(date));
+        stm.setString(4, note);
+        stm.setInt(5, id);
+
+        stm.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
     public List<Transaction> getAllTran() throws SQLException{
         List<Transaction> trans = new ArrayList<>();
         try(Connection conn = JdbcUtils.getConn()){

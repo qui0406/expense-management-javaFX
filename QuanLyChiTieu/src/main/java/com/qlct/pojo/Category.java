@@ -20,7 +20,9 @@ public class Category {
         this.type = type;
 
     }
-
+    public  Category(int id){
+        this.id = id;
+    }
     @Override
     public String toString() {
         return this.name; // Trả về tên danh mục
