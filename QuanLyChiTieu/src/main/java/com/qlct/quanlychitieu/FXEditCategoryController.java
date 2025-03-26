@@ -1,0 +1,155 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
+ */
+package com.qlct.quanlychitieu;
+
+import com.qlct.pojo.Category;
+import com.qlct.services.CategoryServices;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+
+/**
+ * FXML Controller class
+ *
+ * @author ttthu
+ */
+public class FXEditCategoryController implements Initializable {
+
+    @FXML
+    private ComboBox<String> cbType;
+    @FXML
+    private TextField txtName;
+    @FXML
+    private Button btnAdd;
+    @FXML private TableView<Category> tbCategory;
+    /**
+     * Initializes the controller class.
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        CategoryServices cs = new CategoryServices();
+        cbType.setItems(FXCollections.observableArrayList("Chi", "Thu"));
+        loadColumns();
+        loadTableData();
+    }
+
+    private void loadColumns() {
+        TableColumn<Category, String> colName = new TableColumn<>("Tên danh mục");
+        colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        colName.setPrefWidth(200);
+
+        TableColumn<Category, String> colType = new TableColumn<>("Loại danh mục");
+        colType.setCellValueFactory(new PropertyValueFactory<>("type"));
+        colType.setPrefWidth(200);
+
+        TableColumn<Category, Void> colAction = new TableColumn<>();
+        colAction.setCellFactory(tc -> new TableCell<>() {
+            final Button btnDelete = new Button("Xóa");
+            final Button btnEdit = new Button("Sửa");
+            final HBox btnGroup = new HBox(5, btnEdit, btnDelete);
+
+            {
+                btnDelete.setOnAction(evt -> {
+                    Category cate = getTableView().getItems().get(getIndex());
+                    int id = cate.getId();
+                    CategoryServices cs = new CategoryServices();
+                    cs.deleteCategory(id);
+                    Utils.getAlert("Xóa thành công!").show();
+                    loadTableData();
+                });
+
+                btnEdit.setOnAction(evt -> {
+                    Category cate = getTableView().getItems().get(getIndex());
+                    txtName.setText(String.valueOf(cate.getName()));
+                    cbType.getSelectionModel().select(cate.getType());
+
+                    // Gán sự kiện cập nhật
+                    btnAdd.setOnAction(event -> updateCategory(cate.getId()));
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnGroup);
+                }
+            }
+        });
+
+        tbCategory.getColumns().addAll(colName, colType, colAction);
+
+    }
+
+    private void loadTableData() {
+        CategoryServices cs = new CategoryServices();
+
+        try {
+            this.tbCategory.setItems(FXCollections.observableList(cs.getCatetogires()));
+        } catch (SQLException ex) {
+            Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void clearForm() {
+        cbType.setValue(null);
+        txtName.clear();
+    }
+
+    private void updateCategory(int categoryId) {
+        String name = txtName.getText();
+        String type = cbType.getSelectionModel().getSelectedItem();
+
+        if (name.isEmpty() || type == null) {
+            Utils.getAlert("Vui lòng điền đầy đủ tên và loại danh mục").show();
+            return;
+        }
+
+        try {
+            CategoryServices cs = new CategoryServices();
+            cs.updateCategory(categoryId, name, type);
+            Utils.getAlert("Cập nhật danh mục thành công").show();
+            clearForm();
+            loadTableData();
+            btnAdd.setOnAction(this::addHandler);
+        } catch (NumberFormatException ex) {
+            Utils.getAlert("Error!").show();
+        }
+    }
+
+    public void addHandler(ActionEvent e) {
+            String name = txtName.getText().trim();
+            String type = cbType.getSelectionModel().getSelectedItem();
+        try {
+
+            CategoryServices cs = new CategoryServices();
+            Category cate = new Category(0,name, type);
+            cs.addCategory(cate);
+
+            Utils.getAlert("Add successful!").show();
+            clearForm();
+            loadTableData();
+        } catch (NumberFormatException ex) {
+            Utils.getAlert("Error").show();
+        }
+    }
+
+}

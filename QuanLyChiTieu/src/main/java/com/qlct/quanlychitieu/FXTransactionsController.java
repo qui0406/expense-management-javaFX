@@ -9,6 +9,7 @@ import com.qlct.pojo.Category;
 import com.qlct.pojo.Transaction;
 import com.qlct.services.CategoryServices;
 import com.qlct.services.TransactionServices;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -22,7 +23,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -33,6 +37,9 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
@@ -59,25 +66,21 @@ public class FXTransactionsController implements Initializable {
     private Button btnCancel;
     @FXML
     private TableView<Transaction> tbTransaction;
+    @FXML
+    private Button btnEditCategory;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
         CategoryServices catService = new CategoryServices();
         cbType.setItems(FXCollections.observableArrayList("Chi", "Thu"));
 
         btDate.setValue(LocalDate.now());
         this.loadColumns();
         this.loadTableData();
-        List<Category> categories = null;
-        try {
-            categories = catService.getCatetogires();
-        } catch (SQLException ex) {
-            Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        System.out.println("Categories: " + categories);
 
     }
 
@@ -238,5 +241,15 @@ public class FXTransactionsController implements Initializable {
 
     public void clearHandler(ActionEvent e) {
         clearForm();
+    }
+    
+    public void editCategory(MouseEvent e) throws IOException{
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("FXEditCategory.fxml"));
+        Parent root = loader.load();
+
+        Stage stage = (Stage) ((ImageView) e.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 }
