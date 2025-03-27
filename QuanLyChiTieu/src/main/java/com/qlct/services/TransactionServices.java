@@ -24,6 +24,22 @@ import java.util.logging.Logger;
  */
 public class TransactionServices {
     
+    public List<Transaction> getTransactionsByDateRange(LocalDate startDate, LocalDate endDate) throws SQLException {
+        List<Transaction> transactions = new ArrayList<>();
+        try (Connection conn = JdbcUtils.getConn()) {
+            PreparedStatement stm = conn.prepareStatement(
+                "SELECT * FROM transactions WHERE date BETWEEN ? AND ?");
+            stm.setDate(1, java.sql.Date.valueOf(startDate));
+            stm.setDate(2, java.sql.Date.valueOf(endDate));
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                Transaction t = new Transaction(rs.getInt("id"), rs.getDouble("amount"),
+                        rs.getInt("category_id"), rs.getDate("date").toLocalDate(), rs.getString("note"));
+                transactions.add(t);
+            }
+        }
+        return transactions;
+    }
     public void addTransaction(Transaction tran){
         try(Connection conn = JdbcUtils.getConn()){
             String newTran = "INSERT INTO transactions (amount, note, date, category_id) VALUE (?, ?, ?, ?)";

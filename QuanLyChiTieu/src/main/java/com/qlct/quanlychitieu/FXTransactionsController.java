@@ -14,7 +14,9 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -68,22 +70,86 @@ public class FXTransactionsController implements Initializable {
     private TableView<Transaction> tbTransaction;
     @FXML
     private Button btnEditCategory;
-
+    @FXML private ComboBox<String> cbFilterType;
+    @FXML private DatePicker dpFilterDate;
+    @FXML private Button btnFilter;
     /**
      * Initializes the controller class.
      */
+    private Map<Integer, Category> categoryCache = new HashMap<>();
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
         CategoryServices catService = new CategoryServices();
         cbType.setItems(FXCollections.observableArrayList("Chi", "Thu"));
 
+        cbFilterType.setItems(FXCollections.observableArrayList("Ngày", "Tuần", "Tháng", "Quý", "Năm"));
+        dpFilterDate.setValue(LocalDate.now());
+        
+        // Tải danh mục vào cache
+        try {
+            categoryCache.clear();
+            List<Category> categories = catService.getCatetogires();
+            for (Category c : categories) {
+                categoryCache.put(c.getId(), c);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         btDate.setValue(LocalDate.now());
         this.loadColumns();
         this.loadTableData();
 
     }
 
+    public void filterTransactions(ActionEvent e) {
+        TransactionServices tranService = new TransactionServices();
+
+        String filterType = cbFilterType.getSelectionModel().getSelectedItem();
+        LocalDate filterDate = dpFilterDate.getValue();
+
+        if (filterType == null || filterDate == null) {
+            Utils.getAlert("Vui lòng chọn kiểu lọc và ngày!").show();
+            return;
+        }
+
+        LocalDate startDate;
+        LocalDate endDate;
+
+        switch (filterType) {
+            case "Ngày":
+                startDate = filterDate;
+                endDate = filterDate;
+                break;
+            case "Tuần":
+                startDate = filterDate.with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+                endDate = startDate.plusDays(6);
+                break;
+            case "Tháng":
+                startDate = filterDate.withDayOfMonth(1);
+                endDate = filterDate.withDayOfMonth(filterDate.lengthOfMonth());
+                break;
+            case "Quý":
+                int quarter = (filterDate.getMonthValue() - 1) / 3 + 1;
+                startDate = LocalDate.of(filterDate.getYear(), (quarter - 1) * 3 + 1, 1);
+                endDate = startDate.plusMonths(2).withDayOfMonth(startDate.plusMonths(2).lengthOfMonth());
+                break;
+            case "Năm":
+                startDate = LocalDate.of(filterDate.getYear(), 1, 1);
+                endDate = LocalDate.of(filterDate.getYear(), 12, 31);break;
+            default:
+                return;
+        }
+
+        try {
+            List<Transaction> filteredTransactions = tranService.getTransactionsByDateRange(startDate, endDate);
+            tbTransaction.setItems(FXCollections.observableList(filteredTransactions));
+        } catch (SQLException ex) {
+            Utils.getAlert("Lỗi khi lọc giao dịch: " + ex.getMessage()).show();
+            Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     public void updateCategoryCombobox(ActionEvent e) {
         CategoryServices catService = new CategoryServices();
         String selectedType = cbType.getSelectionModel().getSelectedItem();
@@ -166,6 +232,27 @@ public class FXTransactionsController implements Initializable {
         });
 
         tbTransaction.getColumns().addAll(colCate, colAmount, colNote, colDate, colAction);
+        
+        // Áp dụng CSS động cho các hàng
+        tbTransaction.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(Transaction item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    getStyleClass().removeAll("expense", "income");
+                } else {
+                    Category category = categoryCache.get(item.getCategoryId());
+                    if (category != null) {
+                        getStyleClass().removeAll("expense", "income");
+                        if ("Chi".equals(category.getType())) {
+                            getStyleClass().add("expense");
+                        } else if ("Thu".equals(category.getType())) {
+                            getStyleClass().add("income");
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private void updateTransaction(int transactionId) {
@@ -251,5 +338,16 @@ public class FXTransactionsController implements Initializable {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+        CategoryServices catService = new CategoryServices();
+        // Cập nhật cache và bảng sau khi quay lại
+        try {
+            categoryCache.clear();
+            for (Category c : catService.getCatetogires()) {
+                categoryCache.put(c.getId(), c);
+            }
+            loadTableData();
+        } catch (SQLException ex) {
+            Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
