@@ -2,15 +2,13 @@
  * Empty Stylesheet file.
  */
 
-/* styles.css */
-.table-row-cell:filled.expense {
+.table-row-cell.expense .table-cell {
     -fx-text-fill: red;
 }
 
-.table-row-cell:filled.income {
-    -fx-text-fill: green;
+.table-row-cell.income .table-cell {
+    -fx-text-fill: #2D82B5; /* Màu xanh dương nhạt */
 }
-
 .expense {
     -fx-text-fill: red;
 }

@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="740.0" stylesheets="@style/transaction.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.FXTransactionsController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="840" stylesheets="@style/transaction.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.FXTransactionsController">
     <children>
         <Text fill="#2d82b5" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="Subject" text="Thêm giao dịch" wrappingWidth="639.1461181640625" />
         <HBox prefHeight="35.0" prefWidth="600.0">

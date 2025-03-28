@@ -9,6 +9,7 @@ import com.qlct.services.CategoryServices;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,7 +45,9 @@ public class FXEditCategoryController implements Initializable {
     private TextField txtName;
     @FXML
     private Button btnAdd;
-    @FXML private TableView<Category> tbCategory;
+    @FXML
+    private TableView<Category> tbCategory;
+
     /**
      * Initializes the controller class.
      */
@@ -129,7 +132,14 @@ public class FXEditCategoryController implements Initializable {
             Utils.getAlert("Vui lòng điền đầy đủ tên và loại danh mục").show();
             return;
         }
-
+        if (!name.matches("^[\\p{L}\\s]+$")) {
+            Utils.getAlert("Tên danh mục chỉ được chứa chữ cái và khoảng trắng, không chứa số hoặc ký tự đặc biệt!").show();
+            return;
+        }
+        if (isCategoryNameExists(name, type, categoryId)) {
+            Utils.getAlert("Tên danh mục '" + name + "' với loại '" + type + "' đã tồn tại!").show();
+            return;
+        }
         try {
             CategoryServices cs = new CategoryServices();
             cs.updateCategory(categoryId, name, type);
@@ -142,13 +152,41 @@ public class FXEditCategoryController implements Initializable {
         }
     }
 
+    private boolean isCategoryNameExists(String name, String type, int excludeId) {
+        CategoryServices cs = new CategoryServices();
+        try {
+            List<Category> categories = cs.getCatetogires();
+            for (Category cate : categories) {
+                // Kiểm tra trùng tên và loại, nhưng không so sánh với danh mục đang chỉnh sửa (excludeId)
+                if (cate.getName().equalsIgnoreCase(name) && cate.getType().equals(type) && cate.getId() != excludeId) {
+                    return true;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(FXEditCategoryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
     public void addHandler(ActionEvent e) {
-            String name = txtName.getText().trim();
-            String type = cbType.getSelectionModel().getSelectedItem();
+        String name = txtName.getText().trim();
+        String type = cbType.getSelectionModel().getSelectedItem();
+        if (name.isEmpty() || type == null) {
+            Utils.getAlert("Vui lòng điền đầy đủ tên và loại danh mục").show();
+            return;
+        }
+        if (!name.matches("^[\\p{L}\\s]+$")) {
+            Utils.getAlert("Tên danh mục chỉ được chứa chữ cái và khoảng trắng, không chứa số hoặc ký tự đặc biệt!").show();
+            return;
+        }
+        if (isCategoryNameExists(name, type, -1)) { // -1 để không loại trừ danh mục nào khi thêm mới
+            Utils.getAlert("Tên danh mục '" + name + "' với loại '" + type + "' đã tồn tại!").show();
+            return;
+        }
         try {
 
             CategoryServices cs = new CategoryServices();
-            Category cate = new Category(0,name, type);
+            Category cate = new Category(0, name, type);
             cs.addCategory(cate);
 
             Utils.getAlert("Add successful!").show();
@@ -158,17 +196,18 @@ public class FXEditCategoryController implements Initializable {
             Utils.getAlert("Error").show();
         }
     }
+
     public void backToTransactions(MouseEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("FXTransactions.fxml"));
             Parent root = loader.load();
-            
+
             Stage stage = (Stage) ((ImageView) event.getSource()).getScene().getWindow();
 
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
-            
+
         } catch (IOException ex) {
             Utils.getAlert("Lỗi khi quay lại giao diện giao dịch: " + ex.getMessage()).show();
             Logger.getLogger(FXEditCategoryController.class.getName()).log(Level.SEVERE, null, ex);
