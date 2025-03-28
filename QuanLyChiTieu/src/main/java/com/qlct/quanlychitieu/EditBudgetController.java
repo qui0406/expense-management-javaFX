@@ -4,9 +4,15 @@
  */
 package com.qlct.quanlychitieu;
 
+import com.qlct.services.BudgetServices;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
 /**
  * FXML Controller class
@@ -15,12 +21,32 @@ import javafx.fxml.Initializable;
  */
 public class EditBudgetController implements Initializable {
 
+    private BudgetServices budgetServices = new BudgetServices();
+
+    @FXML
+    TextField txtInputBudget;
+    @FXML
+    Button btnEditBudget;
+    @FXML
+    Label lblStatusInEdit;
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
-    
+        budgetServices.setLblStatusInEdit(lblStatusInEdit);
+
+        btnEditBudget.setOnAction(e -> {
+            try {
+                budgetServices.updateBudgetTODB(txtInputBudget.getText());
+            } catch (NumberFormatException | SQLException ex) {
+                lblStatusInEdit.setText("❌ Lỗi kết nối CSDL");
+                lblStatusInEdit.setStyle("-fx-text-fill: red;");
+                ex.printStackTrace(); //In ra lỗi console đẻ debug
+            }
+        });
+    }
+
 }
