@@ -1,4 +1,9 @@
-com\qlct\quanlychitieu\SecondaryController.class
+com\qlct\pojo\Expense.class
+com\qlct\services\UserSessionServices.class
+com\qlct\quanlychitieu\ChartController.class
+com\qlct\quanlychitieu\StatsController.class
+com\qlct\pojo\Category.class
+com\qlct\services\StatsServices.class
 com\qlct\services\LoginServices.class
 module-info.class
 com\qlct\quanlychitieu\App.class

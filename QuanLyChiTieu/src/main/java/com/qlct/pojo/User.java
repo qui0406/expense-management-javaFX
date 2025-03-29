@@ -34,19 +34,35 @@ public class User {
         this.createdDate = createdDate;
     }
     
+    public User(int id, String firstName, String lastName, String username, String email) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return this.username; // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
+    
+    
     
     /**
      * @return the id
-     */
-    public int getId() {
-        return id;
-    }
+    
+    
 
     /**
      * @param id the id to set
      */
     public void setId(int id) {
         this.id = id;
+    }
+    
+    public int getId() {
+        return id;
     }
 
     /**

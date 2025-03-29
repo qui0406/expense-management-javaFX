@@ -4,7 +4,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -12,7 +11,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="646.0" prefWidth="904.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="646.0" prefWidth="904.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.StatsController">
    <children>
       <Line endX="-108.80001831054688" endY="526.1000366210938" layoutX="278.0" layoutY="80.0" startX="-108.80001831054688" startY="-19.49999237060547" stroke="#c7b4b4" />
       <Label layoutX="355.0" layoutY="14.0" text="Báo cáo thống kê">
@@ -20,11 +19,11 @@
             <Font size="31.0" />
          </font>
       </Label>
-      <ComboBox layoutX="701.0" layoutY="80.0" prefHeight="25.0" prefWidth="158.0" promptText="Thống kê theo bảng" />
-      <DatePicker layoutX="243.0" layoutY="80.0" />
-      <DatePicker layoutX="496.0" layoutY="80.0" />
-      <Label layoutX="183.0" layoutY="84.0" text="Từ ngày" />
-      <Label layoutX="438.0" layoutY="84.0" text="Đến ngày" />
+      <ComboBox fx:id="cbChoseTable" layoutX="701.0" layoutY="80.0" onAction="#loadComboBoxTableCurrentMonth" prefHeight="25.0" prefWidth="158.0" promptText="Thống kê theo bảng" />
+      <DatePicker fx:id="fromDate" layoutX="225.0" layoutY="80.0" prefHeight="25.0" prefWidth="170.0" />
+      <DatePicker fx:id="toDate" layoutX="475.0" layoutY="80.0" prefHeight="25.0" prefWidth="153.0" />
+      <Label layoutX="176.0" layoutY="84.0" text="Từ ngày" />
+      <Label layoutX="417.0" layoutY="84.0" text="Đến ngày" />
       <Pane prefHeight="646.0" prefWidth="163.0" style="-fx-background-color: skyblue;">
          <children>
             <ImageView fitHeight="58.0" fitWidth="59.0" layoutX="37.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
@@ -42,27 +41,15 @@
             <Button layoutX="5.0" layoutY="198.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="153.0" text="Báo cáo thống kê" />
          </children>
       </Pane>
-      <Label layoutX="396.0" layoutY="333.0" text="Thống kê chi tiêu theo tháng hiện tại">
+      <Label layoutX="460.0" layoutY="607.0" text="Các chi tiêu tháng trước">
          <font>
             <Font size="15.0" />
          </font>
       </Label>
-      <Label layoutX="457.0" layoutY="596.0" text="Các chi tiêu tháng trước">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
-      <TableView layoutX="208.0" layoutY="130.0" prefHeight="200.0" prefWidth="656.0">
-        <columns>
-          <TableColumn prefWidth="75.0" text="C1" />
-          <TableColumn prefWidth="75.0" text="C2" />
-        </columns>
-      </TableView>
-      <TableView layoutX="211.0" layoutY="384.0" prefHeight="212.0" prefWidth="656.0">
-        <columns>
-          <TableColumn prefWidth="75.0" text="C1" />
-          <TableColumn prefWidth="75.0" text="C2" />
-        </columns>
-      </TableView>
+      <TableView fx:id="tbExpenses" layoutX="208.0" layoutY="130.0" prefHeight="200.0" prefWidth="656.0" />
+      <TableView fx:id="tbStatsByMonth" layoutX="211.0" layoutY="384.0" prefHeight="212.0" prefWidth="656.0" />
+      <Button fx:id="filter" layoutX="631.0" layoutY="80.0" mnemonicParsing="false" text="Lọc" />
+      <ComboBox layoutX="701.0" layoutY="48.0" prefHeight="25.0" prefWidth="81.0" promptText="Chi" />
+      <Label layoutX="459.0" layoutY="333.0" text="Thống kê theo tháng hiện tại" />
    </children>
 </Pane>

@@ -1,6 +1,7 @@
 package com.qlct.quanlychitieu;
 
 import com.qlct.services.LoginServices;
+import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -32,12 +33,14 @@ public class AuthController implements Initializable{
     
     
     @FXML
-    private void checkLogin() throws SQLException{
+    private void checkLogin() throws SQLException, IOException{
         String username = txtUsername.getText();
         String password = txtPassword.getText();
         
         if(LoginServices.checkUserAuth(username, password)){
             showAlertLogin("Login successful", null, "Successful");
+            UserSessionServices.login(username);
+            App.setRoot("baocaothongketheobang");
         }
         else {
             showAlertLogin("Incorrect", null, "Incorrect");
@@ -113,7 +116,7 @@ public class AuthController implements Initializable{
         return !password.equals(confirmPassword);
     }
     
-    public String isValidPassword(String firstName, String lastName, String username, String password, String confirmPassword) {
+    public String isValidPassword(String lastName, String firstName, String username, String password, String confirmPassword) {
         // Kiểm tra null hoặc rỗng
         String mess="";
         
