@@ -12,9 +12,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="840" stylesheets="@style/transaction.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.FXTransactionsController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="843.0" stylesheets="@style/transaction.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.FXTransactionsController">
     <children>
-        <Text fill="#2d82b5" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="Subject" text="Thêm giao dịch" wrappingWidth="639.1461181640625" />
+        <Text fill="#2d82b5" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="Subject" text="Thêm giao dịch" wrappingWidth="807.9461669921875" />
         <HBox prefHeight="35.0" prefWidth="600.0">
             <children>
                 <ComboBox fx:id="cbType" onAction="#updateCategoryCombobox" prefWidth="150.0" promptText="Chi tiêu" styleClass="btnType">
@@ -23,7 +23,7 @@
                </opaqueInsets>
                 </ComboBox>
                 <ComboBox fx:id="cbCates" prefWidth="150.0" promptText="Danh mục" />
-                <ImageView fitHeight="26.0" fitWidth="26.0" onMouseClicked="#editCategory" pickOnBounds="true" preserveRatio="true">
+                <ImageView fitHeight="26.0" fitWidth="35.0" onMouseClicked="#editCategory" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../../../icons/pencil.png" />
                     </image>
@@ -46,6 +46,6 @@
                 <Button fx:id="btnFilter" mnemonicParsing="false" onAction="#filterTransactions" text="Lọc" />
             </children>
         </HBox>
-        <TableView fx:id="tbTransaction" prefHeight="200.0" prefWidth="640.0" styleClass="table-row-cell" stylesheets="@style/transaction.css" />
+        <TableView fx:id="tbTransaction" prefHeight="380.0" prefWidth="800.0" styleClass="table-row-cell" stylesheets="@style/transaction.css" />
     </children>
 </VBox>

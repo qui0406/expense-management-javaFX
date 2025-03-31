@@ -9,6 +9,7 @@ import com.qlct.pojo.Category;
 import com.qlct.pojo.Transaction;
 import com.qlct.services.CategoryServices;
 import com.qlct.services.TransactionServices;
+import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -188,7 +189,7 @@ public class FXTransactionsController implements Initializable {
 
         TableColumn<Transaction, Integer> colCate = new TableColumn<>("Danh mục");
         colCate.setCellValueFactory(new PropertyValueFactory<>("categoryId"));
-        colCate.setPrefWidth(150);
+        colCate.setPrefWidth(145);
 
         TableColumn<Transaction, Void> colAction = new TableColumn<>();
         colAction.setCellFactory(tc -> new TableCell<>() {
@@ -261,7 +262,6 @@ public class FXTransactionsController implements Initializable {
             String note = txtNote.getText();
             LocalDate date = btDate.getValue();
             Category selectedCategory = cbCates.getSelectionModel().getSelectedItem();
-
             if (amount <= 0 || amount > 1_000_000_000_000.0) {
                 Utils.getAlert("Số tiền phải lớn hơn 0 và không vượt quá 1,000,000,000,000!").show();
                 return;
@@ -276,7 +276,7 @@ public class FXTransactionsController implements Initializable {
             }
 
             TransactionServices ts = new TransactionServices();
-            ts.updateTransaction(transactionId, amount, selectedCategory.getId(), date, note);
+            ts.updateTransaction(transactionId, amount, selectedCategory.getId(), date, note,UserSessionServices.getCurrentUser().getId());
 
             Utils.getAlert("Cập nhật thành công!").show();
             clearForm();
@@ -307,7 +307,7 @@ public class FXTransactionsController implements Initializable {
             }
             TransactionServices ts = new TransactionServices();
             Transaction transaction = new Transaction(amount, selectedCategory.getId(),
-                    date, note);
+                    date, note,UserSessionServices.getCurrentUser().getId());
             ts.addTransaction(transaction);
 
             Utils.getAlert("Add successful!").show();

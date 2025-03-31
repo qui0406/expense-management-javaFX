@@ -20,53 +20,55 @@ import java.util.logging.Logger;
  * @author ttthu
  */
 public class CategoryServices {
-    public List<Category> getCatetogires() throws SQLException{
+
+    public List<Category> getCatetogires() throws SQLException {
         List<Category> cates = new ArrayList<>();
-        try(Connection conn = JdbcUtils.getConn()){
+        try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareCall("SELECT * FROM categories");
             ResultSet rs = stm.executeQuery();
-            while(rs.next()){
-                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"));
-                cates.add(c);
-            }
-        } 
-        return cates; 
-    }
-    
-    public List<Category> getCateByType(String type) throws SQLException{
-        List<Category> cates = new ArrayList<>();
-        try(Connection conn = JdbcUtils.getConn()){
-            PreparedStatement stm = conn.prepareCall("SELECT * FROM categories WHERE type = ?");
-            stm.setString(1, type);
-            ResultSet rs = stm.executeQuery();
-            while(rs.next()){
-                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"));
+            while (rs.next()) {
+                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("userId"));
                 cates.add(c);
             }
         }
         return cates;
     }
-    
-    public void addCategory(Category cate){
-        try(Connection conn = JdbcUtils.getConn()){
-            String newTran = "INSERT INTO categories (name, type) VALUE (?, ?)";
+
+    public List<Category> getCateByType(String type) throws SQLException {
+        List<Category> cates = new ArrayList<>();
+        try (Connection conn = JdbcUtils.getConn()) {
+            PreparedStatement stm = conn.prepareCall("SELECT * FROM categories WHERE type = ?");
+            stm.setString(1, type);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("userId"));
+                cates.add(c);
+            }
+        }
+        return cates;
+    }
+
+    public void addCategory(Category cate) {
+        try (Connection conn = JdbcUtils.getConn()) {
+            String newTran = "INSERT INTO categories (name, type, userId) VALUE (?, ?, ?)";
             PreparedStatement stm = conn.prepareStatement(newTran);
             stm.setString(1, cate.getName());
             stm.setString(2, cate.getType());
+            stm.setInt(3, cate.getUserId());
             stm.executeUpdate();
 
         } catch (SQLException ex) {
             Logger.getLogger(TransactionServices.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void deleteCategory(int id){
-        try(Connection conn = JdbcUtils.getConn()){
+
+    public void deleteCategory(int id) {
+        try (Connection conn = JdbcUtils.getConn()) {
             String delCate = "DELETE FROM categories WHERE id =  ?";
             PreparedStatement stm = conn.prepareStatement(delCate);
             stm.setInt(1, id);
             int rowsAffected = stm.executeUpdate();
-            if (rowsAffected == 0){
+            if (rowsAffected == 0) {
                 throw new SQLException("Không tìm thấy giao dịch với id hợp lệ");
             }
 
@@ -74,17 +76,18 @@ public class CategoryServices {
             Logger.getLogger(TransactionServices.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public void updateCategory(int id, String name, String type) {
-    String sql = "UPDATE categories SET name = ?, type = ? WHERE id = ?";
 
-    try (Connection conn = JdbcUtils.getConn();
-        PreparedStatement stm = conn.prepareStatement(sql)) {
-        stm.setString(1, name);
-        stm.setString(2, type);
-        stm.setInt(3, id);
-        stm.executeUpdate();
-    } catch (SQLException e) {
-        e.printStackTrace();
+    public void updateCategory(int id, String name, String type, int userId) {
+        String sql = "UPDATE categories SET name = ?, type = ?, userId = ? WHERE id = ?";
+
+        try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setString(1, name);
+            stm.setString(2, type);
+            stm.setInt(4, userId);
+            stm.setInt(3, id);
+            stm.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-}
 }

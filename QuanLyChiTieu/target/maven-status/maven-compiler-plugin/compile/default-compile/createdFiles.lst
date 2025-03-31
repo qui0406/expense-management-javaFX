@@ -1,4 +1,5 @@
 com\qlct\pojo\Transaction.class
+com\qlct\services\UserSessionServices.class
 com\qlct\quanlychitieu\FXTransactionsController$2.class
 com\qlct\quanlychitieu\SecondaryController.class
 com\qlct\services\LoginServices.class

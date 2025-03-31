@@ -11,31 +11,36 @@ import java.time.LocalDate;
  * @author ttthu
  */
 public class Transaction {
+
     private int id;
     private double amount;
     private int categoryId;
     private LocalDate date;
     private String note;
-    public Transaction(){
+    private int userId;
+
+    public Transaction() {
     }
-    public Transaction(double amount,  int categoryId, LocalDate date,String note) {
-        this.id = 0; // id sẽ được cơ sở dữ liệu tự động gán
+
+    public Transaction(double amount, int categoryId, LocalDate date, String note, int userId) {
+        this.id = 0;
         this.amount = amount;
         this.note = note;
         this.date = date;
         this.categoryId = categoryId;
+        this.userId = userId;
     }
-    public Transaction(int id, double amount, int categoryId, LocalDate date, String note){
+
+    public Transaction(int id, double amount, int categoryId, LocalDate date, String note, int userId) {
         this.id = id;
         this.amount = amount;
         this.categoryId = categoryId;
         this.date = date;
         this.note = note;
-    
-    }
-  
+        this.userId = userId;
 
-  
+    }
+
     /**
      * @return the amount
      */
@@ -106,6 +111,18 @@ public class Transaction {
         this.id = idTran;
     }
 
+    /**
+     * @return the userId
+     */
+    public int getUserId() {
+        return userId;
+    }
+
+    /**
+     * @param userId the userId to set
+     */
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
 }
-

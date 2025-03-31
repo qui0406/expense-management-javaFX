@@ -5,7 +5,9 @@
 package com.qlct.quanlychitieu;
 
 import com.qlct.pojo.Category;
+import com.qlct.pojo.User;
 import com.qlct.services.CategoryServices;
+import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -127,7 +129,7 @@ public class FXEditCategoryController implements Initializable {
     private void updateCategory(int categoryId) {
         String name = txtName.getText();
         String type = cbType.getSelectionModel().getSelectedItem();
-
+//        User currentUser = new User();
         if (name.isEmpty() || type == null) {
             Utils.getAlert("Vui lòng điền đầy đủ tên và loại danh mục").show();
             return;
@@ -142,7 +144,7 @@ public class FXEditCategoryController implements Initializable {
         }
         try {
             CategoryServices cs = new CategoryServices();
-            cs.updateCategory(categoryId, name, type);
+            cs.updateCategory(categoryId, name, type,UserSessionServices.getCurrentUser().getId());
             Utils.getAlert("Cập nhật danh mục thành công").show();
             clearForm();
             loadTableData();
@@ -186,7 +188,7 @@ public class FXEditCategoryController implements Initializable {
         try {
 
             CategoryServices cs = new CategoryServices();
-            Category cate = new Category(0, name, type);
+            Category cate = new Category(0, name, type,UserSessionServices.getCurrentUser().getId());
             cs.addCategory(cate);
 
             Utils.getAlert("Add successful!").show();

@@ -34,7 +34,14 @@ public class User {
         this.createdDate = createdDate;
     }
     
-    
+     public User(int id, String firstName, String lastName, String username, String email) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+     }
     /**
      * @return the id
      */
