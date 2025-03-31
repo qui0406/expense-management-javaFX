@@ -42,8 +42,7 @@ public class BudgetController implements Initializable {
             try {
                 budgetServices.insertBudgetTODB(txtInputBudget.getText());
             } catch (SQLException ex) {
-                lblStatus.setText("❌ Lỗi kết nối CSDL");
-                lblStatus.setStyle("-fx-text-fill: red;");
+                budgetServices.updateStatus(lblStatus, "❌ Lỗi kết nối CSDL", "-fx-text-fill: red;");
                 ex.printStackTrace(); //In ra lỗi console để debug
             }
         });

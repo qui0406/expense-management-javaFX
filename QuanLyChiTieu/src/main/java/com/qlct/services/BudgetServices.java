@@ -39,6 +39,13 @@ public class BudgetServices {
         this.lblStatusInEdit = lblStatusInEdit;
     }
 
+    public void updateStatus(Label label, String message, String style) {
+        Platform.runLater(() -> {
+            label.setText(message);
+            label.setStyle(style);
+        });
+    }
+
     public boolean isValidAmount(String input) {
         try {
             Double.parseDouble(input);
@@ -50,8 +57,7 @@ public class BudgetServices {
 
     public double validateInput(String input) {
         if (input == null || input.trim().isEmpty()) {     // Kiem tra o nhap lieu
-            lblStatus.setText("Không được để trống ô này");
-            lblStatus.setStyle("-fx-text-fill: red;");
+            updateStatus(lblStatus, "Không được để trống ô này", "-fx-text-fill: red;");
             return 0.0;     // Tra ve gia tri mac dinh 
         }
 
@@ -59,8 +65,7 @@ public class BudgetServices {
         input = input.replaceFirst("^0+(?!$)", "");
         if (!isValidAmount(input)) {
             Platform.runLater(() -> {
-                lblStatus.setText("Giá trị nhập vào không hợp lệ");
-                lblStatus.setStyle("-fx-text-fill: red;");
+                updateStatus(lblStatus, "Giá trị nhập vào không hợp lệ", "-fx-text-fill: red;");
             });
             return 0.0;     // Tra ve gia tri mac dinh 
 
@@ -87,18 +92,42 @@ public class BudgetServices {
             int rowsInserted = stm.executeUpdate();
             Platform.runLater(() -> {
                 if (rowsInserted > 0) {
-                    lblStatus.setText("✅ Thêm ngân sách thành công!");
-                    lblStatus.setStyle("-fx-text-fill: green;"); // Đổi màu xanh cho Label
+                    updateStatus(lblStatus, "✅ Thêm ngân sách thành công!", "-fx-text-fill: green;");
                 } else {
-                    lblStatus.setText("❌ Thêm ngân sách thất bại!");
-                    lblStatus.setStyle("-fx-text-fill: red;"); // Đổi màu đỏ cho Label
+                    updateStatus(lblStatus, "❌ Thêm ngân sách thất bại!", "-fx-text-fill: red;");
                 }
             });
         }
     }
 
+    public double sumMethod() {
+        LocalDate currentDate = LocalDate.now();
+        int currentMonth = currentDate.getMonthValue();
+        int currentYear = currentDate.getYear();
+        double total = 0.0; // Bien luu gia tri tong chi tieu
+
+        try (Connection conn = JdbcUtils.getConn()) {
+            PreparedStatement stm = conn.prepareStatement("SELECT SUM(amountBudget) FROM budget WHERE MONTH(createdDate) = ? AND YEAR(createdDate) = ? AND type = N'Chi tiêu' ");
+            stm.setInt(1, currentMonth);
+            stm.setInt(2, currentYear);
+            ResultSet rs = stm.executeQuery();
+
+            if (rs.next()) {
+                total = rs.getDouble(1);    // Lay gia tri tong
+            }
+        } catch (SQLException e) {
+            System.out.println("Không thể truy xuất dữ liệu");
+        }
+        return total;
+    }
+
+    public boolean isBudgetValid(double newBudget, double totalSpent) {
+        return newBudget >= totalSpent;
+    }
+
     public void updateBudgetTODB(String input) throws SQLException {
         double amount = validateInput(input);
+        double totalSpent = sumMethod();
 
         try (Connection conn = JdbcUtils.getConn()) {
 
@@ -112,20 +141,30 @@ public class BudgetServices {
 
             if (lastId != -1) //Trường hợp ID hợp lệ
             {
-                try (PreparedStatement stm2 = conn.prepareCall("UPDATE budget SET amountBudget =  ? WHERE id = ?")) {
-                    stm2.setDouble(1, amount);
-                    stm2.setInt(2, lastId);
-                    int rowsUpdated = stm2.executeUpdate();
+                if (isBudgetValid(amount, totalSpent)) {
+                    try (PreparedStatement stm2 = conn.prepareCall("UPDATE budget SET amountBudget =  ? WHERE id = ?")) {
+                        stm2.setDouble(1, amount);
+                        stm2.setInt(2, lastId);
+                        int rowsUpdated = stm2.executeUpdate();
 
+                        Platform.runLater(() -> {
+                            if (rowsUpdated > 0) {
+                                lblStatusInEdit.setText("✅ Cập nhật ngân sách thành công!");
+                                lblStatusInEdit.setStyle("-fx-text-fill: green;");
+                            } else {
+                                lblStatusInEdit.setText("❌ Cập nhật ngân sách thất bại!");
+                                lblStatusInEdit.setStyle("-fx-text-fill: red;");
+                            }
+                        });
+                    }
+                } else {
                     Platform.runLater(() -> {
-                        if (rowsUpdated > 0) {
-                            lblStatusInEdit.setText("✅ Cập nhật ngân sách thành công!");
-                            lblStatusInEdit.setStyle("-fx-text-fill: green;");
-                        } else {
-                            lblStatusInEdit.setText("❌ Cập nhật ngân sách thất bại!");
-                            lblStatusInEdit.setStyle("-fx-text-fill: red;");
-                        }
+                        lblStatusInEdit.setText("Ngân sách không hợp lệ. "
+                                + "Bạn đã chi tiêu trong tháng này. "
+                                + "Vui lòng nhập ngân sách mới lớn hơn hoặc bằng ngân sách hiện tại!!!");
+                        lblStatusInEdit.setStyle("-fx-text-fill: red;");
                     });
+                    return;    //Dung thuc hien neu ngan sach khong hop le
                 }
             } else {
                 System.out.println("Không tìm thấy ID hợp lệ để cập nhật.");
@@ -152,5 +191,4 @@ public class BudgetServices {
         }
         return false;
     }
-
 }

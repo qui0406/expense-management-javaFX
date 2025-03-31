@@ -42,9 +42,9 @@ public class EditBudgetController implements Initializable {
             try {
                 budgetServices.updateBudgetTODB(txtInputBudget.getText());
             } catch (NumberFormatException | SQLException ex) {
-                lblStatusInEdit.setText("❌ Lỗi kết nối CSDL");
-                lblStatusInEdit.setStyle("-fx-text-fill: red;");
-                ex.printStackTrace(); //In ra lỗi console đẻ debug
+                budgetServices.updateStatus(lblStatusInEdit, "❌ Lỗi kết nối CSDL", "-fx-text-fill: red;");
+
+                ex.printStackTrace(); //In ra lỗi console để debug
             }
         });
     }
