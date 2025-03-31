@@ -4,6 +4,7 @@
  */
 package com.qlct.quanlychitieu;
 
+import com.qlct.services.BudgetServices;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -25,6 +26,7 @@ import javafx.stage.Stage;
  * @author DELL
  */
 public class SelectModeController implements Initializable {
+    BudgetServices budgetServices = new BudgetServices();
 
     @FXML Button btBudget;
     @FXML Button btEditBudget;
@@ -54,10 +56,14 @@ public class SelectModeController implements Initializable {
     }
 
     public void switchToBudget(ActionEvent event) throws IOException {
-        App.setRoot("budget");
+        if(!budgetServices.isBudgetExistForCurrentMonth()){
+            App.setRoot("editbudget");
+        }
     }
 
     public void switchToEditBudget(ActionEvent event) throws IOException {
-        App.setRoot("editbudget");
+        if(budgetServices.isBudgetExistForCurrentMonth()){
+            App.setRoot("editbudget");
+        }
     }
 }

@@ -5,14 +5,18 @@
 package com.qlct.services;
 
 import com.qlct.pojo.JdbcUtils;
+import com.qlct.quanlychitieu.App;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
@@ -44,15 +48,38 @@ public class BudgetServices {
         }
     }
 
-    public void insertBudgetTODB(String input) throws SQLException {
+    public double validateInput(String input) {
+        if (input == null || input.trim().isEmpty()) {     // Kiem tra o nhap lieu
+            lblStatus.setText("Không được để trống ô này");
+            lblStatus.setStyle("-fx-text-fill: red;");
+            return 0.0;     // Tra ve gia tri mac dinh 
+        }
+
+        // Loai bo cac so 0 du thua 
+        input = input.replaceFirst("^0+(?!$)", "");
         if (!isValidAmount(input)) {
             Platform.runLater(() -> {
                 lblStatus.setText("Giá trị nhập vào không hợp lệ");
                 lblStatus.setStyle("-fx-text-fill: red;");
             });
-            return;
+            return 0.0;     // Tra ve gia tri mac dinh 
+
         }
+
         double amount = Double.parseDouble(input);
+        // Khong cho phep nhap so am
+        if (amount < 0) {
+            throw new IllegalArgumentException("Không được nhập số âm.");
+        }
+
+        // Lam tron 2 chu so thap phan 
+        DecimalFormat df = new DecimalFormat("#.##");
+        amount = Double.valueOf(df.format(input));
+        return Math.round(amount);
+    }
+
+    public void insertBudgetTODB(String input) throws SQLException {
+        double amount = validateInput(input);
 
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareCall("INSERT INTO budget (amountBudget) VALUES (?)");
@@ -71,14 +98,8 @@ public class BudgetServices {
     }
 
     public void updateBudgetTODB(String input) throws SQLException {
-        if (!isValidAmount(input)) {
-            Platform.runLater(() -> {
-                lblStatusInEdit.setText("Giá trị nhập vào không hợp lệ");
-                lblStatusInEdit.setStyle("-fx-text-fill: red;");
-            });
-            return;
-        }
-        double amount = Double.parseDouble(input);
+        double amount = validateInput(input);
+
         try (Connection conn = JdbcUtils.getConn()) {
 
             //Lấy ID cuối cùng
@@ -110,6 +131,26 @@ public class BudgetServices {
                 System.out.println("Không tìm thấy ID hợp lệ để cập nhật.");
             }
         }
+    }
+
+    public boolean isBudgetExistForCurrentMonth() {
+        LocalDate currentDate = LocalDate.now();
+        int currentMonth = currentDate.getMonthValue();
+        int currentYear = currentDate.getYear();
+
+        try (Connection conn = JdbcUtils.getConn()) {
+            PreparedStatement stm = conn.prepareStatement("SELECT MAX(id) FROM budget WHERE MONTH(createdDate) = ?, YEAR(createdDate) = ? ");
+            stm.setInt(1, currentMonth);
+            stm.setInt(2, currentYear);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                return true; // Ngân sách tồn tại
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(BudgetServices.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
 }
