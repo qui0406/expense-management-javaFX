@@ -79,7 +79,8 @@ public class BudgetServices {
 
         // Lam tron 2 chu so thap phan 
         DecimalFormat df = new DecimalFormat("#.##");
-        amount = Double.valueOf(df.format(input));
+        double parsedAmount = Double.parseDouble(input);
+        amount = Double.valueOf(df.format(parsedAmount));
         return Math.round(amount);
     }
 
