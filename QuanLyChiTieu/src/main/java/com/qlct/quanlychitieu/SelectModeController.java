@@ -57,7 +57,7 @@ public class SelectModeController implements Initializable {
 
     public void switchToBudget(ActionEvent event) throws IOException {
         if(!budgetServices.isBudgetExistForCurrentMonth()){
-            App.setRoot("editbudget");
+            App.setRoot("budget");
         }
     }
 
