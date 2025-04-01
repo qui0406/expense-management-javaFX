@@ -12,6 +12,7 @@ com\qlct\quanlychitieu\FXTransactionsController$1.class
 com\qlct\quanlychitieu\FXTransactionsController.class
 com\qlct\pojo\Category.class
 com\qlct\quanlychitieu\FXEditCategoryController$1.class
+com\qlct\quanlychitieu\FXTransactionsController$3.class
 com\qlct\pojo\JdbcUtils.class
 com\qlct\quanlychitieu\FXEditCategoryController.class
 com\qlct\quanlychitieu\AuthController.class

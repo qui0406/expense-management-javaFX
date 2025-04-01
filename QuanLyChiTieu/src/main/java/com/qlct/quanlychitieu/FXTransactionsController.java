@@ -71,13 +71,17 @@ public class FXTransactionsController implements Initializable {
     private TableView<Transaction> tbTransaction;
     @FXML
     private Button btnEditCategory;
-    @FXML private ComboBox<String> cbFilterType;
-    @FXML private DatePicker dpFilterDate;
-    @FXML private Button btnFilter;
+    @FXML
+    private ComboBox<String> cbFilterType;
+    @FXML
+    private DatePicker dpFilterDate;
+    @FXML
+    private Button btnFilter;
     /**
      * Initializes the controller class.
      */
     private Map<Integer, Category> categoryCache = new HashMap<>();
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
@@ -86,7 +90,7 @@ public class FXTransactionsController implements Initializable {
 
         cbFilterType.setItems(FXCollections.observableArrayList("Ngày", "Tuần", "Tháng", "Quý", "Năm"));
         dpFilterDate.setValue(LocalDate.now());
-        
+
         // Tải danh mục vào cache
         try {
             categoryCache.clear();
@@ -97,7 +101,7 @@ public class FXTransactionsController implements Initializable {
         } catch (SQLException ex) {
             Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         btDate.setValue(LocalDate.now());
         this.loadColumns();
         this.loadTableData();
@@ -138,7 +142,8 @@ public class FXTransactionsController implements Initializable {
                 break;
             case "Năm":
                 startDate = LocalDate.of(filterDate.getYear(), 1, 1);
-                endDate = LocalDate.of(filterDate.getYear(), 12, 31);break;
+                endDate = LocalDate.of(filterDate.getYear(), 12, 31);
+                break;
             default:
                 return;
         }
@@ -151,6 +156,7 @@ public class FXTransactionsController implements Initializable {
             Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     public void updateCategoryCombobox(ActionEvent e) {
         CategoryServices catService = new CategoryServices();
         String selectedType = cbType.getSelectionModel().getSelectedItem();
@@ -189,6 +195,18 @@ public class FXTransactionsController implements Initializable {
 
         TableColumn<Transaction, Integer> colCate = new TableColumn<>("Danh mục");
         colCate.setCellValueFactory(new PropertyValueFactory<>("categoryId"));
+        colCate.setCellFactory(column -> new TableCell<Transaction, Integer>() {
+            @Override
+            protected void updateItem(Integer categoryId, boolean empty) {
+                super.updateItem(categoryId, empty);
+                if (empty || categoryId == null) {
+                    setText(null);
+                } else {
+                    Category category = categoryCache.get(categoryId);
+                    setText(category != null ? category.getName() : "Không xác định");
+                }
+            }
+        });
         colCate.setPrefWidth(145);
 
         TableColumn<Transaction, Void> colAction = new TableColumn<>();
@@ -233,7 +251,7 @@ public class FXTransactionsController implements Initializable {
         });
 
         tbTransaction.getColumns().addAll(colCate, colAmount, colNote, colDate, colAction);
-        
+
         // Áp dụng CSS động cho các hàng
         tbTransaction.setRowFactory(tv -> new TableRow<>() {
             @Override
@@ -276,7 +294,7 @@ public class FXTransactionsController implements Initializable {
             }
 
             TransactionServices ts = new TransactionServices();
-            ts.updateTransaction(transactionId, amount, selectedCategory.getId(), date, note,UserSessionServices.getCurrentUser().getId());
+            ts.updateTransaction(transactionId, amount, selectedCategory.getId(), date, note, UserSessionServices.getCurrentUser().getId());
 
             Utils.getAlert("Cập nhật thành công!").show();
             clearForm();
@@ -307,7 +325,7 @@ public class FXTransactionsController implements Initializable {
             }
             TransactionServices ts = new TransactionServices();
             Transaction transaction = new Transaction(amount, selectedCategory.getId(),
-                    date, note,UserSessionServices.getCurrentUser().getId());
+                    date, note, UserSessionServices.getCurrentUser().getId());
             ts.addTransaction(transaction);
 
             Utils.getAlert("Add successful!").show();
@@ -329,8 +347,8 @@ public class FXTransactionsController implements Initializable {
     public void clearHandler(ActionEvent e) {
         clearForm();
     }
-    
-    public void editCategory(MouseEvent e) throws IOException{
+
+    public void editCategory(MouseEvent e) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("FXEditCategory.fxml"));
         Parent root = loader.load();
 
