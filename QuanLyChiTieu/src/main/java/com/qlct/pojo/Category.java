@@ -4,15 +4,31 @@
  */
 package com.qlct.pojo;
 
-/**
- *
- * @author QUI
- */
+
 public class Category {
+
+
     private int id;
     private String name;
     private String type;
     private int userId;
+
+
+
+    public Category(int id, String name, String type, int userId) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.userId = userId;
+    }
+    public  Category(int id){
+        this.id = id;
+    }
+    @Override
+    public String toString() {
+        return this.name; // Trả về tên danh mục
+    }
+
 
     /**
      * @return the id
@@ -69,6 +85,4 @@ public class Category {
     public void setUserId(int userId) {
         this.userId = userId;
     }
-    
-    
 }

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="843.0" stylesheets="@style/transaction.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.FXTransactionsController">
+    <children>
+        <Text fill="#2d82b5" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="Subject" text="Thêm giao dịch" wrappingWidth="807.9461669921875" />
+        <HBox prefHeight="35.0" prefWidth="600.0">
+            <children>
+                <ComboBox fx:id="cbType" onAction="#updateCategoryCombobox" prefWidth="150.0" promptText="Chi tiêu" styleClass="btnType">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+                </ComboBox>
+                <ComboBox fx:id="cbCates" prefWidth="150.0" promptText="Danh mục" />
+                <ImageView fitHeight="26.0" fitWidth="35.0" onMouseClicked="#editCategory" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../../icons/pencil.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </HBox>
+        <TextField fx:id="txtAmount" prefHeight="25.0" prefWidth="240.0" promptText="Số tiền" />
+        <TextField fx:id="txtNote" prefHeight="25.0" prefWidth="240.0" promptText="Ghi chú" />
+        <DatePicker fx:id="btDate" promptText="Ngày giao dịch" />
+        <HBox prefHeight="35.0" prefWidth="600.0">
+            <children>
+                <Button fx:id="btnSave" mnemonicParsing="false" onAction="#addHandler" text="Ghi nhận" />
+                <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#clearHandler" text="Hủy" />
+            </children>
+        </HBox>
+        <HBox prefHeight="35.0" prefWidth="600.0">
+            <children>
+                <ComboBox fx:id="cbFilterType" prefWidth="150.0" promptText="Lọc theo" />
+                <DatePicker fx:id="dpFilterDate" promptText="Chọn ngày" />
+                <Button fx:id="btnFilter" mnemonicParsing="false" onAction="#filterTransactions" text="Lọc" />
+            </children>
+        </HBox>
+        <TableView fx:id="tbTransaction" prefHeight="380.0" prefWidth="800.0" styleClass="table-row-cell" stylesheets="@style/transaction.css" />
+    </children>
+</VBox>

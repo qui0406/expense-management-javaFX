@@ -23,6 +23,8 @@ public class JdbcUtils {
     
     public static Connection getConn() throws SQLException{
         return DriverManager.getConnection("jdbc:mysql://localhost/quanlychitieu", "root", "12345678");
+
+
     }
     
 }
