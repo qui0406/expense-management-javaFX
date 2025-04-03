@@ -1,0 +1,69 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Mar 27, 2025, 6:23:06 PM
+    Author     : ttthu
+*/
+
+VBox{
+    -fx-background-color:#F0F5F9;
+    -fx-padding: 15;  /* Khoảng cách từ các thành phần tới VBox */
+    /*    -fx-spacing: 15;*/
+}
+
+Text.lbTy {
+    -fx-font-size: 30;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2D82B5;
+    -fx-text-alignment: center;
+}
+.button {
+    -fx-background-color: #2D82B5; /* Màu pastel xanh dương nhẹ */
+    -fx-text-fill: white;
+    -fx-margin: 10 10;
+    -fx-padding: 6 12 6 12;
+}
+.button:hover {
+    -fx-background-color: #53A6D8; /* Màu xanh pastel nhạt hơn khi hover */
+}
+.combo-box {
+    -fx-border-color: #D1D9E0; /* Viền nhẹ */
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+/* TextField và DatePicker */
+.text-field, .date-picker {
+    -fx-border-color: #D1D9E0; /* Viền xám nhạt */
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 5 10 5 10;
+}
+.table-view {
+    -fx-background-color: #FFFFFF; /* Nền trắng cho bảng */
+    -fx-border-color: #E0E0E0; /* Viền mờ nhạt cho bảng */
+    -fx-border-radius: 5;
+}
+.table-view .column-header-background {
+    -fx-background-color: #88CDF6; /* Màu pastel xanh nhạt cho đầu bảng */
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: #F9FBFD; /* Màu nền nhẹ nhàng cho các dòng */
+}
+
+.table-view .table-cell {
+    -fx-text-fill: #333333; /* Màu chữ tối cho nội dung bảng */
+}
+
+/* Separator (ngăn cách) */
+.separator {
+    -fx-background-color: #E0E0E0; /* Viền mờ cho các phần ngăn cách */
+}
+
+/* Tooltip */
+.tooltip {
+    -fx-background-color: #88CDF6; /* Tooltip với màu xanh nhẹ nhàng */
+    -fx-text-fill: white;
+}
