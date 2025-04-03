@@ -23,8 +23,10 @@ public class CategoryServices {
 
     public List<Category> getCatetogires() throws SQLException {
         List<Category> cates = new ArrayList<>();
+        int currentUserId = UserSessionServices.getCurrentUser().getId();
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareCall("SELECT * FROM categories");
+            PreparedStatement stm = conn.prepareCall("SELECT * FROM categories WHERE userId IS NULL OR userId = ?");
+            stm.setInt(1, currentUserId);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("userId"));
@@ -36,9 +38,12 @@ public class CategoryServices {
 
     public List<Category> getCateByType(String type) throws SQLException {
         List<Category> cates = new ArrayList<>();
+        int currentUserId = UserSessionServices.getCurrentUser().getId();
+
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareCall("SELECT * FROM categories WHERE type = ?");
+            PreparedStatement stm = conn.prepareCall("SELECT * FROM categories WHERE type = ? AND (userId IS NULL OR userId = ?)");
             stm.setString(1, type);
+            stm.setInt(2, currentUserId);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("userId"));

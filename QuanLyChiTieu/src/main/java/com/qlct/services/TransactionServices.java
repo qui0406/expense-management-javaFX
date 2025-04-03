@@ -26,11 +26,13 @@ public class TransactionServices {
 
     public List<Transaction> getTransactionsByDateRange(LocalDate startDate, LocalDate endDate) throws SQLException {
         List<Transaction> transactions = new ArrayList<>();
+        int currentUserId = UserSessionServices.getCurrentUser().getId();
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(
-                    "SELECT * FROM transactions WHERE date BETWEEN ? AND ?");
+                    "SELECT * FROM transactions WHERE date BETWEEN ? AND userId = ?");
             stm.setDate(1, java.sql.Date.valueOf(startDate));
             stm.setDate(2, java.sql.Date.valueOf(endDate));
+            stm.setInt(3, currentUserId);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 Transaction t = new Transaction(rs.getInt("id"), rs.getDouble("amount"),
@@ -49,7 +51,7 @@ public class TransactionServices {
             stm.setString(2, tran.getNote());
             stm.setDate(3, java.sql.Date.valueOf(tran.getDate()));
             stm.setInt(4, tran.getCategoryId());
-            stm.setInt(5,tran.getUserId());
+            stm.setInt(5, tran.getUserId());
             stm.executeUpdate();
 
         } catch (SQLException ex) {
@@ -91,9 +93,11 @@ public class TransactionServices {
 
     public List<Transaction> getAllTran() throws SQLException {
         List<Transaction> trans = new ArrayList<>();
+        int currentUserId = UserSessionServices.getCurrentUser().getId();
         try (Connection conn = JdbcUtils.getConn()) {
-            String transQery = "SELECT t.*, c.name AS category_name FROM transactions t JOIN categories c ON t.category_id = c.id";
-            PreparedStatement stm = conn.prepareStatement(transQery);
+            String transQuery = "SELECT t.*, c.name AS category_name FROM transactions t JOIN categories c ON t.category_id = c.id WHERE t.userId = ?";
+            PreparedStatement stm = conn.prepareStatement(transQuery);
+            stm.setInt(1, currentUserId);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 trans.add(new Transaction(

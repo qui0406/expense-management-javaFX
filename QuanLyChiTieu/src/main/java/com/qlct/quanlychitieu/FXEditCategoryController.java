@@ -63,6 +63,7 @@ public class FXEditCategoryController implements Initializable {
 
     private void loadColumns() {
         TableColumn<Category, String> colName = new TableColumn<>("Tên danh mục");
+        tbCategory.setFixedCellSize(40);
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colName.setPrefWidth(200);
 
@@ -79,34 +80,43 @@ public class FXEditCategoryController implements Initializable {
             {
                 btnDelete.setOnAction(evt -> {
                     Category cate = getTableView().getItems().get(getIndex());
-                    int id = cate.getId();
+                    if (cate.getUserId() == 0 || cate.getUserId() == -1) { // Kiểm tra danh mục cố định
+                        Utils.getAlert("Không thể xóa danh mục cố định!").show();
+                        return;
+                    }
                     CategoryServices cs = new CategoryServices();
-                    cs.deleteCategory(id);
+                    cs.deleteCategory(cate.getId());
                     Utils.getAlert("Xóa thành công!").show();
                     loadTableData();
                 });
 
                 btnEdit.setOnAction(evt -> {
                     Category cate = getTableView().getItems().get(getIndex());
-                    txtName.setText(String.valueOf(cate.getName()));
+                    if (cate.getUserId() == 0 || cate.getUserId() == -1) { // Kiểm tra danh mục cố định
+                        Utils.getAlert("Không thể sửa danh mục cố định!").show();
+                        return;
+                    }
+                    txtName.setText(cate.getName());
                     cbType.getSelectionModel().select(cate.getType());
-
-                    // Gán sự kiện cập nhật
                     btnAdd.setOnAction(event -> updateCategory(cate.getId()));
                 });
             }
 
             @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
+        protected void updateItem(Void item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty) {
+                setGraphic(null);
+            } else {
+                Category cate = getTableView().getItems().get(getIndex());
+                if (cate.getUserId() == 0 || cate.getUserId() == -1) { // Ẩn nút cho danh mục cố định
                     setGraphic(null);
                 } else {
                     setGraphic(btnGroup);
                 }
             }
-        });
-
+        }
+    });
         tbCategory.getColumns().addAll(colName, colType, colAction);
 
     }
@@ -129,7 +139,6 @@ public class FXEditCategoryController implements Initializable {
     private void updateCategory(int categoryId) {
         String name = txtName.getText();
         String type = cbType.getSelectionModel().getSelectedItem();
-//        User currentUser = new User();
         if (name.isEmpty() || type == null) {
             Utils.getAlert("Vui lòng điền đầy đủ tên và loại danh mục").show();
             return;
@@ -144,7 +153,7 @@ public class FXEditCategoryController implements Initializable {
         }
         try {
             CategoryServices cs = new CategoryServices();
-            cs.updateCategory(categoryId, name, type,UserSessionServices.getCurrentUser().getId());
+            cs.updateCategory(categoryId, name, type, UserSessionServices.getCurrentUser().getId());
             Utils.getAlert("Cập nhật danh mục thành công").show();
             clearForm();
             loadTableData();
@@ -188,7 +197,7 @@ public class FXEditCategoryController implements Initializable {
         try {
 
             CategoryServices cs = new CategoryServices();
-            Category cate = new Category(0, name, type,UserSessionServices.getCurrentUser().getId());
+            Category cate = new Category(0, name, type, UserSessionServices.getCurrentUser().getId());
             cs.addCategory(cate);
 
             Utils.getAlert("Add successful!").show();
