@@ -20,9 +20,6 @@ public class User {
     private String avatar;
     private DateTimeFormatter createdDate;
 
-    public User() {
-    }
-
     public User(int id, String firstName, String lastName, String username, String password, String email, String avatar, DateTimeFormatter createdDate) {
         this.id = id;
         this.firstName = firstName;
@@ -40,7 +37,6 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
-        this.password = password;
         this.email = email;
     }
 
@@ -50,8 +46,7 @@ public class User {
     }
     
     
-        
-     }
+     
     /**
      * @return the id
     
