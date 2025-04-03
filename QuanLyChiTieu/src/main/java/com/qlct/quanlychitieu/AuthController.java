@@ -40,7 +40,7 @@ public class AuthController implements Initializable{
         if(LoginServices.checkUserAuth(username, password)){
             showAlertLogin("Login successful", null, "Successful");
             UserSessionServices.login(username);
-            App.setRoot("FXTransactions");
+            App.setRoot("baocaothongketheobang");
         }
         else {
             showAlertLogin("Incorrect", null, "Incorrect");
@@ -116,7 +116,7 @@ public class AuthController implements Initializable{
         return !password.equals(confirmPassword);
     }
     
-    public String isValidPassword(String firstName, String lastName, String username, String password, String confirmPassword) {
+    public String isValidPassword(String lastName, String firstName, String username, String password, String confirmPassword) {
         // Kiểm tra null hoặc rỗng
         String mess="";
         

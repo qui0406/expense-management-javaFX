@@ -48,7 +48,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="646.0" prefWidth="904.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="646.0" prefWidth="904.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.ChartController">
    <children>
       <Line endX="-108.80001831054688" endY="526.1000366210938" layoutX="278.0" layoutY="80.0" startX="-108.80001831054688" startY="-19.49999237060547" stroke="#c7b4b4" />
       <Label layoutX="355.0" layoutY="14.0" text="Báo cáo thống kê">
@@ -56,7 +56,7 @@
             <Font size="31.0" />
          </font>
       </Label>
-      <ComboBox layoutX="696.0" layoutY="80.0" prefHeight="25.0" prefWidth="163.0" promptText="Thống kê theo biểu đồ" />
+      <ComboBox fx:id="cbChoseChart" layoutX="696.0" layoutY="80.0" onAction="#loadComboBoxChart" prefHeight="25.0" prefWidth="163.0" promptText="Thống kê theo biểu đồ" />
       <StackedBarChart layoutX="204.0" layoutY="411.0" prefHeight="174.0" prefWidth="655.0" style="-fx-background-color: greenyellow;">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
