@@ -6,10 +6,12 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.EditBudgetController">
    <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="312.4000244140625" minWidth="10.0" prefWidth="102.20002441406251" />
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="483.5999633789063" minWidth="10.0" prefWidth="438.99997558593753" />
@@ -25,20 +27,41 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nhập ngân sách: " GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
-      <TextField prefHeight="26.0" prefWidth="406.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <Button mnemonicParsing="false" text="Lưu ngân sách" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="VND" textAlignment="RIGHT" wrappingWidth="40.84379768371582" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-      <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-      <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-      <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng ngân sách: " GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Số tiền đã chi: " GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Số tiền còn lại: " GridPane.halignment="RIGHT" GridPane.rowIndex="5" />
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="VND" textAlignment="RIGHT" wrappingWidth="40.84379768371582" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="VND" textAlignment="RIGHT" wrappingWidth="40.84379768371582" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="VND" textAlignment="RIGHT" wrappingWidth="40.84379768371582" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-      <ProgressBar prefHeight="18.0" prefWidth="311.0" progress="0.0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="CHỈNH SỬA NGÂN SÁCH" textAlignment="CENTER" wrappingWidth="317.3367614746094" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="1">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nhập ngân sách: " wrappingWidth="114.875732421875" />
+            <TextField fx:id="txtInputBudget" prefHeight="26.0" prefWidth="439.0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="VND" textAlignment="RIGHT" wrappingWidth="36.04380977153778" />
+         </children>
+      </HBox>
+      <ProgressBar prefHeight="18.0" prefWidth="311.0" progress="0.0" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="3">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng ngân sách: " wrappingWidth="114.875732421875" />
+            <Label text="0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="VND" textAlignment="RIGHT" wrappingWidth="36.04380977153778" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="4">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Số tiền đã chi: " wrappingWidth="114.875732421875" />
+            <Label text="0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="VND" textAlignment="RIGHT" wrappingWidth="36.04380977153778" />
+         </children>
+      </HBox>
+      <HBox prefHeight="58.0" prefWidth="602.0" GridPane.columnSpan="3" GridPane.rowIndex="5">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Số tiền còn lại: " wrappingWidth="114.875732421875" />
+            <Label text="0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="VND" textAlignment="RIGHT" wrappingWidth="36.04380977153778" />
+         </children>
+      </HBox>
+      <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <children>
+            <Button fx:id="btnEditBudget" mnemonicParsing="false" text="Lưu ngân sách" />
+            <Label fx:id="lblStatusInEdit" prefHeight="18.0" prefWidth="466.0" />
+         </children>
+      </VBox>
    </children>
 </GridPane>

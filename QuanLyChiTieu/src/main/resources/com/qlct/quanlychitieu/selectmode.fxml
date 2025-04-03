@@ -4,17 +4,16 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.SelectModeController">
    <children>
       <Pane prefHeight="200.0" prefWidth="200.0">
          <children>
-            <Button layoutX="-1.0" layoutY="-1.0" mnemonicParsing="false" prefHeight="200.0" prefWidth="600.0" text="Nhập ngân sách" />
+            <Button fx:id="btBudget" layoutX="-1.0" layoutY="-1.0" mnemonicParsing="false" prefHeight="200.0" prefWidth="600.0" text="Nhập ngân sách" />
          </children>
       </Pane>
       <Pane prefHeight="200.0" prefWidth="200.0">
          <children>
-            <Button mnemonicParsing="false" prefHeight="200.0" prefWidth="600.0" text="Chỉnh sửa ngân sách" />
+            <Button fx:id="btEditBudget" mnemonicParsing="false" prefHeight="200.0" prefWidth="600.0" text="Chỉnh sửa ngân sách" />
          </children>
       </Pane>
    </children>
