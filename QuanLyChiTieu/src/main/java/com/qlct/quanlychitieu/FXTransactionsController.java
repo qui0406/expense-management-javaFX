@@ -7,6 +7,7 @@ package com.qlct.quanlychitieu;
 //import com.mysql.cj.util.Util;
 import com.qlct.pojo.Category;
 import com.qlct.pojo.Transaction;
+import com.qlct.pojo.User;
 import com.qlct.services.CategoryServices;
 import com.qlct.services.TransactionServices;
 import com.qlct.services.UserSessionServices;
@@ -44,6 +45,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -77,6 +79,8 @@ public class FXTransactionsController implements Initializable {
     private DatePicker dpFilterDate;
     @FXML
     private Button btnFilter;
+    @FXML
+    private Text txtUsername;
     /**
      * Initializes the controller class.
      */
@@ -102,6 +106,14 @@ public class FXTransactionsController implements Initializable {
             Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        // Hiển thị username của người dùng hiện tại
+        User currentUser = UserSessionServices.getCurrentUser();
+        if (currentUser != null) {
+            txtUsername.setText(currentUser.getUsername());
+        } else {
+            txtUsername.setText("Chưa đăng nhập");
+        }
+        
         btDate.setValue(LocalDate.now());
         this.loadColumns();
         this.loadTableData();

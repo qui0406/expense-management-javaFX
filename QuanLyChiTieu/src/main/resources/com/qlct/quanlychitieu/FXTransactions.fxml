@@ -13,21 +13,26 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="710.0" prefWidth="935.0" stylesheets="@style/transaction.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.FXTransactionsController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="730.0" prefWidth="936.0" stylesheets="@style/transaction.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.FXTransactionsController">
    <left>
       <AnchorPane prefHeight="710.0" prefWidth="198.0" styleClass="sideBar" BorderPane.alignment="CENTER">
          <children>
-            <Text layoutX="46.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="UserName" wrappingWidth="55.4765625" />
-            <Button layoutX="46.0" layoutY="82.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="96.0" styleClass="btnSideBar" text="Button" />
-            <Button layoutX="46.0" layoutY="138.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="98.0" styleClass="btnSideBar" text="Button" />
+            <Text fx:id="txtUsername" layoutX="50.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="96.27655029296875" />
+            <Button layoutX="50.0" layoutY="152.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="96.0" styleClass="btnSideBar" text="Button" />
+            <Button layoutX="50.0" layoutY="208.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="98.0" styleClass="btnSideBar" text="Button" />
+            <ImageView fitHeight="45.0" fitWidth="50.0" layoutX="73.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../icons/User.png" />
+               </image>
+            </ImageView>
          </children>
       </AnchorPane>
    </left>
    <center>
-      <AnchorPane prefHeight="710.0" prefWidth="758.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="734.0" prefWidth="735.0" BorderPane.alignment="CENTER">
          <children>
-            <Text fill="#2d82b5" layoutX="78.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="Subject" text="Thêm giao dịch" wrappingWidth="540.746223449707" />
-            <HBox layoutX="78.0" layoutY="85.0" prefHeight="35.0" prefWidth="600.0">
+            <Text fill="#2d82b5" layoutX="63.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="Subject" text="Thêm giao dịch" wrappingWidth="540.746223449707" />
+            <HBox layoutX="63.0" layoutY="105.0" prefHeight="35.0" prefWidth="600.0">
                <children>
                   <ComboBox fx:id="cbType" onAction="#updateCategoryCombobox" prefWidth="150.0" promptText="Chi tiêu" styleClass="btnType">
                      <opaqueInsets>
@@ -42,23 +47,23 @@
                   </ImageView>
                </children>
             </HBox>
-            <TextField fx:id="txtAmount" layoutX="78.0" layoutY="127.0" prefHeight="25.0" prefWidth="240.0" promptText="Số tiền" />
-            <TextField fx:id="txtNote" layoutX="78.0" layoutY="170.0" prefHeight="25.0" prefWidth="240.0" promptText="Ghi chú" />
-            <DatePicker fx:id="btDate" layoutX="78.0" layoutY="213.0" promptText="Ngày giao dịch" />
-            <HBox layoutX="78.0" layoutY="264.0" prefHeight="35.0" prefWidth="600.0">
+            <TextField fx:id="txtAmount" layoutX="63.0" layoutY="148.0" prefHeight="25.0" prefWidth="240.0" promptText="Số tiền" />
+            <TextField fx:id="txtNote" layoutX="63.0" layoutY="191.0" prefHeight="25.0" prefWidth="240.0" promptText="Ghi chú" />
+            <DatePicker fx:id="btDate" layoutX="63.0" layoutY="234.0" promptText="Ngày giao dịch" />
+            <HBox layoutX="63.0" layoutY="287.0" prefHeight="35.0" prefWidth="600.0">
                <children>
                   <Button fx:id="btnSave" mnemonicParsing="false" onAction="#addHandler" text="Ghi nhận" />
                   <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#clearHandler" text="Hủy" />
                </children>
             </HBox>
-            <HBox layoutX="78.0" layoutY="308.0" prefHeight="35.0" prefWidth="600.0">
+            <HBox layoutX="63.0" layoutY="332.0" prefHeight="35.0" prefWidth="600.0">
                <children>
                   <ComboBox fx:id="cbFilterType" prefWidth="150.0" promptText="Lọc theo" />
                   <DatePicker fx:id="dpFilterDate" promptText="Chọn ngày" />
                   <Button fx:id="btnFilter" mnemonicParsing="false" onAction="#filterTransactions" onMouseClicked="#filterTransactions" text="Lọc" />
                </children>
             </HBox>
-            <TableView fx:id="tbTransaction" layoutX="78.0" layoutY="363.0" prefHeight="313.0" prefWidth="620.0" styleClass="table-row-cell" stylesheets="@style/transaction.css" />
+            <TableView fx:id="tbTransaction" layoutX="63.0" layoutY="387.0" prefHeight="298.0" prefWidth="606.0" styleClass="table-row-cell" stylesheets="@style/transaction.css" />
          </children>
       </AnchorPane>
    </center>

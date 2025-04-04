@@ -1,6 +1,11 @@
 /*
  * Empty Stylesheet file.
  */
+#txtUsername {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-fill: #ffffff; /* Màu chữ trắng */
+}
 
 .table-row-cell.expense .table-cell {
     -fx-text-fill: red;
