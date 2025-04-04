@@ -183,15 +183,15 @@ public class FXTransactionsController implements Initializable {
     public void loadColumns() {
         TableColumn<Transaction, Double> colAmount = new TableColumn<>("Số tiền");
         colAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
-        colAmount.setPrefWidth(150);
+        colAmount.setPrefWidth(100);
 
         TableColumn<Transaction, String> colNote = new TableColumn<>("Ghi chú");
         colNote.setCellValueFactory(new PropertyValueFactory<>("note"));
-        colNote.setPrefWidth(200);
+        colNote.setPrefWidth(140);
 
         TableColumn<Transaction, LocalDate> colDate = new TableColumn<>("Ngày");
         colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
-        colDate.setPrefWidth(160);
+        colDate.setPrefWidth(100);
 
         TableColumn<Transaction, Integer> colCate = new TableColumn<>("Danh mục");
         colCate.setCellValueFactory(new PropertyValueFactory<>("categoryId"));
@@ -207,7 +207,7 @@ public class FXTransactionsController implements Initializable {
                 }
             }
         });
-        colCate.setPrefWidth(145);
+        colCate.setPrefWidth(130);
 
         TableColumn<Transaction, Void> colAction = new TableColumn<>();
         colAction.setCellFactory(tc -> new TableCell<>() {
