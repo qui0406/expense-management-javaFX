@@ -150,9 +150,10 @@ public class BudgetServices {
             if (lastId != -1) //Trường hợp ID hợp lệ
             {
                 if (isBudgetValid(amount, totalSpent)) {
-                    try (PreparedStatement stm2 = conn.prepareCall("UPDATE budget SET amountBudget =  ? WHERE id = ?")) {
+                    try (PreparedStatement stm2 = conn.prepareCall("UPDATE budget SET amountBudget =  ? WHERE id = ? AND userId = ?")) {
                         stm2.setDouble(1, amount);
                         stm2.setInt(2, lastId);
+                        stm1.setInt(3, currentUserId);
                         int rowsUpdated = stm2.executeUpdate();
 
                         Platform.runLater(() -> {
