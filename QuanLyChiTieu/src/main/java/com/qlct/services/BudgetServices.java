@@ -86,10 +86,11 @@ public class BudgetServices {
 
     public void insertBudgetTODB(String input) throws SQLException {
         double amount = validateInput(input);
-
+        int currentUserId = UserSessionServices.getCurrentUser().getId();
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareCall("INSERT INTO budget (amountBudget) VALUES (?)");
+            PreparedStatement stm = conn.prepareCall("INSERT INTO budget (amountBudget, userId) VALUES (?,?)");
             stm.setDouble(1, amount);
+            stm.setInt(2, currentUserId);
             int rowsInserted = stm.executeUpdate();
             Platform.runLater(() -> {
                 if (rowsInserted > 0) {
@@ -103,14 +104,18 @@ public class BudgetServices {
 
     public double sumMethod() {
         LocalDate currentDate = LocalDate.now();
+        int currentUserId = UserSessionServices.getCurrentUser().getId();
         int currentMonth = currentDate.getMonthValue();
         int currentYear = currentDate.getYear();
         double total = 0.0; // Bien luu gia tri tong chi tieu
 
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareStatement("SELECT SUM(amountBudget) FROM budget WHERE MONTH(createdDate) = ? AND YEAR(createdDate) = ? AND type = N'Chi tiêu' ");
+            PreparedStatement stm = conn.prepareStatement("SELECT SUM(amountBudget) "
+                    + "FROM budget WHERE MONTH(createdDate) = ? AND YEAR(createdDate) = ? AND userId = ? "
+                    + "AND type = N'Chi tiêu'");
             stm.setInt(1, currentMonth);
             stm.setInt(2, currentYear);
+            stm.setInt(3, currentUserId);
             ResultSet rs = stm.executeQuery();
 
             if (rs.next()) {
@@ -127,6 +132,7 @@ public class BudgetServices {
     }
 
     public void updateBudgetTODB(String input) throws SQLException {
+        int currentUserId = UserSessionServices.getCurrentUser().getId();
         double amount = validateInput(input);
         double totalSpent = sumMethod();
 
@@ -134,7 +140,8 @@ public class BudgetServices {
 
             //Lấy ID cuối cùng
             int lastId = -1;
-            PreparedStatement stm1 = conn.prepareCall("SELECT MAX(id) FROM budget");
+            PreparedStatement stm1 = conn.prepareCall("SELECT MAX(id) FROM budget WHERE userId = ?");
+            stm1.setInt(1, currentUserId);
             ResultSet rs = stm1.executeQuery();
             if (rs.next()) {
                 lastId = rs.getInt(1);
@@ -175,13 +182,16 @@ public class BudgetServices {
 
     public boolean isBudgetExistForCurrentMonth() {
         LocalDate currentDate = LocalDate.now();
+        int currentUserId = UserSessionServices.getCurrentUser().getId();
         int currentMonth = currentDate.getMonthValue();
         int currentYear = currentDate.getYear();
 
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareStatement("SELECT MAX(id) FROM budget WHERE MONTH(createdDate) = ?, YEAR(createdDate) = ? ");
+            PreparedStatement stm = conn.prepareStatement("SELECT MAX(id) FROM budget "
+                    + "WHERE MONTH(createdDate) = ? AND YEAR(createdDate) = ?  AND userId = ?");
             stm.setInt(1, currentMonth);
             stm.setInt(2, currentYear);
+            stm.setInt(3, currentUserId);
             ResultSet rs = stm.executeQuery();
             if (rs.next() && rs.getInt(1) > 0) {
                 return true; // Ngân sách tồn tại
