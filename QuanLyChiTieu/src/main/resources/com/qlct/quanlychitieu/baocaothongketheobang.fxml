@@ -49,7 +49,7 @@
       <TableView fx:id="tbExpenses" layoutX="208.0" layoutY="130.0" prefHeight="200.0" prefWidth="656.0" />
       <TableView fx:id="tbStatsByMonth" layoutX="211.0" layoutY="384.0" prefHeight="212.0" prefWidth="656.0" />
       <Button fx:id="filter" layoutX="631.0" layoutY="80.0" mnemonicParsing="false" text="Lọc" />
-      <ComboBox layoutX="701.0" layoutY="48.0" prefHeight="25.0" prefWidth="81.0" promptText="Chi" />
+      <ComboBox fx:id="cbType" layoutX="701.0" layoutY="48.0" prefHeight="25.0" prefWidth="81.0" promptText="Chi" />
       <Label layoutX="459.0" layoutY="333.0" text="Thống kê theo tháng hiện tại" />
    </children>
 </Pane>
