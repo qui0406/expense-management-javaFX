@@ -10,6 +10,7 @@ com\qlct\services\TransactionServices.class
 com\qlct\pojo\User.class
 com\qlct\quanlychitieu\FXTransactionsController$1.class
 com\qlct\quanlychitieu\FXTransactionsController.class
+com\qlct\quanlychitieu\TransactionManager.class
 com\qlct\pojo\Category.class
 com\qlct\quanlychitieu\FXEditCategoryController$1.class
 com\qlct\quanlychitieu\FXTransactionsController$3.class

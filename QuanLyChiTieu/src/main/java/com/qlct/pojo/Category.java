@@ -21,9 +21,11 @@ public class Category {
         this.type = type;
         this.userId = userId;
     }
-    public  Category(int id){
+
+    public Category(int id) {
         this.id = id;
     }
+
     @Override
     public String toString() {
         return this.name; // Trả về tên danh mục
@@ -84,5 +86,20 @@ public class Category {
     public void setUserId(int userId) {
         this.userId = userId;
     }
+// Phương thức validate để kiểm tra ràng buộc
 
+    public void validate() throws IllegalArgumentException {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên danh mục không được để trống!");
+        }
+        if (type == null || type.trim().isEmpty()) {
+            throw new IllegalArgumentException("Loại danh mục không được để trống!");
+        }
+        if (!name.matches("^[\\p{L}\\s]+$")) {
+            throw new IllegalArgumentException("Tên danh mục chỉ được chứa chữ cái và khoảng trắng, không chứa số hoặc ký tự đặc biệt!");
+        }
+        if (!type.equals("Chi") && !type.equals("Thu")) {
+            throw new IllegalArgumentException("Loại danh mục phải là 'Chi' hoặc 'Thu'!");
+        }
+    }
 }

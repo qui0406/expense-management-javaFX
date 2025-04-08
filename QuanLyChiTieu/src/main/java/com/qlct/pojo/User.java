@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
  * @author QUI
  */
 public class User {
+
     private int id;
     private String firstName;
     private String lastName;
@@ -33,15 +34,36 @@ public class User {
         this.avatar = avatar;
         this.createdDate = createdDate;
     }
-    
-     public User(int id, String firstName, String lastName, String username, String email) {
+
+    public User(int id, String firstName, String lastName, String username, String email) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.password = password;
         this.email = email;
-     }
+    }
+    // Bổ sung: Constructor tối thiểu với id và username
+
+    public User(int id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+    }
+// Bổ sung (tùy chọn): Kiểm tra email hợp lệ
+    public boolean isValidEmail() {
+        if (email == null) return false;
+        return email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
+    }@Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
     /**
      * @return the id
      */
