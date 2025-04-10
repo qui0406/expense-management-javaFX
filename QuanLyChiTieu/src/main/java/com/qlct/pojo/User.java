@@ -32,6 +32,7 @@ public class User {
         this.createdDate = createdDate;
     }
 
+
     public User(int id, String firstName, String lastName, String username, String email) {
 
         this.id = id;
@@ -40,6 +41,14 @@ public class User {
         this.username = username;
         this.email = email;
     }
+
+    @Override
+    public String toString() {
+        return this.username; // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
+    
+    
+
     // Bổ sung: Constructor tối thiểu với id và username
 
     public User(int id, String username, String password) {
@@ -55,7 +64,7 @@ public class User {
         }
         return email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
     }
-//
+
 //    @Override
 //    public String toString() {
 //        return "User{"
@@ -67,10 +76,14 @@ public class User {
 //                + '}';
 //    }
 
-    @Override
-    public String toString() {
-        return this.username; // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
-    }
+//    @Override
+//    public String toString() {
+//        return this.username; // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+//    }
+
+
+    
+    
 
     /**
      * @return the id

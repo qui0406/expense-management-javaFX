@@ -87,6 +87,7 @@ public class Category {
     public void setUserId(int userId) {
         this.userId = userId;
     }
+
 // Phương thức validate để kiểm tra ràng buộc
 
     public void validate() throws IllegalArgumentException {
