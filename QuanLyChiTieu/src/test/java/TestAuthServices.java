@@ -128,7 +128,7 @@ public class TestAuthServices {
     @Test
     void testValidPassword() {
         String result = authController.isValidPassword("Doe", "John", "user123", "Password@123", "Password@123");
-        Assertions.assertEquals("", result);
+        Assertions.assertEquals("", result);    
     }
 
     @Test

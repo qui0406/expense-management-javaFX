@@ -106,7 +106,7 @@ public class StatsServices {
                      "ORDER BY MONTH(transaction.date)";
 
         try (Connection conn = JdbcUtils.getConn();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
+            PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, userId);
             stm.setString(2, type);
 

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.value.ObservableLongValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -27,7 +26,6 @@ import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
-import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -100,6 +98,8 @@ public class ChartController implements Initializable{
                     fromDateChart.setValue(null); // Reset fromDate
                     toDateChart.setValue(null); // Reset toDate
                     loadData(statsServices.getExpenseCurrentMonth(cbTypeChart.getValue()));
+                    
+                    loadDataByMonth();
                 } catch (SQLException ex) {
                     Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -116,8 +116,6 @@ public class ChartController implements Initializable{
                 }
             });
            
-           
-        
         }
     }
     
@@ -196,24 +194,39 @@ public class ChartController implements Initializable{
 
     
     private void loadData(List<Expense> expenseList) throws SQLException {
+        if (expenseList == null || expenseList.isEmpty()) {
+            pieChart.setVisible(false);
+            lineChart.setVisible(false);
+            pieChart.getData().clear();
+            lineChart.getData().clear();
+            return;
+        }
+
+        pieChart.setVisible(true);
+        lineChart.setVisible(true);
+
         ObservableList<Expense> expenses = FXCollections.observableArrayList(expenseList);
         loadPieChart(expenses);
-        
         loadLineChart(expenseList);
-        
     }
-    
+
     
     private void loadDataByMonth() {
         try {
             List<Expense> expensesByMonth = statsServices.getMonthlyExpenses(cbTypeChart.getValue());
-            ObservableList<Expense> expenses = FXCollections.observableArrayList(expensesByMonth);
-            
+
+            if (expensesByMonth == null || expensesByMonth.isEmpty()) {
+                barChart.setVisible(false);
+                barChart.getData().clear();
+                return;
+            }
+
+            barChart.setVisible(true);
             loadBarChart(expensesByMonth);
+
         } catch (SQLException ex) {
             Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
     }
+
 }

@@ -6,6 +6,7 @@ package com.qlct.quanlychitieu;
 
 import com.qlct.pojo.Expense;
 import com.qlct.services.StatsServices;
+import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -26,6 +27,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -54,6 +56,8 @@ public class StatsController implements Initializable {
     
     @FXML
     private ComboBox<String> cbType;
+    
+    @FXML private Label lbUsername;
 
     
     public StatsController() {
@@ -77,10 +81,15 @@ public class StatsController implements Initializable {
         cbType.setItems(FXCollections.observableList(choice));
         cbType.setValue("Chi");
     }
+    
+    public void loadUsername(){
+        lbUsername.setText(UserSessionServices.getCurrentUser().getUsername());
+    }
 
  
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        loadUsername();
         try {
             if (cbChoseTable == null) {
                 System.out.println("cbChoseTable is null - check your FXML file!");
@@ -89,6 +98,7 @@ public class StatsController implements Initializable {
                 loadComboBoxTableCurrentMonth();
                 cbChoseTable.setOnAction(event -> handleComboBoxTable());
                
+                
             }
             loadColumnsCurrentMonth();
             
@@ -100,6 +110,11 @@ public class StatsController implements Initializable {
                     fromDate.setValue(null); // Reset fromDate
                     toDate.setValue(null); // Reset toDate
                     loadData(statsServices.getExpenseCurrentMonth(cbType.getValue()));
+                  
+        
+                    // Cập nhật bảng thống kê theo tháng
+                    loadDataByMonth();
+                   
                 } catch (SQLException ex) {
                     Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -212,7 +227,4 @@ public class StatsController implements Initializable {
         }
     }
 
-    
-    
-    
 }

@@ -1,6 +1,6 @@
 
 .BtnLogin {
-    -fx-background-color: greenyellow;
+    -fx-background-color: skyblue;
 }
 
 .BtnLogin:hover {
@@ -8,10 +8,9 @@
 }
 
 .BtnSwitchRegister {
-    -fx-background-color: greenyellow;
+    -fx-background-color: skyblue;
 }
 
 .BtnSwitchRegister:hover {
      -fx-background-color: aliceblue;
-
 }

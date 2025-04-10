@@ -1,0 +1,16 @@
+
+.btnSwitchLogin {
+    -fx-background-color: skyblue;
+}
+
+.btnSwitchLogin:hover {
+    -fx-background-color: aliceblue;
+}
+
+.btnRegister {
+    -fx-background-color: green;
+}
+
+.btnRegister:hover {
+    -fx-background-color: yellowgreen;
+}
