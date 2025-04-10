@@ -13,9 +13,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="730.0" prefWidth="936.0" stylesheets="@style/transaction.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.FXTransactionsController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="936.0" stylesheets="@style/transaction.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.FXTransactionsController">
    <left>
-      <AnchorPane prefHeight="710.0" prefWidth="198.0" styleClass="sideBar" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="783.0" prefWidth="198.0" styleClass="sideBar" BorderPane.alignment="CENTER">
          <children>
             <Text fx:id="txtUsername" layoutX="50.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="96.27655029296875" />
             <Button layoutX="50.0" layoutY="152.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="96.0" styleClass="btnSideBar" text="Button" />
@@ -64,6 +64,8 @@
                </children>
             </HBox>
             <TableView fx:id="tbTransaction" layoutX="63.0" layoutY="387.0" prefHeight="298.0" prefWidth="606.0" styleClass="table-row-cell" stylesheets="@style/transaction.css" />
+            <Text fx:id="txtTotalAmount" fill="#2D82B5" layoutX="203.0" layoutY="704.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="129.0" />
+            <Text fx:id="txtExpenseAmount" fill="RED" layoutX="203.0" layoutY="727.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="129.0" />
          </children>
       </AnchorPane>
    </center>
