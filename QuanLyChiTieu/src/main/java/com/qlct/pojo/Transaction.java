@@ -125,4 +125,18 @@ public class Transaction {
         this.userId = userId;
     }
 
+    public void validate() throws IllegalArgumentException {
+        if (amount <= 0 || amount > 1_000_000_000_000.0) {
+            throw new IllegalArgumentException("Số tiền phải lớn hơn 0 và không vượt quá 1,000,000,000,000!");
+        }
+        if (date == null) {
+            throw new IllegalArgumentException("Ngày giao dịch không được để trống!");
+        }
+        if (date.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Ngày giao dịch không được vượt quá ngày hiện tại!");
+        }
+        if (categoryId <= 0) {
+            throw new IllegalArgumentException("Danh mục không được để trống!");
+        }
+    }
 }
