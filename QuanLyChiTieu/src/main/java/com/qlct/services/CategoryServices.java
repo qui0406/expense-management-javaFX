@@ -88,8 +88,8 @@ public class CategoryServices {
         try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setString(1, name);
             stm.setString(2, type);
-            stm.setInt(4, userId);
-            stm.setInt(3, id);
+            stm.setInt(3, userId);
+            stm.setInt(4, id);
             stm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -98,6 +98,7 @@ public class FXEditCategoryController implements Initializable {
                     }
                     txtName.setText(cate.getName());
                     cbType.getSelectionModel().select(cate.getType());
+                    btnAdd.setText("Cập nhật");
                     btnAdd.setOnAction(event -> updateCategory(cate.getId()));
                 });
             }
@@ -134,6 +135,7 @@ public class FXEditCategoryController implements Initializable {
     private void clearForm() {
         cbType.setValue(null);
         txtName.clear();
+        btnAdd.setText("Thêm");
     }
 
     private void updateCategory(int categoryId) {
