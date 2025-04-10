@@ -4,16 +4,16 @@
  */
 package com.qlct.pojo;
 
-/**
- *
- * @author ttthu
- */
+
 public class Category {
+
 
     private int id;
     private String name;
     private String type;
     private int userId;
+
+
 
     public Category(int id, String name, String type, int userId) {
         this.id = id;
@@ -30,6 +30,7 @@ public class Category {
     public String toString() {
         return this.name; // Trả về tên danh mục
     }
+
 
     /**
      * @return the id
@@ -102,4 +103,5 @@ public class Category {
             throw new IllegalArgumentException("Loại danh mục phải là 'Chi' hoặc 'Thu'!");
         }
     }
+
 }

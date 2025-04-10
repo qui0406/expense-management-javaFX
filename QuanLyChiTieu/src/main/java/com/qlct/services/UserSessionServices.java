@@ -32,8 +32,7 @@ public class UserSessionServices {
             stm.setString(1, username);
             ResultSet rs = stm.executeQuery();
             if(rs.next()){
-                currentUser = new User(rs.getInt("id"), rs.getString("firstName"), 
-                        rs.getString("lastName"), username,  rs.getString("email"));
+                currentUser = new User(rs.getInt("id"), rs.getString("firstName"), rs.getString("lastName"), username,  rs.getString("email"));
             }
             return currentUser;
         }

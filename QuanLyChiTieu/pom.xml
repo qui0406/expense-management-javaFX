@@ -73,11 +73,11 @@
             <version>5.12.0</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>6.6.9.Final</version>
-        </dependency>
+        </dependency>-->
         <!-- Thêm TestFX -->
         <dependency>
             <groupId>org.testfx</groupId>

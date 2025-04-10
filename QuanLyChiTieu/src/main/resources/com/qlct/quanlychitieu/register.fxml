@@ -4,35 +4,52 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="475.0" prefWidth="638.0" style="-fx-background-color: lightgrey;" stylesheets="@style/login.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.AuthController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="475.0" prefWidth="638.0" style="-fx-background-color: aliceblue;" stylesheets="@style/login.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.AuthController">
    <children>
       <AnchorPane layoutY="-2.0" />
-      <Label layoutX="427.0" layoutY="209.0" text="Quản lý chi tiêu" textFill="#1e14cc">
+      <Label layoutX="380.0" layoutY="30.0" styleClass="Subject" stylesheets="@style/register.css" text="QUẢN LÝ CHI TIÊU" textFill="#1e14cc">
          <font>
-            <Font size="24.0" />
+            <Font name="System Bold" size="26.0" />
          </font>
       </Label>
       <Line endX="100.0" startX="-100.0" />
-      <Line endX="40.899993896484375" endY="186.99996948242188" layoutX="361.0" layoutY="211.0" startX="40.9000244140625" startY="-120.80000305175781" stroke="#807c7c" />
-      <Label layoutX="135.0" layoutY="26.0" text="Đăng ký">
+      <Line endX="40.9000244140625" endY="222.60000610351562" layoutX="304.0" layoutY="214.0" startX="40.9000244140625" startY="-144.60000610351562" stroke="#807c7c" />
+      <Label layoutX="134.0" layoutY="32.0" styleClass="txtLogin" text="ĐĂNG KÝ" textFill="#2b9439">
          <font>
-            <Font size="26.0" />
+            <Font size="22.0" />
          </font>
       </Label>
-      <TextField fx:id="txtUsernameRegister" layoutX="51.0" layoutY="144.0" prefHeight="38.0" prefWidth="318.0" promptText="Username" />
-      <PasswordField fx:id="txtPasswordRegister" layoutX="51.0" layoutY="271.0" prefHeight="38.0" prefWidth="318.0" promptText="Mật khẩu" />
-      <Button fx:id="btnRegister" layoutX="49.0" layoutY="409.0" mnemonicParsing="false" onAction="#btnRegisterHandler" prefHeight="38.0" prefWidth="318.0" style="-fx-background-color: green;" text="Đăng ký ngay" textFill="#f4f2f2">
+      <TextField fx:id="txtUsernameRegister" layoutX="24.0" layoutY="134.0" prefHeight="38.0" prefWidth="302.0" promptText="Username" />
+      <PasswordField fx:id="txtPasswordRegister" layoutX="24.0" layoutY="238.0" prefHeight="38.0" prefWidth="302.0" promptText="Mật khẩu" />
+      <Button fx:id="btnRegister" layoutX="24.0" layoutY="344.0" mnemonicParsing="false" onAction="#btnRegisterHandler" prefHeight="38.0" prefWidth="302.0" stylesheets="@style/register.css" text="Đăng ký ngay" textFill="#f4f2f2">
          <font>
             <Font size="16.0" />
          </font>
       </Button>
-      <PasswordField fx:id="txtCofirmPassword" layoutX="51.0" layoutY="330.0" prefHeight="38.0" prefWidth="318.0" promptText="Xâc nhận mật khẩu" />
-      <TextField fx:id="txtEmail" layoutX="51.0" layoutY="207.0" prefHeight="38.0" prefWidth="318.0" promptText="Email" />
-      <TextField fx:id="txtLastName" layoutX="51.0" layoutY="89.0" prefHeight="38.0" prefWidth="119.0" promptText="Họ" />
-      <TextField fx:id="txtFirstName" layoutX="182.0" layoutY="89.0" prefHeight="38.0" prefWidth="187.0" promptText="Tên" />
+      <PasswordField fx:id="txtCofirmPassword" layoutX="24.0" layoutY="290.0" prefHeight="38.0" prefWidth="302.0" promptText="Xâc nhận mật khẩu" />
+      <TextField fx:id="txtEmail" layoutX="24.0" layoutY="187.0" prefHeight="38.0" prefWidth="302.0" promptText="Email" />
+      <TextField fx:id="txtLastName" layoutX="24.0" layoutY="81.0" prefHeight="38.0" prefWidth="186.0" promptText="Họ và tên lót" styleClass="textfield" />
+      <TextField fx:id="txtFirstName" layoutX="223.0" layoutY="81.0" prefHeight="38.0" prefWidth="102.0" promptText="Tên" />
+      <Label layoutX="36.0" layoutY="411.0" text="Bạn đã có tài khoản?" textFill="#0615b7">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="198.0" fitWidth="201.0" layoutX="402.0" layoutY="126.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../icons/logo.png" />
+         </image>
+      </ImageView>
+      <Button layoutX="175.0" layoutY="401.0" mnemonicParsing="false" onAction="#switchLogin" prefHeight="38.0" prefWidth="149.0" styleClass="btnSwitchLogin" stylesheets="@style/register.css" text="Đăng nhập">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

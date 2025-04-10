@@ -21,9 +21,6 @@ public class User {
     private String avatar;
     private DateTimeFormatter createdDate;
 
-    public User() {
-    }
-
     public User(int id, String firstName, String lastName, String username, String password, String email, String avatar, DateTimeFormatter createdDate) {
         this.id = id;
         this.firstName = firstName;
@@ -36,11 +33,11 @@ public class User {
     }
 
     public User(int id, String firstName, String lastName, String username, String email) {
+
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
-        this.password = password;
         this.email = email;
     }
     // Bổ sung: Constructor tối thiểu với id và username
@@ -51,31 +48,45 @@ public class User {
         this.password = password;
     }
 // Bổ sung (tùy chọn): Kiểm tra email hợp lệ
+
     public boolean isValidEmail() {
-        if (email == null) return false;
+        if (email == null) {
+            return false;
+        }
         return email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
-    }@Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                '}';
     }
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
+//
+//    @Override
+//    public String toString() {
+//        return "User{"
+//                + "id=" + id
+//                + ", username='" + username + '\''
+//                + ", firstName='" + firstName + '\''
+//                + ", lastName='" + lastName + '\''
+//                + ", email='" + email + '\''
+//                + '}';
+//    }
+
+    @Override
+    public String toString() {
+        return this.username; // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
     }
 
     /**
+     * @return the id
+     *
+     *
+     *
+     * /
+     **
      * @param id the id to set
      */
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     /**
