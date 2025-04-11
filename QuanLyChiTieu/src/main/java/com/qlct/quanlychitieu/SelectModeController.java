@@ -30,7 +30,6 @@ public class SelectModeController implements Initializable {
     BudgetServices budgetServices = new BudgetServices();
 
     @FXML Button btBudget;
-    @FXML Button btEditBudget;
     @FXML Pane contentPane;
 
     /**
@@ -46,28 +45,14 @@ public class SelectModeController implements Initializable {
                 Logger.getLogger(SelectModeController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        
-        btEditBudget.setOnAction(event -> {
-            try {
-                switchToEditBudget(event);
-            } catch (IOException ex) {
-                Logger.getLogger(SelectModeController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
 
     }
 
     public void switchToBudget(ActionEvent event) throws IOException {
-        if(!budgetServices.isBudgetExistForCurrentMonth()){
             App.setContentPane(contentPane, "budget");
-        }
     }
-
-    public void switchToEditBudget(ActionEvent event) throws IOException {
-        if(budgetServices.isBudgetExistForCurrentMonth()){
-            App.setContentPane(contentPane, "editbudget");
-        }
-    }
+    
+    
     
     
 }

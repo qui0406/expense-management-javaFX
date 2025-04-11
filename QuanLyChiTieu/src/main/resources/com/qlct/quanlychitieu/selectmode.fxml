@@ -21,7 +21,6 @@
                </font>
             </Label>
             <Button fx:id="btBudget" layoutX="5.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="153.0" styleClass="action-button" text="Nhập ngân sách" />
-            <Button fx:id="btEditBudget" layoutX="5.0" layoutY="203.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="153.0" styleClass="action-button" text="Chỉnh sửa ngân sách" />
          </children>
       </Pane>
       <Pane fx:id="contentPane" layoutX="163.0" layoutY="68.0" prefHeight="578.0" prefWidth="742.0" />

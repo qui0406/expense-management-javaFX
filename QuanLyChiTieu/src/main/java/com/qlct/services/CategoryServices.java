@@ -95,4 +95,54 @@ public class CategoryServices {
             e.printStackTrace();
         }
     }
+
+    public List<Category> getCateByTypeFromBudget(String type) throws SQLException {
+        List<Category> cates = new ArrayList<>();
+        int currentUserId = UserSessionServices.getCurrentUser().getId();
+
+        try (Connection conn = JdbcUtils.getConn()) {
+            // Chỉ chọn những category có type tồn tại trong bảng budget
+            PreparedStatement stm = conn.prepareStatement("SELECT * FROM categories \n"
+                    + "            WHERE type = ? \n"
+                    + "              AND (userId IS NULL OR userId = ?) \n"
+                    + "              AND EXISTS (\n"
+                    + "                  SELECT 1 FROM budget \n"
+                    + "                  WHERE budget.type = categories.type\n"
+                    + "              )");
+            stm.setString(1, type);
+            stm.setInt(2, currentUserId);
+
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                Category c = new Category(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("type"),
+                        rs.getInt("userId")
+                );
+                cates.add(c);
+            }
+        }
+        return cates;
+    }
+
+    // Phương thức lấy tên danh mục từ ID
+    public String getCategoryById(int id) {
+        String name = null; // Giá trị mặc định nếu không tìm thấy
+        String query = "SELECT name FROM categories WHERE id = ?"; // Câu truy vấn SQL
+
+        try (Connection conn = JdbcUtils.getConn(); // Kết nối đến CSDL
+                 PreparedStatement stm = conn.prepareStatement(query)) {
+
+            stm.setInt(1, id); // Thiết lập giá trị ID
+            ResultSet rs = stm.executeQuery(); // Thực thi truy vấn
+            if (rs.next()) {
+                name = rs.getString("name"); // Lấy tên danh mục từ kết quả
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Xử lý ngoại lệ
+        }
+        return name; // Trả về tên danh mục hoặc null
+    }
+
 }
