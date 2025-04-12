@@ -85,6 +85,11 @@ public class StatsController implements Initializable {
     public void loadUsername(){
         lbUsername.setText(UserSessionServices.getCurrentUser().getUsername());
     }
+    
+     @FXML
+    private void switchTransaction() throws IOException{
+        App.setRoot("FXTransactions", 900, 700);
+    }
 
  
     @Override
