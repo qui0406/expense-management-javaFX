@@ -268,7 +268,7 @@ public class FXTransactionsController implements Initializable {
                 }
             }
         });
-        colCate.setPrefWidth(130);
+        colCate.setPrefWidth(120);
 
         TableColumn<Transaction, Void> colAction = new TableColumn<>();
         colAction.setCellFactory(tc -> new TableCell<>() {
@@ -402,6 +402,10 @@ public class FXTransactionsController implements Initializable {
 
     public void clearHandler(ActionEvent e) {
         clearForm();
+    }
+    @FXML
+    private void switchBCTK() throws IOException {
+        App.setRoot("baocaothongketheobang", 935, 750);
     }
 
     public void editCategory(MouseEvent e) throws IOException {

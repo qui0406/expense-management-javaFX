@@ -87,8 +87,7 @@ public class Category {
     public void setUserId(int userId) {
         this.userId = userId;
     }
-<<<<<<< HEAD
-=======
+
 // Phương thức validate để kiểm tra ràng buộc
 
     public void validate() throws IllegalArgumentException {
@@ -105,5 +104,5 @@ public class Category {
             throw new IllegalArgumentException("Loại danh mục phải là 'Chi' hoặc 'Thu'!");
         }
     }
->>>>>>> 8e026b27155154bbe4f564c39c7562e4f83205b3
+
 }
