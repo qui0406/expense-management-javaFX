@@ -21,9 +21,12 @@ import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -85,7 +88,7 @@ public class BudgetController implements Initializable {
                 return;
             }
             try {
-                int categoryId = budgetServices.getIdByName(selectedCate); // Giả sử bạn có hàm này
+                int categoryId = budgetServices.getIdByName(selectedCate);
                 if (budgetServices.isBudgetExistForCurrentMonth(categoryId, true)) {
                     budgetServices.updateStatus(lblStatus, "❌ Ngân sách cho danh mục này đã tồn tại trong tháng!", "-fx-text-fill: red;");
                     return;
@@ -118,8 +121,16 @@ public class BudgetController implements Initializable {
         }
     }
 
-    public void switchToEditBudget(MouseEvent event) throws IOException {
-        App.setRoot("editbudget");
+    public void switchToEditBudget(MouseEvent event, Budget selectedBudget) throws IOException {
+        FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/qlct/quanlychitieu/editbudget.fxml"));
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.getDialogPane().setContent(loader.load());
+        EditBudgetController controller = loader.getController();
+        controller.setEditingBudget(selectedBudget);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
+//        dialog.initModality(Modality.APPLICATION_MODAL);
+//        dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
+        dialog.showAndWait();
     }
 
     public void loadColumns() {
@@ -178,8 +189,9 @@ public class BudgetController implements Initializable {
 
             {
                 btnEdit.setOnMouseClicked(e -> {
+                    Budget selectedBudget = getTableView().getItems().get(getIndex());
                     try {
-                        switchToEditBudget(e);
+                        switchToEditBudget(e, selectedBudget);
                     } catch (IOException ex) {
                         Logger.getLogger(SelectModeController.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -204,7 +216,7 @@ public class BudgetController implements Initializable {
     }
 
     private void loadTableData() {
-            List<Budget> budgets = budgetServices.getBudgetsForCurrentUser(); // Lấy danh sách ngân sách từ dịch vụ
+        List<Budget> budgets = budgetServices.getBudgetsForCurrentUser(); // Lấy danh sách ngân sách từ dịch vụ
         System.out.println(budgets.size());
         List<Budget> filteredBudgets = budgets.stream()
                 .filter(budget -> {
@@ -214,35 +226,8 @@ public class BudgetController implements Initializable {
                     return isExists;
 
                 })
-               .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
         tbBudget.setItems(FXCollections.observableList(filteredBudgets));
     }
-    
-    
-    
-//    private void loadTableData() {
-//        List<Budget> budgets = budgetServices.getBudgetsForCurrentUser();
-//
-//        // Kiểm tra dữ liệu trong budgets
-//        if (budgets != null && !budgets.isEmpty()) {
-//            for (Budget budget : budgets) {
-//                if (budget == null) {
-//                    System.out.println("Found a null budget object.");
-//                    continue; // Bỏ qua đối tượng null
-//                }
-//
-//                // Kiểm tra các thuộc tính của Budget
-//                if (budget.getCategoryId() == 0 || budget.getType() == null) {
-//                    System.out.println("Invalid budget data found: " + budget);
-//                    continue; // Bỏ qua đối tượng invalid
-//                }
-//            }
-//
-//            tbBudget.setItems(FXCollections.observableList(budgets)); // Thêm dữ liệu hợp lệ vào TableView
-//        } else {
-//            System.out.println("No data to load into the table.");
-//        }
-//    }
-
 }

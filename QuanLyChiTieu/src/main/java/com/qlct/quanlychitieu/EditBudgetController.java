@@ -9,12 +9,15 @@ import com.qlct.pojo.Category;
 import com.qlct.services.BudgetServices;
 import com.qlct.services.CategoryServices;
 import com.qlct.services.UserSessionServices;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,6 +39,8 @@ import javafx.scene.layout.HBox;
 public class EditBudgetController implements Initializable {
 
     private BudgetServices budgetServices = new BudgetServices();
+    private CategoryServices categoryServices = new CategoryServices();
+    private Budget editingBudget;
 
     @FXML
     TextField txtInputBudget;
@@ -53,74 +58,80 @@ public class EditBudgetController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         budgetServices.setLblStatusInEdit(lblStatusInEdit);
-
+        loadTableData();
+        loadColumns();
+        btnEditBudget.setOnAction(e -> {
+            try {
+                int budgetId = editingBudget.getId();
+                budgetServices.updateBudgetTODB(txtInputBudget.getText(), budgetId);
+            } catch (SQLException ex) {
+                budgetServices.updateStatus(lblStatusInEdit, "❌ Lỗi kết nối CSDL", "-fx-text-fill: red;");
+                ex.printStackTrace(); //In ra lỗi console để debug
+            }
+        });
     }
 
-    private void loadColumns() {
-        TableColumn<Budget, String> colAmount = new TableColumn<>("Số tiền");
-        tbBudget.setFixedCellSize(40);
+    public void setEditingBudget(Budget budget) {
+        this.editingBudget = budget;
+    }
+
+    public void loadColumns() {
+        // Cột Số tiền
+        TableColumn<Budget, Double> colAmount = new TableColumn<>("Số tiền");
         colAmount.setCellValueFactory(new PropertyValueFactory<>("amountBudget"));
-        colAmount.setPrefWidth(200);
+        colAmount.setPrefWidth(150);
 
-        TableColumn<Budget, String> colType = new TableColumn<>("Loại ngân sách");
+        // Cột Loại
+        TableColumn<Budget, String> colType = new TableColumn<>("Loại");
         colType.setCellValueFactory(new PropertyValueFactory<>("type"));
-        colType.setPrefWidth(200);
+        colType.setPrefWidth(100);
 
-        TableColumn<Budget, Void> colAction = new TableColumn<>();
-        colAction.setCellFactory(tc -> new TableCell<>() {
-            final Button btnEdit = new Button("Sửa");
-            final HBox btnGroup = new HBox(5, btnEdit);
-
-            {
-                btnEdit.setOnAction(evt -> {
-                    Budget budget = getTableView().getItems().get(getIndex());
-                    txtInputBudget.setText(String.valueOf(budget.getAmountBudget())); // Giả sử bạn có trường nhập số tiền                    
-                    btnEditBudget.setOnAction(e -> {
-                        try {
-                            budgetServices.updateBudgetTODB(txtInputBudget.getText());
-                        } catch (NumberFormatException | SQLException ex) {
-                            budgetServices.updateStatus(lblStatusInEdit, "❌ Lỗi kết nối CSDL", "-fx-text-fill: red;");
-
-                            ex.printStackTrace(); //In ra lỗi console để debug
-                        }
-                    });
-                });
-            }
-
+        // Cột Danh mục
+        TableColumn<Budget, String> colCateName = new TableColumn<>("Danh mục");
+        colCateName.setCellFactory(column -> new TableCell<Budget, String>() {
             @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
+            protected void updateItem(String categoryName, boolean empty) {
+                super.updateItem(categoryName, empty);
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                    setText(null);
                 } else {
-                    Budget budget = getTableView().getItems().get(getIndex());
-                    setGraphic(btnGroup);
+                    Budget budget = getTableRow().getItem();
+                    int categoryId = budget.getCategoryId();
+                    try {
+                        String name = categoryServices.getCategoryById(categoryId);
+                        setText(name != null ? name : "Không xác định");
+                    } catch (Exception e) {
+                        setText("Lỗi");
+                        e.printStackTrace();
+                    }
                 }
             }
         });
+        colCateName.setPrefWidth(145);
 
-        tbBudget.getColumns().addAll(colAmount, colType, colAction);
-    }
+        // Cột Ngày
+        TableColumn<Budget, LocalDate> colDate = new TableColumn<>("Ngày");
+        colDate.setCellValueFactory(new PropertyValueFactory<>("createdDate"));
+        colDate.setPrefWidth(160);
 
-    private boolean isCategoryNameExists(String name, String type, int excludeId) {
-        CategoryServices cs = new CategoryServices();
-        try {
-            List<Category> categories = cs.getCatetogires();
-            for (Category cate : categories) {
-                // Kiểm tra trùng tên và loại, nhưng không so sánh với danh mục đang chỉnh sửa (excludeId)
-                if (cate.getName().equalsIgnoreCase(name) && cate.getType().equals(type) && cate.getId() != excludeId) {
-                    return true;
-                }
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(FXEditCategoryController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
+        // Thêm các cột vào bảng (bỏ cột hành động)
+        tbBudget.getColumns().clear();
+        tbBudget.getColumns().addAll(colAmount, colType, colCateName, colDate);
     }
 
     private void loadTableData() {
-        BudgetServices bs = new BudgetServices();
-        this.tbBudget.setItems(FXCollections.observableList(bs.getBudgetsForCurrentUser())); // Lấy danh sách ngân sách
-    }
+        List<Budget> budgets = budgetServices.getBudgetsForCurrentUser(); // Lấy danh sách ngân sách từ dịch vụ
+        System.out.println(budgets.size());
+        List<Budget> filteredBudgets = budgets.stream()
+                .filter(budget -> {
+                    // Kiểm tra xem ngân sách có tồn tại trong tháng hiện tại không
+                    boolean isExists = budgetServices.isBudgetExistForCurrentMonth(budget.getId(), false);
+                    System.out.println("ID: " + budget.getId() + " exists in current month: " + isExists);
+                    return isExists;
 
+                })
+                .collect(Collectors.toList());
+
+        tbBudget.setItems(FXCollections.observableList(filteredBudgets));
+    }
 }

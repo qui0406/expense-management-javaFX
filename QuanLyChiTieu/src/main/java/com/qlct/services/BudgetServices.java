@@ -141,52 +141,37 @@ public class BudgetServices {
         return newBudget >= totalSpent;
     }
 
-    public void updateBudgetTODB(String input) throws SQLException {
+    public void updateBudgetTODB(String input, int budgetId) throws SQLException {
         int currentUserId = UserSessionServices.getCurrentUser().getId();
         double amount = validateInput(input);
         double totalSpent = sumMethod();
 
         try (Connection conn = JdbcUtils.getConn()) {
+            if (isBudgetValid(amount, totalSpent)) {
+                try (PreparedStatement stm2 = conn.prepareCall("UPDATE budget SET amountBudget =  ? WHERE id = ? AND userId = ?")) {
+                    stm2.setDouble(1, amount);
+                    stm2.setInt(2, budgetId);
+                    stm2.setInt(3, currentUserId);
+                    int rowsUpdated = stm2.executeUpdate();
 
-            //Lấy ID cuối cùng
-            int lastId = -1;
-            PreparedStatement stm1 = conn.prepareCall("SELECT MAX(id) FROM budget WHERE userId = ?");
-            stm1.setInt(1, currentUserId);
-            ResultSet rs = stm1.executeQuery();
-            if (rs.next()) {
-                lastId = rs.getInt(1);
-            }
-
-            if (lastId != -1) //Trường hợp ID hợp lệ
-            {
-                if (isBudgetValid(amount, totalSpent)) {
-                    try (PreparedStatement stm2 = conn.prepareCall("UPDATE budget SET amountBudget =  ? WHERE id = ? AND userId = ?")) {
-                        stm2.setDouble(1, amount);
-                        stm2.setInt(2, lastId);
-                        stm1.setInt(3, currentUserId);
-                        int rowsUpdated = stm2.executeUpdate();
-
-                        Platform.runLater(() -> {
-                            if (rowsUpdated > 0) {
-                                lblStatusInEdit.setText("✅ Cập nhật ngân sách thành công!");
-                                lblStatusInEdit.setStyle("-fx-text-fill: green;");
-                            } else {
-                                lblStatusInEdit.setText("❌ Cập nhật ngân sách thất bại!");
-                                lblStatusInEdit.setStyle("-fx-text-fill: red;");
-                            }
-                        });
-                    }
-                } else {
                     Platform.runLater(() -> {
-                        lblStatusInEdit.setText("Ngân sách không hợp lệ. "
-                                + "Bạn đã chi tiêu trong tháng này. "
-                                + "Vui lòng nhập ngân sách mới lớn hơn hoặc bằng ngân sách hiện tại!!!");
-                        lblStatusInEdit.setStyle("-fx-text-fill: red;");
+                        if (rowsUpdated > 0) {
+                            lblStatusInEdit.setText("✅ Cập nhật ngân sách thành công!");
+                            lblStatusInEdit.setStyle("-fx-text-fill: green;");
+                        } else {
+                            lblStatusInEdit.setText("❌ Cập nhật ngân sách thất bại!");
+                            lblStatusInEdit.setStyle("-fx-text-fill: red;");
+                        }
                     });
-                    return;    //Dung thuc hien neu ngan sach khong hop le
                 }
             } else {
-                System.out.println("Không tìm thấy ID hợp lệ để cập nhật.");
+                Platform.runLater(() -> {
+                    lblStatusInEdit.setText("Ngân sách không hợp lệ. "
+                            + "Bạn đã chi tiêu trong tháng này. "
+                            + "Vui lòng nhập ngân sách mới lớn hơn hoặc bằng ngân sách hiện tại!!!");
+                    lblStatusInEdit.setStyle("-fx-text-fill: red;");
+                });
+                return;    //Dung thuc hien neu ngan sach khong hop le
             }
         }
     }
