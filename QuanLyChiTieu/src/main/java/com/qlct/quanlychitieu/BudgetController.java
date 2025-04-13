@@ -94,6 +94,7 @@ public class BudgetController implements Initializable {
                     return;
                 }
                 budgetServices.insertBudgetTODB(txtInputBudget.getText(), selectedType, selectedCate);
+                loadTableData();
             } catch (SQLException ex) {
                 budgetServices.updateStatus(lblStatus, "❌ Lỗi kết nối CSDL", "-fx-text-fill: red;");
                 ex.printStackTrace(); //In ra lỗi console để debug
@@ -192,6 +193,7 @@ public class BudgetController implements Initializable {
                     Budget selectedBudget = getTableView().getItems().get(getIndex());
                     try {
                         switchToEditBudget(e, selectedBudget);
+                        loadTableData();
                     } catch (IOException ex) {
                         Logger.getLogger(SelectModeController.class.getName()).log(Level.SEVERE, null, ex);
                     }
