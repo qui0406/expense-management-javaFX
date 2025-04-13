@@ -28,6 +28,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -59,6 +60,16 @@ public class BudgetController implements Initializable {
     ComboBox<String> cbCate;
     @FXML
     TableView<Budget> tbBudget;
+    @FXML
+    Label lblTotal;
+    @FXML
+    Label lblTotalMoneyUsed;
+    @FXML
+    ProgressBar progressBarTotal;
+    @FXML
+    ProgressBar progressBarUsed;
+    @FXML
+    Label lblPercentage;
 
     /**
      * Initializes the controller class.
@@ -67,6 +78,9 @@ public class BudgetController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         budgetServices.setLblStatus(lblStatus);
+        budgetServices.setLblTotal(lblTotal);
+        updateBudgetProgress(progressBarTotal, progressBarUsed, budgetServices.getTotalBudget(), budgetServices.getTotalUsed());
+        budgetServices.setLblTotalMoneyUsed(lblTotalMoneyUsed);
 
         cbType.setItems(FXCollections.observableArrayList("Chi"));
 
@@ -165,7 +179,7 @@ public class BudgetController implements Initializable {
                     int categoryId = budget.getCategoryId();
 
                     try {
-                        String name = categoryServices.getCategoryById(categoryId);
+                        String name = categoryServices.getCategoryByIdForBudget(categoryId);
                         setText(name != null ? name : "Không xác định");
                     } catch (Exception e) {
                         setText("Lỗi");
@@ -232,4 +246,35 @@ public class BudgetController implements Initializable {
 
         tbBudget.setItems(FXCollections.observableList(filteredBudgets));
     }
+
+    public void updateBudgetProgress(ProgressBar progressBarTotal, ProgressBar progressBarUsed, double totalBudget, double spentAmount) {
+        // Đảm bảo ngân sách không bị chia 0
+        if (totalBudget <= 0) {
+            progressBarUsed.setProgress(0);
+            progressBarUsed.setStyle("-fx-accent: grey;");
+            lblPercentage.setText("0%");
+            return;
+        }
+
+        // Tính tỷ lệ phần trăm đã chi
+        double ratio = spentAmount / totalBudget;
+        ratio = Math.min(ratio, 1.0); // Giới hạn max là 100%
+
+        // Set tiến trình
+        progressBarTotal.setProgress(1.0); // Luôn là 100%
+        progressBarUsed.setProgress(ratio);
+
+        // Set màu
+        if (ratio >= 0.8) {
+            progressBarUsed.setStyle("-fx-accent: red;");
+        } else {
+            progressBarUsed.setStyle("-fx-accent: green;");
+        }
+
+        if (lblPercentage != null) {
+            int percent = (int) Math.round(ratio * 100);
+            lblPercentage.setText(percent + "% đã chi");
+        }
+    }
+
 }

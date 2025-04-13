@@ -29,7 +29,7 @@ public class TransactionServices {
         int currentUserId = UserSessionServices.getCurrentUser().getId();
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(
-                    "SELECT * FROM transactions WHERE date BETWEEN ? AND userId = ?");
+                    "SELECT * FROM transactions WHERE date BETWEEN ? AND ? AND userId = ?");
             stm.setDate(1, java.sql.Date.valueOf(startDate));
             stm.setDate(2, java.sql.Date.valueOf(endDate));
             stm.setInt(3, currentUserId);
@@ -44,6 +44,8 @@ public class TransactionServices {
     }
 
     public void addTransaction(Transaction tran) {
+        tran.validate();
+        
         try (Connection conn = JdbcUtils.getConn()) {
             String newTran = "INSERT INTO transactions (amount, note, date, category_id, userId) VALUE (?, ?, ?, ?,?)";
             PreparedStatement stm = conn.prepareStatement(newTran);
@@ -75,6 +77,8 @@ public class TransactionServices {
     }
 
     public void updateTransaction(int id, double amount, int categoryId, LocalDate date, String note, int userId) {
+        Transaction tran = new Transaction(id, amount, categoryId, date, note, userId);
+        tran.validate();
         String sql = "UPDATE transactions SET amount = ?, category_id = ?, date = ?, note = ?, userId = ? WHERE id = ?";
 
         try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql)) {
@@ -83,7 +87,7 @@ public class TransactionServices {
             stm.setDate(3, Date.valueOf(date));
             stm.setString(4, note);
             stm.setInt(5, userId);
-            stm.setInt(5, id);
+            stm.setInt(6, id);
 
             stm.executeUpdate();
         } catch (SQLException e) {

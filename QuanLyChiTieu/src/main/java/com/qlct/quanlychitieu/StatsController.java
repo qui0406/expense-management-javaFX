@@ -12,7 +12,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -28,6 +27,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -49,11 +49,18 @@ public class StatsController implements Initializable {
     private Button filter;
     @FXML
     private TableView<Expense> tbExpenses;
+
+    @FXML
+    private TableView<Expense> tbStatsByMonth;
+
+    private final StatsServices statsServices;
     
-    @FXML private TableView<Expense> tbStatsByMonth;
-    
-    private StatsServices statsServices;
-    
+    @FXML
+    private ComboBox<String> cbType;
+
+    @FXML
+    private Label lbUsername;
+
     public StatsController() {
         this.statsServices = new StatsServices(); // Khởi tạo service
     }
@@ -67,49 +74,78 @@ public class StatsController implements Initializable {
         cbChoseTable.setValue("Thống kê theo bảng");
     }
 
- 
+    public void loadComboBoxType() {
+        cbType.setValue("Chi");
+        List<String> choice = new ArrayList<>();
+        choice.add("Chi");
+        choice.add("Thu");
+        cbType.setItems(FXCollections.observableList(choice));
+        cbType.setValue("Chi");
+    }
+
+    public void loadUsername() {
+        lbUsername.setText(UserSessionServices.getCurrentUser().getUsername());
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        loadUsername();
         try {
             if (cbChoseTable == null) {
                 System.out.println("cbChoseTable is null - check your FXML file!");
             } else {
+                loadComboBoxType();
                 loadComboBoxTableCurrentMonth();
                 cbChoseTable.setOnAction(event -> handleComboBoxTable());
-            }
 
+            }
             loadColumnsCurrentMonth();
-            loadData(statsServices.getExpenseCurrentMonth()); // Gọi loadData()
 
+            loadData(statsServices.getExpenseCurrentMonth(cbType.getValue())); // Gọi loadData()
+
+            // Khi bam vao chon loai thu/chi
+            cbType.setOnAction(event -> {
+                try {
+                    fromDate.setValue(null); // Reset fromDate
+                    toDate.setValue(null); // Reset toDate
+                    loadData(statsServices.getExpenseCurrentMonth(cbType.getValue()));
+
+                    // Cập nhật bảng thống kê theo tháng
+                    loadDataByMonth();
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+
+            // Gán sự kiện bấm nút lọc sau khi khối try-catch kết thúc
+            filter.setOnAction(event -> {
+                try {
+                    filterDate(event);
+                } catch (SQLException ex) {
+                    Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+
+            loadColumnsByMonth();
+            loadData(statsServices.getExpenseCurrentMonth(cbType.getValue()));
+
+            loadDataByMonth();
         } catch (SQLException ex) {
             Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        // Gán sự kiện bấm nút lọc sau khi khối try-catch kết thúc
-        filter.setOnAction(event -> {
-            try {
-                filterDate(event);
-            } catch (SQLException ex) {
-                Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
-        
-        
-        
-        loadColumnsByMonth();
-        try {
-            loadData(statsServices.getExpenseCurrentMonth());
-        } catch (SQLException ex) {
-            Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        loadDataByMonth(LocalDate.now().getYear());
 
     }
 
+    @FXML
+    private void switchTransaction() throws IOException {
+        App.setRoot("FXTransactions", 935, 750);
+    }
 
     private void handleComboBoxTable() {
         String selectedOption = cbChoseTable.getValue();
         if (selectedOption.equals("Thống kê theo bảng")) {
+            System.out.println(selectedOption);
             switchSceneTable("baocaothongketheobang.fxml");
         } else if (selectedOption.equals("Thống kê theo biểu đồ")) {
             System.out.println(selectedOption);
@@ -124,7 +160,9 @@ public class StatsController implements Initializable {
 
             Stage stage = (Stage) cbChoseTable.getScene().getWindow();
             stage.setScene(new Scene(root));
-        } catch (IOException e) {
+        } catch (IOException e) { // In ra chi tiết lỗi
+            // In ra chi tiết lỗi
+            System.out.println("Failed to load FXML: " + e);
         }
     }
 
@@ -132,7 +170,7 @@ public class StatsController implements Initializable {
         TableColumn<Expense, String> colCategoryId = new TableColumn<>("Số thứ tự");
         colCategoryId.setCellValueFactory(new PropertyValueFactory<>("categoryId"));
         colCategoryId.setPrefWidth(100);
-        
+
         TableColumn<Expense, String> colCategoryName = new TableColumn<>("Danh mục");
         colCategoryName.setCellValueFactory(new PropertyValueFactory<>("categoryName"));
         colCategoryName.setPrefWidth(200);
@@ -143,31 +181,29 @@ public class StatsController implements Initializable {
 
         tbExpenses.getColumns().addAll(colCategoryId, colCategoryName, colAmount);
     }
-    
+
     private void loadData(List<Expense> expenseList) {
         ObservableList<Expense> expenses = FXCollections.observableArrayList(expenseList);
         tbExpenses.setItems(expenses);
     }
-    
-    private void filterDate(Event e) throws SQLException{
+
+    private void filterDate(Event e) throws SQLException {
         LocalDate selectedFromDate = fromDate.getValue();
         LocalDate selectedToDate = toDate.getValue();
-        
+
         if (selectedFromDate != null && selectedToDate != null) {
-            List<Expense> filteredExpenses = statsServices.getExpensesFilterByDate(selectedFromDate, selectedToDate);
+            List<Expense> filteredExpenses = statsServices.getExpensesFilterByDate(selectedFromDate, selectedToDate, cbType.getValue());
             loadData(filteredExpenses);
         } else {
             System.out.println("Vui lòng chọn cả hai ngày bắt đầu và kết thúc!");
         }
     }
-    
-    
-    
+
     private void loadColumnsByMonth() {
         TableColumn<Expense, String> colCategoryId = new TableColumn<>("Số thứ tự");
         colCategoryId.setCellValueFactory(new PropertyValueFactory<>("categoryId"));
         colCategoryId.setPrefWidth(100);
-        
+
         TableColumn<Expense, String> colCategoryName = new TableColumn<>("Tháng");
         colCategoryName.setCellValueFactory(new PropertyValueFactory<>("categoryName"));
         colCategoryName.setPrefWidth(200);
@@ -178,16 +214,15 @@ public class StatsController implements Initializable {
 
         tbStatsByMonth.getColumns().addAll(colCategoryId, colCategoryName, colAmount);
     }
-    
-    private void loadDataByMonth(int year) {
-    try {
-        List<Expense> expensesByMonth = statsServices.getMonthlyExpenses(year);
-        ObservableList<Expense> expenses = FXCollections.observableArrayList(expensesByMonth);
-        tbStatsByMonth.setItems(expenses);
-    } catch (SQLException ex) {
-        Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
-    }
-}
 
+    private void loadDataByMonth() {
+        try {
+            List<Expense> expensesByMonth = statsServices.getMonthlyExpenses(cbType.getValue());
+            ObservableList<Expense> expenses = FXCollections.observableArrayList(expensesByMonth);
+            tbStatsByMonth.setItems(expenses);
+        } catch (SQLException ex) {
+            Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
 }

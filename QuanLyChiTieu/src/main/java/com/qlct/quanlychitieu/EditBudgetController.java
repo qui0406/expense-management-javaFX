@@ -18,6 +18,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -63,7 +64,19 @@ public class EditBudgetController implements Initializable {
         btnEditBudget.setOnAction(e -> {
             try {
                 int budgetId = editingBudget.getId();
-                budgetServices.updateBudgetTODB(txtInputBudget.getText(), budgetId);
+                double amount = editingBudget.getAmountBudget();
+                if (budgetServices.isBudgetValid(Double.parseDouble(txtInputBudget.getText()), amount)==true) {
+                    budgetServices.updateBudgetTODB(txtInputBudget.getText(), budgetId);
+                }
+                else {
+                    Platform.runLater(() -> {
+                    lblStatusInEdit.setText("Ngân sách không hợp lệ. "
+                            + "Bạn đã chi tiêu trong tháng này. "
+                            + "Vui lòng nhập ngân sách mới lớn hơn hoặc bằng ngân sách hiện tại!!!");
+                    lblStatusInEdit.setStyle("-fx-text-fill: red;");
+                });
+                return;    //Dung thuc hien neu ngan sach khong hop le
+                }
             } catch (SQLException ex) {
                 budgetServices.updateStatus(lblStatusInEdit, "❌ Lỗi kết nối CSDL", "-fx-text-fill: red;");
                 ex.printStackTrace(); //In ra lỗi console để debug
@@ -98,7 +111,7 @@ public class EditBudgetController implements Initializable {
                     Budget budget = getTableRow().getItem();
                     int categoryId = budget.getCategoryId();
                     try {
-                        String name = categoryServices.getCategoryById(categoryId);
+                        String name = categoryServices.getCategoryByIdForBudget(categoryId);
                         setText(name != null ? name : "Không xác định");
                     } catch (Exception e) {
                         setText("Lỗi");

@@ -7,16 +7,19 @@ package com.qlct.quanlychitieu;
 //import com.mysql.cj.util.Util;
 import com.qlct.pojo.Category;
 import com.qlct.pojo.Transaction;
+import com.qlct.pojo.User;
 import com.qlct.services.CategoryServices;
 import com.qlct.services.TransactionServices;
 import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -44,6 +47,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -77,6 +81,12 @@ public class FXTransactionsController implements Initializable {
     private DatePicker dpFilterDate;
     @FXML
     private Button btnFilter;
+    @FXML
+    private Text txtUsername;
+    @FXML
+    private Text txtTotalAmount;
+    @FXML
+    private Text txtExpenseAmount;
     /**
      * Initializes the controller class.
      */
@@ -100,6 +110,14 @@ public class FXTransactionsController implements Initializable {
             }
         } catch (SQLException ex) {
             Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // Hiển thị username của người dùng hiện tại
+        User currentUser = UserSessionServices.getCurrentUser();
+        if (currentUser != null) {
+            txtUsername.setText(currentUser.getUsername());
+        } else {
+            txtUsername.setText("Chưa đăng nhập");
         }
 
         btDate.setValue(LocalDate.now());
@@ -150,7 +168,10 @@ public class FXTransactionsController implements Initializable {
 
         try {
             List<Transaction> filteredTransactions = tranService.getTransactionsByDateRange(startDate, endDate);
-            tbTransaction.setItems(FXCollections.observableList(filteredTransactions));
+//            tbTransaction.setItems(FXCollections.observableList(filteredTransactions));
+            ObservableList<Transaction> transactions = FXCollections.observableList(filteredTransactions);
+            tbTransaction.setItems(transactions);
+            updateTotalAmount(transactions);
         } catch (SQLException ex) {
             Utils.getAlert("Lỗi khi lọc giao dịch: " + ex.getMessage()).show();
             Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
@@ -174,24 +195,64 @@ public class FXTransactionsController implements Initializable {
         TransactionServices tranService = new TransactionServices();
 
         try {
-            this.tbTransaction.setItems(FXCollections.observableList(tranService.getAllTran()));
+//            this.tbTransaction.setItems(FXCollections.observableList(tranService.getAllTran()));
+            ObservableList<Transaction> transactions = FXCollections.observableList(tranService.getAllTran());
+            this.tbTransaction.setItems(transactions);
+            updateTotalAmount(transactions);
         } catch (SQLException ex) {
             Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void updateTotalAmount(ObservableList<Transaction> transactions) {
+        NumberFormat currencyFormat = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
+        currencyFormat.setMinimumFractionDigits(2);
+        currencyFormat.setMinimumFractionDigits(2);
+
+        double incomeAmount = transactions.stream()
+                .filter(t -> {
+                    Category category = categoryCache.get(t.getCategoryId());
+                    return category != null && "Thu".equals(category.getType());
+                })
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+        double expenseAmount = transactions.stream()
+                .filter(t -> {
+                    Category category = categoryCache.get(t.getCategoryId());
+                    return category != null && "Chi".equals(category.getType());
+                })
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        // Cập nhật tổng Thu
+        if (incomeAmount > 0) {
+            txtTotalAmount.setText(currencyFormat.format(incomeAmount) + " VND");
+            txtTotalAmount.setVisible(true);
+        } else {
+            txtTotalAmount.setVisible(false); // Ẩn nếu bằng 0
+        }
+
+        // Cập nhật tổng Chi
+        if (expenseAmount > 0) {
+            txtExpenseAmount.setText(currencyFormat.format(expenseAmount) + " VND");
+            txtExpenseAmount.setVisible(true);
+        } else {
+            txtExpenseAmount.setVisible(false); // Ẩn nếu bằng 0
         }
     }
 
     public void loadColumns() {
         TableColumn<Transaction, Double> colAmount = new TableColumn<>("Số tiền");
         colAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
-        colAmount.setPrefWidth(150);
+        colAmount.setPrefWidth(100);
 
         TableColumn<Transaction, String> colNote = new TableColumn<>("Ghi chú");
         colNote.setCellValueFactory(new PropertyValueFactory<>("note"));
-        colNote.setPrefWidth(200);
+        colNote.setPrefWidth(140);
 
         TableColumn<Transaction, LocalDate> colDate = new TableColumn<>("Ngày");
         colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
-        colDate.setPrefWidth(160);
+        colDate.setPrefWidth(100);
 
         TableColumn<Transaction, Integer> colCate = new TableColumn<>("Danh mục");
         colCate.setCellValueFactory(new PropertyValueFactory<>("categoryId"));
@@ -207,7 +268,7 @@ public class FXTransactionsController implements Initializable {
                 }
             }
         });
-        colCate.setPrefWidth(145);
+        colCate.setPrefWidth(120);
 
         TableColumn<Transaction, Void> colAction = new TableColumn<>();
         colAction.setCellFactory(tc -> new TableCell<>() {
@@ -218,11 +279,23 @@ public class FXTransactionsController implements Initializable {
             {
                 btnDelete.setOnAction(evt -> {
                     Transaction tran = getTableView().getItems().get(getIndex());
-                    int id = tran.getIdTran();
-                    TransactionServices ts = new TransactionServices();
-                    ts.deleteTransaction(id);
-                    Utils.getAlert("Xóa thành công!").show();
-                    loadTableData();
+
+                    // Thêm hộp thoại xác nhận
+                    Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirmation.setTitle("Xác nhận xóa");
+                    confirmation.setHeaderText("Bạn có chắc chắn muốn xóa giao dịch này?");
+                    confirmation.setContentText("Số tiền: " + tran.getAmount() + "\n"
+                            + "Ngày: " + tran.getDate() + "\n"
+                            + "Ghi chú: " + tran.getNote());
+
+                    confirmation.showAndWait().ifPresent(response -> {
+                        if (response == javafx.scene.control.ButtonType.OK) {
+                            TransactionServices ts = new TransactionServices();
+                            ts.deleteTransaction(tran.getIdTran());
+                            Utils.getAlert("Xóa thành công!").show();
+                            loadTableData();
+                        }
+                    });
                 });
 
                 btnEdit.setOnAction(evt -> {
@@ -280,19 +353,6 @@ public class FXTransactionsController implements Initializable {
             String note = txtNote.getText();
             LocalDate date = btDate.getValue();
             Category selectedCategory = cbCates.getSelectionModel().getSelectedItem();
-            if (amount <= 0 || amount > 1_000_000_000_000.0) {
-                Utils.getAlert("Số tiền phải lớn hơn 0 và không vượt quá 1,000,000,000,000!").show();
-                return;
-            }
-            if (date.isAfter(LocalDate.now())) {
-                Utils.getAlert("Ngày giao dịch không được vượt quá ngày hiện tại!").show();
-                return;
-            }
-            if (date == null || selectedCategory == null) {
-                Utils.getAlert("Vui lòng điền đầy đủ thông tin!").show();
-                return;
-            }
-
             TransactionServices ts = new TransactionServices();
             ts.updateTransaction(transactionId, amount, selectedCategory.getId(), date, note, UserSessionServices.getCurrentUser().getId());
 
@@ -301,6 +361,8 @@ public class FXTransactionsController implements Initializable {
             loadTableData();
         } catch (NumberFormatException ex) {
             Utils.getAlert("Số tiền phải là một số hợp lệ!").show();
+        } catch (IllegalArgumentException ex) {
+            Utils.getAlert(ex.getMessage()).show();
         }
     }
 
@@ -311,16 +373,8 @@ public class FXTransactionsController implements Initializable {
             LocalDate date = btDate.getValue();
             Category selectedCategory = cbCates.getSelectionModel().getSelectedItem();
 
-            if (amount <= 0 || amount > 1_000_000_000_000.0) {
-                Utils.getAlert("Số tiền phải lớn hơn 0 và không vượt quá 1,000,000,000,000!").show();
-                return;
-            }
-            if (date.isAfter(LocalDate.now())) {
-                Utils.getAlert("Ngày giao dịch không được vượt quá ngày hiện tại!").show();
-                return;
-            }
-            if (date == null || selectedCategory == null) {
-                Utils.getAlert("Vui lòng điền đầy đủ thông tin!").show();
+            if (selectedCategory == null) {
+                Utils.getAlert("Vui lòng chọn danh mục!").show();
                 return;
             }
             TransactionServices ts = new TransactionServices();
@@ -333,6 +387,8 @@ public class FXTransactionsController implements Initializable {
             loadTableData();
         } catch (NumberFormatException ex) {
             Utils.getAlert("Số tiền phải là một số hợp lệ!").show();
+        } catch (IllegalArgumentException ex) {
+            Utils.getAlert(ex.getMessage()).show();
         }
     }
 
@@ -346,6 +402,10 @@ public class FXTransactionsController implements Initializable {
 
     public void clearHandler(ActionEvent e) {
         clearForm();
+    }
+    @FXML
+    private void switchBCTK() throws IOException {
+        App.setRoot("baocaothongketheobang", 935, 750);
     }
 
     public void editCategory(MouseEvent e) throws IOException {

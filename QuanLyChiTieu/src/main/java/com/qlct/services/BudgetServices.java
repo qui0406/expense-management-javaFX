@@ -37,6 +37,12 @@ public class BudgetServices {
     Label lblStatus;
     @FXML
     Label lblStatusInEdit;
+    @FXML
+    Label lblTotal;
+    @FXML
+    Label lblTotalMoneyUsed;
+    private double totalBudget;
+    private double totalUsed;
 
     public void setLblStatus(Label lblStatus) {
         this.lblStatus = lblStatus;
@@ -44,6 +50,32 @@ public class BudgetServices {
 
     public void setLblStatusInEdit(Label lblStatusInEdit) {
         this.lblStatusInEdit = lblStatusInEdit;
+    }
+
+    public void setLblTotal(Label lblTotal) {
+        totalBudget = sumBudgetInMonth();
+        lblTotal.setText(String.format("%,d VND", (int) totalBudget));
+        this.lblTotal = lblTotal;
+    }
+
+    public void setLblTotalMoneyUsed(Label lblTotalMoneyUsed) {
+        totalUsed = sumMoneyUsedInMonth();
+        lblTotalMoneyUsed.setText(String.format("%,d VND", (int) totalUsed));
+        this.lblTotalMoneyUsed = lblTotalMoneyUsed;
+    }
+
+    /**
+     * @return the totalBudget
+     */
+    public double getTotalBudget() {
+        return totalBudget;
+    }
+
+    /**
+     * @return the totalUsed
+     */
+    public double getTotalUsed() {
+        return totalUsed;
     }
 
     public void updateStatus(Label label, String message, String style) {
@@ -112,7 +144,7 @@ public class BudgetServices {
         }
     }
 
-    public double sumMethod() {
+    public double sumBudgetInMonth() {
         LocalDate currentDate = LocalDate.now();
         int currentUserId = UserSessionServices.getCurrentUser().getId();
         int currentMonth = currentDate.getMonthValue();
@@ -137,6 +169,31 @@ public class BudgetServices {
         return total;
     }
 
+    public double sumMoneyUsedInMonth() {
+        LocalDate currentDate = LocalDate.now();
+        int currentUserId = UserSessionServices.getCurrentUser().getId();
+        int currentMonth = currentDate.getMonthValue();
+        int currentYear = currentDate.getYear();
+        double total = 0.0; // Bien luu gia tri tong chi tieu
+        String sql = "SELECT SUM(t.amount) "
+                + "FROM transaction t JOIN categories c ON t.category_id = c.id "
+                + "WHERE c.type = N'Chi' AND t.user_id =  ? AND MONTH(t.date) = ? AND YEAR(t.date) = ?";
+        try (Connection conn = JdbcUtils.getConn()) {
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setInt(1, currentUserId);
+            stm.setInt(2, currentMonth);
+            stm.setInt(3, currentYear);
+            ResultSet rs = stm.executeQuery();
+
+            if (rs.next()) {
+                total = rs.getDouble(1);    // Lay gia tri tong
+            }
+        } catch (SQLException e) {
+            System.out.println("Không thể truy xuất dữ liệu");
+        }
+        return total;
+    }
+
     public boolean isBudgetValid(double newBudget, double totalSpent) {
         return newBudget >= totalSpent;
     }
@@ -144,10 +201,7 @@ public class BudgetServices {
     public void updateBudgetTODB(String input, int budgetId) throws SQLException {
         int currentUserId = UserSessionServices.getCurrentUser().getId();
         double amount = validateInput(input);
-        double totalSpent = sumMethod();
-
         try (Connection conn = JdbcUtils.getConn()) {
-            if (isBudgetValid(amount, totalSpent)) {
                 try (PreparedStatement stm2 = conn.prepareCall("UPDATE budget SET amountBudget =  ? WHERE id = ? AND userId = ?")) {
                     stm2.setDouble(1, amount);
                     stm2.setInt(2, budgetId);
@@ -164,17 +218,9 @@ public class BudgetServices {
                         }
                     });
                 }
-            } else {
-                Platform.runLater(() -> {
-                    lblStatusInEdit.setText("Ngân sách không hợp lệ. "
-                            + "Bạn đã chi tiêu trong tháng này. "
-                            + "Vui lòng nhập ngân sách mới lớn hơn hoặc bằng ngân sách hiện tại!!!");
-                    lblStatusInEdit.setStyle("-fx-text-fill: red;");
-                });
-                return;    //Dung thuc hien neu ngan sach khong hop le
             }
-        }
     }
+
 
     public boolean isBudgetExistForCurrentMonth(int id, boolean byCategory) {
         LocalDate currentDate = LocalDate.now();
@@ -184,9 +230,13 @@ public class BudgetServices {
 
         String sql;
         if (byCategory == true) {
-            sql = "SELECT id, createdDate FROM budget WHERE MONTH(createdDate) = ? AND YEAR(createdDate) = ? AND userId = ? AND categoryId = ?";
+            sql = "SELECT id, createdDate "
+                    + "FROM budget "
+                    + "WHERE MONTH(createdDate) = ? AND YEAR(createdDate) = ? AND userId = ? AND categoryId = ?";
         } else {
-            sql = "SELECT id, createdDate FROM budget WHERE MONTH(createdDate) = ? AND YEAR(createdDate) = ? AND userId = ? AND id = ?";
+            sql = "SELECT id, createdDate "
+                    + "FROM budget "
+                    + "WHERE MONTH(createdDate) = ? AND YEAR(createdDate) = ? AND userId = ? AND id = ?";
         }
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);

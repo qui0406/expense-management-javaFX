@@ -27,10 +27,13 @@ import javafx.stage.Stage;
  * @author DELL
  */
 public class SelectModeController implements Initializable {
+
     BudgetServices budgetServices = new BudgetServices();
 
-    @FXML Button btBudget;
-    @FXML Pane contentPane;
+    @FXML
+    Button btBudget;
+    @FXML
+    Pane contentPane;
 
     /**
      * Initializes the controller class.
@@ -49,10 +52,6 @@ public class SelectModeController implements Initializable {
     }
 
     public void switchToBudget(ActionEvent event) throws IOException {
-            App.setContentPane(contentPane, "budget");
+        App.setContentPane(contentPane, "budget");
     }
-    
-    
-    
-    
 }

@@ -1,26 +1,39 @@
 /*
  * Empty Stylesheet file.
  */
+#txtUsername {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-fill: #ffffff; /* Màu chữ trắng */
+}
 
 .table-row-cell.expense .table-cell {
     -fx-text-fill: red;
 }
 
 .table-row-cell.income .table-cell {
-    -fx-text-fill: #2D82B5; 
+    -fx-text-fill: #2D82B5;
 }
 
-VBox{
-    -fx-background-color:#F0F5F9;
+AnchorPane {
+    -fx-background-color: #f0f8ff;
     -fx-padding: 20px;  /* Khoảng cách từ các thành phần tới VBox */
     -fx-spacing: 15px;
 }
+AnchorPane.sideBar{
+    -fx-background-color: #91cde9;
 
+}
 Text.Subject {
     -fx-font-size: 30;
     -fx-font-weight: bold;
     -fx-text-fill: #2D82B5;
-    -fx-text-alignment: center;
+    /*    -fx-text-alignment: center;*/
+}
+.button.btnSideBar{
+    -fx-background-color: #F0F5F9;
+    -fx-text-fill: black;
+
 }
 .button {
     -fx-background-color: #2D82B5;
@@ -28,17 +41,21 @@ Text.Subject {
     -fx-margin: 10 10;
     -fx-padding: 6 12 6 12;
 }
+
 .button:hover {
     -fx-background-color: #53A6D8;
 }
+
 HBox {
     -fx-spacing: 20px;  /* Khoảng cách giữa các ComboBox */
 }
+
 .combo-box {
     -fx-border-color: #D1D9E0;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
 }
+
 /* TextField và DatePicker */
 .text-field, .date-picker {
     -fx-border-color: #D1D9E0; /* Viền xám nhạt */
@@ -46,11 +63,13 @@ HBox {
     -fx-background-radius: 5;
     -fx-padding: 5 10 5 10;
 }
+
 .table-view {
     -fx-background-color: #FFFFFF; /* Nền trắng cho bảng */
     -fx-border-color: #E0E0E0; /* Viền mờ nhạt cho bảng */
     -fx-border-radius: 5;
 }
+
 .table-view .column-header-background {
     -fx-background-color: #88CDF6; /* Màu pastel xanh nhạt cho đầu bảng */
 }
@@ -72,4 +91,29 @@ HBox {
 .tooltip {
     -fx-background-color: #88CDF6; /* Tooltip với màu xanh nhẹ nhàng */
     -fx-text-fill: white;
+}/* Định dạng cho AnchorPane bên trái (sidebar) */
+AnchorPane#sidebar {
+    -fx-background-color: #ADD8E6; /* Màu nền xanh nhạt giống trong hình "Báo cáo thống kê" */
+    -fx-padding: 20px; /* Khoảng cách từ các thành phần tới viền của AnchorPane */
+}
+
+/* Định dạng cho Text trong sidebar (UserName) */
+AnchorPane#sidebar Text {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2D82B5; /* Màu chữ xanh đậm, đồng bộ với giao diện */
+}
+
+/* Định dạng cho Button trong sidebar */
+AnchorPane#sidebar .button {
+    -fx-background-color: #2D82B5; /* Màu nền xanh đậm giống các button khác */
+    -fx-text-fill: white;
+    -fx-padding: 6 12 6 12;
+    -fx-background-radius: 5; /* Bo góc cho button */
+    -fx-pref-width: 120px; /* Chiều rộng cố định cho button */
+    -fx-margin: 10 0; /* Khoảng cách trên dưới giữa các button */
+}
+
+AnchorPane#sidebar .button:hover {
+    -fx-background-color: #53A6D8; /* Màu khi hover, đồng bộ với các button khác */
 }

@@ -8,9 +8,9 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
@@ -31,29 +31,25 @@ public class AuthController implements Initializable{
     @FXML private CheckBox ckValid;
     @FXML private Button btnRegister;
     
-    
     @FXML
     private void checkLogin() throws SQLException, IOException{
         String username = txtUsername.getText();
         String password = txtPassword.getText();
         
         if(LoginServices.checkUserAuth(username, password)){
-            showAlertLogin("Login successful", null, "Successful");
             UserSessionServices.login(username);
-            App.setRoot("selectmode");
+            App.setRoot("selectmode", 950, 750);
         }
         else {
-            showAlertLogin("Incorrect", null, "Incorrect");
+            Utils.showAlertLogin("Incorrect", null, "Incorrect");
         }
     }
     
     @FXML
     private void switchRegister() throws IOException{
-        App.setRoot("register");
+        App.setRoot("register", 650, 500);
     }
     
-    
-  
     
     @FXML
     private void btnRegisterHandler() throws SQLException, IOException{
@@ -67,17 +63,21 @@ public class AuthController implements Initializable{
         String mess= isValidPassword(firstName, lastName, username, password, confirmPassword);
         if (mess.equals("")){
             if(LoginServices.registerUser(firstName, lastName, username, password, email)){
-                showAlertLogin("Lưu thành công", null, "Lưu thành công");
-                App.setRoot("login");
+                App.setRoot("login", 650, 500);
             }else {
-                showAlertLogin("Lưu thất bại", null, "Lưu thất bại");
+                Utils.showAlertLogin("Lưu thất bại", null, "Lưu thất bại");
             }
         }
         else{
-            showAlertLogin(mess, null, mess);
-            
+            Utils.showAlertLogin(mess, null, mess);    
         }
     }
+    
+    @FXML
+    private void switchLogin() throws IOException{
+        App.setRoot("login", 650, 500);
+    }
+      
     
     public boolean checkIsEmptyFirstName(String firstName){
         return firstName.isEmpty();
@@ -171,12 +171,6 @@ public class AuthController implements Initializable{
     
     
     
-    private void showAlertLogin(String info, String header, String title){
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText(info);
-        alert.setHeaderText(header);
-        alert.showAndWait();
-    }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
