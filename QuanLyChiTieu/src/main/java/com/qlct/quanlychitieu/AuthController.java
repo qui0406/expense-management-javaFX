@@ -38,7 +38,7 @@ public class AuthController implements Initializable{
         
         if(LoginServices.checkUserAuth(username, password)){
             UserSessionServices.login(username);
-            App.setRoot("FXTransactions", 950, 750);
+            App.setRoot("selectmode", 950, 750);
         }
         else {
             Utils.showAlertLogin("Incorrect", null, "Incorrect");
