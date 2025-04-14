@@ -33,7 +33,7 @@ public class LoginServices {
     }
     
     public static boolean registerUser(String firstName, String lastName, String username, String password, String email) throws SQLException {
-        String sql = "INSERT INTO user (username, password, email, firstName, lastName, createdDate) VALUES (?, ?, ?,  ? , ?, NOW())";
+        String sql = "INSERT INTO user (username, password, email, first_name, last_name, created_date) VALUES (?, ?, ?,  ? , ?, NOW())";
          
         // Băm mật khẩu bằng BCrypt
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt(12));

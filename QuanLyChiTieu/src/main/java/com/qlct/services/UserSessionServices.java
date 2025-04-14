@@ -26,13 +26,13 @@ public class UserSessionServices {
     }
     
     public User getDataUser() throws SQLException{
-         String sql = "SELECT id, firstName, lastName, email FROM user WHERE username = ?";
+         String sql = "SELECT id, first_name, last_name, email FROM user WHERE username = ?";
         try (Connection conn = JdbcUtils.getConn()){
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, username);
             ResultSet rs = stm.executeQuery();
             if(rs.next()){
-                currentUser = new User(rs.getInt("id"), rs.getString("firstName"), rs.getString("lastName"), username,  rs.getString("email"));
+                currentUser = new User(rs.getInt("id"), rs.getString("first_name"), rs.getString("last_name"), username,  rs.getString("email"));
             }
             return currentUser;
         }
