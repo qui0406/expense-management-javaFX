@@ -8,7 +8,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 */
 
 VBox{
-    -fx-background-color:#F0F5F9;
+    -fx-background-color:#f0f8ff;
     -fx-padding: 15;  /* Khoảng cách từ các thành phần tới VBox */
     /*    -fx-spacing: 15;*/
 }

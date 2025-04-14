@@ -29,7 +29,7 @@ public class TransactionServices {
         int currentUserId = UserSessionServices.getCurrentUser().getId();
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(
-                    "SELECT * FROM transactions WHERE date BETWEEN ? AND userId = ?");
+                    "SELECT * FROM transactions WHERE date BETWEEN ? AND ? AND userId = ?");
             stm.setDate(1, java.sql.Date.valueOf(startDate));
             stm.setDate(2, java.sql.Date.valueOf(endDate));
             stm.setInt(3, currentUserId);
@@ -83,7 +83,7 @@ public class TransactionServices {
             stm.setDate(3, Date.valueOf(date));
             stm.setString(4, note);
             stm.setInt(5, userId);
-            stm.setInt(5, id);
+            stm.setInt(6, id);
 
             stm.executeUpdate();
         } catch (SQLException e) {
