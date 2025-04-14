@@ -30,41 +30,44 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 /**
  *
  * @author QUI
  */
-public class ChartController implements Initializable {
+public class ChartController implements Initializable{
+    @FXML private ComboBox<String> cbChoseChart;
+    
+    @FXML private ComboBox<String> cbTypeChart;
 
-    @FXML
-    private ComboBox<String> cbChoseChart;
-
-    @FXML
-    private ComboBox<String> cbTypeChart;
-
-    @FXML
-    private PieChart pieChart;
-    @FXML
-    private LineChart lineChart;
-    @FXML
-    private BarChart barChart;
-
+    @FXML private PieChart pieChart;
+    @FXML private LineChart lineChart;
+    @FXML private BarChart barChart;
+    
     @FXML
     private DatePicker fromDateChart;
     @FXML
     private DatePicker toDateChart;
     @FXML
     private Button btnFilterChart;
-
+    
+    @FXML private Label lbUsernameChart;
+    
+    @FXML private ImageView imgViewChart;
+    
     private final StatsServices statsServices;
-
+    
+   
+    
     public ChartController() {
         this.statsServices = new StatsServices();
     }
 
-    public void loadComboBoxChart() {
+    public void loadComboBoxChart(){
         cbChoseChart.setValue("Thống kê theo biểu đồ");
         List<String> choiceBox = new ArrayList<>();
         choiceBox.add("Thống kê theo biểu đồ");
@@ -72,8 +75,8 @@ public class ChartController implements Initializable {
         cbChoseChart.setItems(FXCollections.observableList(choiceBox));
         cbChoseChart.setValue("Thống kê theo biểu đồ");
     }
-
-    public void loadComboBoxType() {
+    
+    public void loadComboBoxType(){
         cbTypeChart.setValue("Chi");
         List<String> choice = new ArrayList<>();
         choice.add("Chi");
@@ -84,33 +87,36 @@ public class ChartController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        if (cbChoseChart == null) {
-            System.out.println("cbChoseTable is null - check your FXML file!");
-        } else {
-            loadComboBoxChart();
-            loadComboBoxType();
-            cbChoseChart.setOnAction(event -> handleComboBoxChart());
+        Utils.loadUsername(lbUsernameChart);
+       if (cbChoseChart == null) {
+        System.out.println("cbChoseTable is null - check your FXML file!");
+    } else {
+           loadComboBoxChart();
+           loadComboBoxType();
+           cbChoseChart.setOnAction(event -> handleComboBoxChart());
+           
+           try {
+               loadData(statsServices.getExpenseCurrentMonth(cbTypeChart.getValue()));
+               loadDataByMonth();
+           } catch (SQLException ex) {
+               Logger.getLogger(ChartController.class.getName()).log(Level.SEVERE, null, ex);
+           }
 
-            try {
-                loadData(statsServices.getExpenseCurrentMonth(cbTypeChart.getValue()));
-                loadDataByMonth();
-            } catch (SQLException ex) {
-                Logger.getLogger(ChartController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            // Khi bam vao chon loai thu/chi
+           // Khi bam vao chon loai thu/chi
             cbTypeChart.setOnAction(event -> {
                 try {
                     fromDateChart.setValue(null); // Reset fromDate
                     toDateChart.setValue(null); // Reset toDate
                     loadData(statsServices.getExpenseCurrentMonth(cbTypeChart.getValue()));
-
+                    
                     loadDataByMonth();
                 } catch (SQLException ex) {
                     Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-
+            
+            
+            
             // Gán sự kiện bấm nút lọc sau khi khối try-catch kết thúc
             btnFilterChart.setOnAction(event -> {
                 try {
@@ -119,22 +125,23 @@ public class ChartController implements Initializable {
                     Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-
+           
         }
     }
-
-    private void filterDate(Event e) throws SQLException {
+    
+    private void filterDate(Event e) throws SQLException{
         LocalDate selectedFromDate = fromDateChart.getValue();
         LocalDate selectedToDate = toDateChart.getValue();
-
+        
         if (selectedFromDate != null && selectedToDate != null) {
             List<Expense> filteredExpenses = statsServices.getExpensesFilterByDate(selectedFromDate, selectedToDate, cbTypeChart.getValue());
             loadData(filteredExpenses);
         } else {
-            System.out.println("Vui lòng chọn cả hai ngày bắt đầu và kết thúc!");
+            Utils.showAlert("Vui lòng chọn cả hai ngày bắt đầu và kết thúc!", null, "Vui lòng chọn cả hai ngày bắt đầu và kết thúc!");
+
         }
     }
-
+    
     private void handleComboBoxChart() {
         String selectedOption = cbChoseChart.getValue();
         if (selectedOption.equals("Thống kê theo bảng")) {
@@ -144,20 +151,19 @@ public class ChartController implements Initializable {
             switchSceneChart("baocaothongketheobieudo.fxml");
         }
     }
-
+    
     private void switchSceneChart(String fxmlFile) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             Parent root = loader.load();
-
             Stage stage = (Stage) cbChoseChart.getScene().getWindow();
             stage.setScene(new Scene(root));
         } catch (IOException e) {
-
+            
         }
     }
-
-    private void loadPieChart(List<Expense> expenses) throws SQLException {
+     
+    private void loadPieChart(List<Expense> expenses) throws SQLException{
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         for (Expense expense : expenses) {
             System.out.println(expense);
@@ -168,7 +174,7 @@ public class ChartController implements Initializable {
         pieChart.setLabelsVisible(true);
         pieChart.setLegendVisible(true);
     }
-
+    
     private void loadLineChart(List<Expense> expenses) {
         lineChart.getData().clear();
         lineChart.setTitle("Biểu đồ xu hướng chi tiêu");
@@ -181,7 +187,7 @@ public class ChartController implements Initializable {
         }
         lineChart.getData().add(series);
     }
-
+    
     private void loadBarChart(List<Expense> expenses) {
         barChart.getData().clear();
         barChart.setTitle("Chi tiêu theo danh mục");
@@ -196,6 +202,7 @@ public class ChartController implements Initializable {
         barChart.getData().add(series);
     }
 
+    
     private void loadData(List<Expense> expenseList) throws SQLException {
         if (expenseList == null || expenseList.isEmpty()) {
             pieChart.setVisible(false);
@@ -213,6 +220,7 @@ public class ChartController implements Initializable {
         loadLineChart(expenseList);
     }
 
+    
     private void loadDataByMonth() {
         try {
             List<Expense> expensesByMonth = statsServices.getMonthlyExpenses(cbTypeChart.getValue());
@@ -231,8 +239,4 @@ public class ChartController implements Initializable {
         }
     }
 
-    @FXML
-    private void switchTransaction() throws IOException {
-        App.setRoot("FXTransactions", 935, 750);
-    }
 }

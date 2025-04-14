@@ -42,7 +42,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
@@ -89,19 +88,17 @@
       </Label>
       <Pane layoutY="1.0" prefHeight="750.0" prefWidth="198.0" style="-fx-background-color: skyblue;" stylesheets="@style/baocaothongketheobang.css">
          <children>
-            <ImageView fitHeight="46.0" fitWidth="71.0" layoutX="62.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@Screenshot%202025-03-15%20150924.png" />
-               </image>
-            </ImageView>
-            <Label layoutX="60.0" layoutY="97.0" text="Username">
+            <Label fx:id="lbUsernameChart" layoutX="31.0" layoutY="72.0" text="Username">
+
                <font>
                   <Font size="16.0" />
                </font>
             </Label>
-            <Button layoutX="26.0" layoutY="146.0" mnemonicParsing="false" onAction="#switchTransaction" prefHeight="29.0" prefWidth="141.0" styleClass="btnSideBar" text="Thêm giao dịch" />
-            <Button layoutX="26.0" layoutY="197.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="141.0" styleClass="btnSideBar" text="Button" />
-            <Button layoutX="26.0" layoutY="248.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="141.0" styleClass="btnSideBar" text="Báo cáo thống kê" />
+            <Button layoutX="5.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="153.0" text="Button" />
+            <Button layoutX="5.0" layoutY="158.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="153.0" text="Button" />
+            <Button layoutX="5.0" layoutY="198.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="153.0" text="Báo cáo thống kê" />
+            <ImageView fx:id="imgViewChart" fitHeight="46.0" fitWidth="51.0" layoutX="49.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true" />
+
          </children>
       </Pane>
       <ComboBox fx:id="cbTypeChart" layoutX="711.0" layoutY="138.0" prefHeight="25.0" prefWidth="78.0" promptText="Chi" />

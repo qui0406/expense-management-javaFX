@@ -34,6 +34,7 @@
                   <Font size="16.0" />
                </font>
             </Label>
+
             <Button layoutX="26.0" layoutY="146.0" mnemonicParsing="false" onAction="#switchTransaction" prefHeight="29.0" prefWidth="141.0" styleClass="btnSideBar" text="Thêm giao dịch" />
             <Button layoutX="26.0" layoutY="197.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="141.0" styleClass="btnSideBar" text="Button" />
             <Button layoutX="26.0" layoutY="248.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="141.0" styleClass="btnSideBar" text="Báo cáo thống kê" />
