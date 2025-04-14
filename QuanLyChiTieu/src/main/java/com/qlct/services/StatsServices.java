@@ -1,11 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.qlct.services;
+
 
 import com.qlct.pojo.Expense;
 import com.qlct.pojo.JdbcUtils;
+import com.qlct.services.UserSessionServices;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -14,29 +12,25 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-/**
- *
- * @author QUI
- */
+
 public class StatsServices {
     private Expense expense;
-    
+
     public List<Expense> getExpenseCurrentMonth(String type) throws SQLException {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
 
-        String sql = "SELECT categories.id, categories.name AS name, COALESCE(SUM(transactions.amount), 0) AS amount " +
-                     "FROM user " +
-                     "JOIN user_cates ON user.id = user_cates.user_id " +
-                     "JOIN categories ON user_cates.category_id = categories.id " +
-                     "LEFT JOIN transactions ON categories.id = transactions.category_id " +
-                     "WHERE user.id = ? " +
-                     "AND categories.type = ? " +
-                     "AND MONTH(transactions.date) = MONTH(CURRENT_DATE) " +
-                     "AND YEAR(transactions.date) = YEAR(CURRENT_DATE) " +
-                     "GROUP BY categories.id, categories.name " +
-                     "ORDER BY categories.id";
-
+        String sql = "SELECT category.id, category.name as name, COALESCE(SUM(transaction.amount), 0) AS amount " +
+             "FROM user, category, user_cate, transaction " +
+             "WHERE category.id = user_cate.category_id " +
+             "AND transaction.user_id = user.id " +
+             "AND user.id = ? " +
+             "AND category.type = ? " +
+             "AND MONTH(transaction.date) = MONTH(CURRENT_DATE) " +
+             "AND YEAR(transaction.date) = YEAR(CURRENT_DATE) " +
+             "GROUP BY category.id, category.name " +
+             "ORDER BY category.id";
+        
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setInt(1, userId);
@@ -52,22 +46,21 @@ public class StatsServices {
         }
         return expenseList;
     }
-    
+
     public List<Expense> getExpensesFilterByDate(LocalDate fromDate, LocalDate toDate, String type) throws SQLException {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
 
-        // Sửa lại câu truy vấn SQL
-        String sql = "SELECT categories.id, categories.name AS name, COALESCE(SUM(transactions.amount), 0) AS amount " +
-                     "FROM user " +
-                     "JOIN user_cates ON user.id = user_cates.user_id " +
-                     "JOIN categories ON user_cates.category_id = categories.id " +
-                     "LEFT JOIN transactions ON categories.id = transactions.category_id " +
-                     "WHERE user.id = ? " +
-                     "AND categories.type = ? " +
-                     "AND transactions.date BETWEEN ? AND ? " + 
-                     "GROUP BY categories.id, categories.name " +
-                     "ORDER BY categories.id";
+        String sql = "SELECT category.id, category.name as name, COALESCE(SUM(transaction.amount), 0) AS amount " +
+             "FROM user, category, user_cate, transaction " +
+             "WHERE category.id = user_cate.category_id " +
+             "AND transaction.user_id = user.id " +
+             "AND user.id = ? " +
+             "AND category.type = ? " +
+             "AND transaction.date BETWEEN ? AND ? " +
+             "GROUP BY category.id, category.name " +
+             "ORDER BY category.id";
+
 
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
@@ -88,25 +81,22 @@ public class StatsServices {
         return expenseList;
     }
 
-    
-    
     public List<Expense> getMonthlyExpenses(String type) throws SQLException {
         List<Expense> expenseList = new ArrayList<>();
-        int userId = UserSessionServices.getCurrentUser().getId();
-
-        String sql = "SELECT MONTH(transactions.date) AS month, COALESCE(SUM(transactions.amount), 0) AS total_amount " +
-                     "FROM user " +
-                     "JOIN user_cates ON user.id = user_cates.user_id " +
-                     "JOIN categories ON user_cates.category_id = categories.id " +
-                     "LEFT JOIN transactions ON categories.id = transactions.category_id " +
-                     "WHERE user.id = ? " +
-                     "AND categories.type = ? " +
-                     "AND YEAR(transactions.date) = YEAR(CURDATE()) " +
-                     "GROUP BY MONTH(transactions.date) " +
-                     "ORDER BY MONTH(transactions.date)";
+        int userId = UserSessionServices.getCurrentUser().getId();      
+        String sql="SELECT MONTH(transaction.date) AS month, COALESCE(SUM(transaction.amount), 0) AS total_amount \n" +
+                    "FROM user \n" +
+                    "JOIN user_cate ON user.id = user_cate.user_id \n" +
+                    "JOIN category ON user_cate.category_id = category.id \n" +
+                    "LEFT JOIN transaction ON category.id = transaction.category_id \n" +
+                    "WHERE user.id = ? \n" +
+                    "AND category.type = ? \n" +
+                    "AND YEAR(transaction.date) = YEAR(CURRENT_DATE) \n" +
+                    "GROUP BY MONTH(transaction.date) \n" +
+                    "ORDER BY MONTH(transaction.date);";
 
         try (Connection conn = JdbcUtils.getConn();
-            PreparedStatement stm = conn.prepareStatement(sql)) {
+             PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, userId);
             stm.setString(2, type);
 
@@ -121,5 +111,4 @@ public class StatsServices {
         }
         return expenseList;
     }
-
 }
