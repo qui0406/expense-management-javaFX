@@ -3,7 +3,6 @@ package com.qlct.services;
 
 import com.qlct.pojo.Expense;
 import com.qlct.pojo.JdbcUtils;
-import com.qlct.services.UserSessionServices;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -18,7 +17,7 @@ public class StatsServices {
 
     public List<Expense> getExpenseCurrentMonth(String type) throws SQLException {
         List<Expense> expenseList = new ArrayList<>();
-        int userId = UserSessionServices.getCurrentUser().getId();
+        int user_id = UserSessionServices.getCurrentUser().getId();
 
         String sql = "SELECT category.id, category.name as name, COALESCE(SUM(transaction.amount), 0) AS amount " +
              "FROM user, category, user_cate, transaction " +
@@ -33,7 +32,7 @@ public class StatsServices {
         
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
-            stm.setInt(1, userId);
+            stm.setInt(1, user_id);
             stm.setString(2, type);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
@@ -49,7 +48,7 @@ public class StatsServices {
 
     public List<Expense> getExpensesFilterByDate(LocalDate fromDate, LocalDate toDate, String type) throws SQLException {
         List<Expense> expenseList = new ArrayList<>();
-        int userId = UserSessionServices.getCurrentUser().getId();
+        int user_id = UserSessionServices.getCurrentUser().getId();
 
         String sql = "SELECT category.id, category.name as name, COALESCE(SUM(transaction.amount), 0) AS amount " +
              "FROM user, category, user_cate, transaction " +
@@ -64,7 +63,7 @@ public class StatsServices {
 
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
-            stm.setInt(1, userId);
+            stm.setInt(1, user_id);
             stm.setString(2, type);
             stm.setDate(3, Date.valueOf(fromDate));
             stm.setDate(4, Date.valueOf(toDate));
@@ -98,7 +97,6 @@ public class StatsServices {
         try (Connection conn = JdbcUtils.getConn();
              PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, userId);
-            stm.setString(2, type);
 
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {

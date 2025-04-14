@@ -46,20 +46,20 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="676.0" prefWidth="907.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.ChartController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="936.0" style="-fx-background-color: aliceblue;" stylesheets="@style/baocaothongketheobang.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.ChartController">
    <children>
-      <Label layoutX="355.0" layoutY="14.0" text="Báo cáo thống kê">
+      <Label layoutX="413.0" layoutY="14.0" prefHeight="46.0" prefWidth="254.0" styleClass="Subject" text="Báo cáo thống kê">
          <font>
             <Font size="31.0" />
          </font>
       </Label>
-      <ComboBox fx:id="cbChoseChart" layoutX="696.0" layoutY="80.0" onAction="#loadComboBoxChart" prefHeight="25.0" prefWidth="163.0" promptText="Thống kê theo biểu đồ" />
-      <PieChart fx:id="pieChart" layoutX="204.0" layoutY="128.0" prefHeight="225.0" prefWidth="289.0" style="-fx-background-color: pink;">
+      <ComboBox fx:id="cbChoseChart" layoutX="711.0" layoutY="102.0" onAction="#loadComboBoxChart" prefHeight="25.0" prefWidth="163.0" promptText="Thống kê theo biểu đồ" />
+      <PieChart fx:id="pieChart" layoutX="224.0" layoutY="193.0" prefHeight="235.0" prefWidth="296.0" style="-fx-background-color: pink;">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
       </PieChart>
-      <LineChart fx:id="lineChart" layoutX="554.0" layoutY="123.0" prefHeight="235.0" prefWidth="305.0" style="-fx-background-color: yellow;">
+      <LineChart fx:id="lineChart" layoutX="585.0" layoutY="193.0" prefHeight="235.0" prefWidth="296.0" style="-fx-background-color: yellow;">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
@@ -67,28 +67,29 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </LineChart>
-      <DatePicker fx:id="fromDateChart" layoutX="243.0" layoutY="80.0" prefHeight="25.0" prefWidth="132.0" />
-      <DatePicker fx:id="toDateChart" layoutX="458.0" layoutY="80.0" prefHeight="25.0" prefWidth="132.0" />
-      <Label layoutX="183.0" layoutY="84.0" text="Từ ngày" />
-      <Label layoutX="391.0" layoutY="84.0" text="Đến ngày" />
-      <Label layoutX="257.0" layoutY="362.0" text="Thống kê danh mục đã tiêu">
+      <DatePicker fx:id="fromDateChart" layoutX="277.0" layoutY="102.0" prefHeight="25.0" prefWidth="150.0" />
+      <DatePicker fx:id="toDateChart" layoutX="537.0" layoutY="102.0" prefHeight="25.0" prefWidth="150.0" />
+      <Label layoutX="224.0" layoutY="106.0" text="Từ ngày" />
+      <Label layoutX="472.0" layoutY="106.0" text="Đến ngày" />
+      <Label layoutX="277.0" layoutY="438.0" text="Thống kê danh mục đã tiêu">
          <font>
             <Font size="15.0" />
          </font>
       </Label>
-      <Label layoutX="416.0" layoutY="597.0" text="Biểu đồ tổng chi tiêu theo các tháng">
+      <Label layoutX="434.0" layoutY="683.0" text="Biểu đồ tổng chi tiêu theo các tháng">
          <font>
             <Font size="15.0" />
          </font>
       </Label>
-      <Label layoutX="603.0" layoutY="362.0" text="Thống kê danh mục đã tiêu">
+      <Label layoutX="659.0" layoutY="438.0" text="Thống kê danh mục đã tiêu">
          <font>
             <Font size="15.0" />
          </font>
       </Label>
-      <Pane prefHeight="676.0" prefWidth="163.0" style="-fx-background-color: skyblue;">
+      <Pane layoutY="1.0" prefHeight="750.0" prefWidth="198.0" style="-fx-background-color: skyblue;" stylesheets="@style/baocaothongketheobang.css">
          <children>
             <Label fx:id="lbUsernameChart" layoutX="31.0" layoutY="72.0" text="Username">
+
                <font>
                   <Font size="16.0" />
                </font>
@@ -97,10 +98,11 @@
             <Button layoutX="5.0" layoutY="158.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="153.0" text="Button" />
             <Button layoutX="5.0" layoutY="198.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="153.0" text="Báo cáo thống kê" />
             <ImageView fx:id="imgViewChart" fitHeight="46.0" fitWidth="51.0" layoutX="49.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true" />
+
          </children>
       </Pane>
-      <ComboBox fx:id="cbTypeChart" layoutX="696.0" layoutY="48.0" prefHeight="25.0" prefWidth="78.0" promptText="Chi" />
-      <BarChart fx:id="barChart" layoutX="206.0" layoutY="386.0" prefHeight="204.0" prefWidth="655.0">
+      <ComboBox fx:id="cbTypeChart" layoutX="711.0" layoutY="138.0" prefHeight="25.0" prefWidth="78.0" promptText="Chi" />
+      <BarChart fx:id="barChart" layoutX="224.0" layoutY="472.0" prefHeight="204.0" prefWidth="655.0">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
@@ -108,6 +110,6 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </BarChart>
-      <Button fx:id="btnFilterChart" layoutX="603.0" layoutY="80.0" mnemonicParsing="false" text="Lọc" />
+      <Button fx:id="btnFilterChart" layoutX="839.0" layoutY="138.0" mnemonicParsing="false" text="Lọc" />
    </children>
 </Pane>

@@ -44,6 +44,8 @@ public class TransactionServices {
     }
 
     public void addTransaction(Transaction tran) {
+        tran.validate();
+        
         try (Connection conn = JdbcUtils.getConn()) {
             String newTran = "INSERT INTO transactions (amount, note, date, category_id, userId) VALUE (?, ?, ?, ?,?)";
             PreparedStatement stm = conn.prepareStatement(newTran);
@@ -75,6 +77,8 @@ public class TransactionServices {
     }
 
     public void updateTransaction(int id, double amount, int categoryId, LocalDate date, String note, int userId) {
+        Transaction tran = new Transaction(id, amount, categoryId, date, note, userId);
+        tran.validate();
         String sql = "UPDATE transactions SET amount = ?, category_id = ?, date = ?, note = ?, userId = ? WHERE id = ?";
 
         try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql)) {
