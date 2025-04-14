@@ -4,6 +4,7 @@
  */
 package com.qlct.quanlychitieu;
 
+import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import javafx.util.Duration;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 
 /**
  *
@@ -23,7 +25,7 @@ public class Utils {
         return new Alert(Alert.AlertType.INFORMATION, content, ButtonType.OK);
     }
     
-    public static void showAlertLogin(String info, String header, String title){
+    public static void showAlert(String info, String header, String title){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setContentText(info);
         alert.setHeaderText(header);
@@ -47,5 +49,12 @@ public class Utils {
         }));
         timeline.play();
     }
+     
+    public static void loadUsername(Label lbUsername){
+           lbUsername.setText(UserSessionServices.getCurrentUser().getUsername());
+    }
+    
+    
+    
     
 }

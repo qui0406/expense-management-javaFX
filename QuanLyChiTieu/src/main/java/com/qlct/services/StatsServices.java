@@ -25,17 +25,17 @@ public class StatsServices {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
 
-        String sql = "SELECT category.id, category.name AS name, COALESCE(SUM(transaction.amount), 0) AS amount " +
+        String sql = "SELECT categories.id, categories.name AS name, COALESCE(SUM(transactions.amount), 0) AS amount " +
                      "FROM user " +
                      "JOIN user_cates ON user.id = user_cates.user_id " +
-                     "JOIN category ON user_cates.category_id = category.id " +
-                     "LEFT JOIN transaction ON category.id = transaction.categoryId " +
+                     "JOIN categories ON user_cates.category_id = categories.id " +
+                     "LEFT JOIN transactions ON categories.id = transactions.category_id " +
                      "WHERE user.id = ? " +
-                     "AND category.type = ? " +
-                     "AND MONTH(transaction.date) = MONTH(CURRENT_DATE) " +
-                     "AND YEAR(transaction.date) = YEAR(CURRENT_DATE) " +
-                     "GROUP BY category.id, category.name " +
-                     "ORDER BY category.id";
+                     "AND categories.type = ? " +
+                     "AND MONTH(transactions.date) = MONTH(CURRENT_DATE) " +
+                     "AND YEAR(transactions.date) = YEAR(CURRENT_DATE) " +
+                     "GROUP BY categories.id, categories.name " +
+                     "ORDER BY categories.id";
 
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
@@ -43,10 +43,10 @@ public class StatsServices {
             stm.setString(2, type);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                int categoryId = rs.getInt("id");
-                String categoryName = rs.getString("name");
+                int category_id = rs.getInt("id");
+                String categoriesName = rs.getString("name");
                 double sumAmount = rs.getDouble("amount");
-                expense = new Expense(categoryId, categoryName, sumAmount);
+                expense = new Expense(category_id, categoriesName, sumAmount);
                 expenseList.add(expense);
             }
         }
@@ -58,16 +58,16 @@ public class StatsServices {
         int userId = UserSessionServices.getCurrentUser().getId();
 
         // Sửa lại câu truy vấn SQL
-        String sql = "SELECT category.id, category.name AS name, COALESCE(SUM(transaction.amount), 0) AS amount " +
+        String sql = "SELECT categories.id, categories.name AS name, COALESCE(SUM(transactions.amount), 0) AS amount " +
                      "FROM user " +
                      "JOIN user_cates ON user.id = user_cates.user_id " +
-                     "JOIN category ON user_cates.category_id = category.id " +
-                     "LEFT JOIN transaction ON category.id = transaction.categoryId " +
+                     "JOIN categories ON user_cates.category_id = categories.id " +
+                     "LEFT JOIN transactions ON categories.id = transactions.category_id " +
                      "WHERE user.id = ? " +
-                     "AND category.type = ? " +
-                     "AND transaction.date BETWEEN ? AND ? " + 
-                     "GROUP BY category.id, category.name " +
-                     "ORDER BY category.id";
+                     "AND categories.type = ? " +
+                     "AND transactions.date BETWEEN ? AND ? " + 
+                     "GROUP BY categories.id, categories.name " +
+                     "ORDER BY categories.id";
 
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
@@ -78,10 +78,10 @@ public class StatsServices {
             ResultSet rs = stm.executeQuery();
 
             while (rs.next()) {
-                int categoryId = rs.getInt("id");
-                String categoryName = rs.getString("name");
+                int category_id = rs.getInt("id");
+                String categoriesName = rs.getString("name");
                 double sumAmount = rs.getDouble("amount");
-                expense = new Expense(categoryId, categoryName, sumAmount);
+                expense = new Expense(category_id, categoriesName, sumAmount);
                 expenseList.add(expense);
             }
         }
@@ -94,16 +94,16 @@ public class StatsServices {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
 
-        String sql = "SELECT MONTH(transaction.date) AS month, COALESCE(SUM(transaction.amount), 0) AS total_amount " +
+        String sql = "SELECT MONTH(transactions.date) AS month, COALESCE(SUM(transactions.amount), 0) AS total_amount " +
                      "FROM user " +
                      "JOIN user_cates ON user.id = user_cates.user_id " +
-                     "JOIN category ON user_cates.category_id = category.id " +
-                     "LEFT JOIN transaction ON category.id = transaction.categoryId " +
+                     "JOIN categories ON user_cates.category_id = categories.id " +
+                     "LEFT JOIN transactions ON categories.id = transactions.category_id " +
                      "WHERE user.id = ? " +
-                     "AND category.type = ? " +
-                     "AND YEAR(transaction.date) = YEAR(CURDATE()) " +
-                     "GROUP BY MONTH(transaction.date) " +
-                     "ORDER BY MONTH(transaction.date)";
+                     "AND categories.type = ? " +
+                     "AND YEAR(transactions.date) = YEAR(CURDATE()) " +
+                     "GROUP BY MONTH(transactions.date) " +
+                     "ORDER BY MONTH(transactions.date)";
 
         try (Connection conn = JdbcUtils.getConn();
             PreparedStatement stm = conn.prepareStatement(sql)) {

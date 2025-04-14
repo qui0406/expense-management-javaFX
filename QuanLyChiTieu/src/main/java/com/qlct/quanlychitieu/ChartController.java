@@ -30,6 +30,9 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 /**
@@ -52,7 +55,13 @@ public class ChartController implements Initializable{
     @FXML
     private Button btnFilterChart;
     
+    @FXML private Label lbUsernameChart;
+    
+    @FXML private ImageView imgViewChart;
+    
     private final StatsServices statsServices;
+    
+   
     
     public ChartController() {
         this.statsServices = new StatsServices();
@@ -78,6 +87,7 @@ public class ChartController implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        Utils.loadUsername(lbUsernameChart);
        if (cbChoseChart == null) {
         System.out.println("cbChoseTable is null - check your FXML file!");
     } else {
@@ -127,7 +137,8 @@ public class ChartController implements Initializable{
             List<Expense> filteredExpenses = statsServices.getExpensesFilterByDate(selectedFromDate, selectedToDate, cbTypeChart.getValue());
             loadData(filteredExpenses);
         } else {
-            System.out.println("Vui lòng chọn cả hai ngày bắt đầu và kết thúc!");
+            Utils.showAlert("Vui lòng chọn cả hai ngày bắt đầu và kết thúc!", null, "Vui lòng chọn cả hai ngày bắt đầu và kết thúc!");
+
         }
     }
     
@@ -145,7 +156,6 @@ public class ChartController implements Initializable{
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             Parent root = loader.load();
-            
             Stage stage = (Stage) cbChoseChart.getScene().getWindow();
             stage.setScene(new Scene(root));
         } catch (IOException e) {

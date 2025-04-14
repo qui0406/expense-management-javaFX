@@ -41,7 +41,7 @@ public class AuthController implements Initializable{
             App.setRoot("baocaothongketheobang", 950, 700);
         }
         else {
-            Utils.showAlertLogin("Incorrect", null, "Incorrect");
+            Utils.showAlert("Incorrect", null, "Incorrect");
         }
     }
     
@@ -65,11 +65,11 @@ public class AuthController implements Initializable{
             if(LoginServices.registerUser(firstName, lastName, username, password, email)){
                 App.setRoot("login", 650, 500);
             }else {
-                Utils.showAlertLogin("Lưu thất bại", null, "Lưu thất bại");
+                Utils.showAlert("Lưu thất bại", null, "Lưu thất bại");
             }
         }
         else{
-            Utils.showAlertLogin(mess, null, mess);    
+            Utils.showAlert(mess, null, mess);    
         }
     }
     
