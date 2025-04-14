@@ -3,5 +3,29 @@
  */
 
 .mainFxmlClass {
-
+    -fx-background-color: #BCE6FF;
+    -fx-padding: 20;
 }
+
+.header-text {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #015C92;
+}
+
+.progress-bar {
+    -fx-accent: #2D82B5;
+}
+
+.action-button {
+    -fx-background-color: #2D82B5;
+    -fx-text-fill: white;
+    -fx-padding: 10;
+    -fx-font-weight: bold;
+}
+
+.action-button:hover {
+    -fx-background-color: #53A6D8;
+}
+
+

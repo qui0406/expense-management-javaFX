@@ -53,7 +53,12 @@ public class CategoryServices {
         return cates;
     }
 
-    public void addCategory(Category cate) {
+    public void addCategory(Category cate) throws SQLException {
+        // Kiểm tra ràng buộc
+        cate.validate();
+        if (isCategoryNameExists(cate.getName(), cate.getType(), -1)) {
+            throw new IllegalArgumentException("Tên danh mục '" + cate.getName() + "' với loại '" + cate.getType() + "' đã tồn tại!");
+        }
         try (Connection conn = JdbcUtils.getConn()) {
             String newTran = "INSERT INTO categories (name, type, userId) VALUE (?, ?, ?)";
             PreparedStatement stm = conn.prepareStatement(newTran);
@@ -67,7 +72,15 @@ public class CategoryServices {
         }
     }
 
-    public void deleteCategory(int id) {
+    public void deleteCategory(int id) throws SQLException {
+        // Kiểm tra danh mục cố định
+        Category cate = getCategoryById(id);
+        if (cate == null) {
+            throw new SQLException("Không tìm thấy danh mục với id hợp lệ");
+        }
+        if (cate.getUserId() == 0 || cate.getUserId() == -1) {
+            throw new IllegalArgumentException("Không thể xóa danh mục cố định!");
+        }
         try (Connection conn = JdbcUtils.getConn()) {
             String delCate = "DELETE FROM categories WHERE id =  ?";
             PreparedStatement stm = conn.prepareStatement(delCate);
@@ -82,7 +95,24 @@ public class CategoryServices {
         }
     }
 
-    public void updateCategory(int id, String name, String type, int userId) {
+    public void updateCategory(int id, String name, String type, int userId) throws SQLException {
+        // Tạo đối tượng Category để validate
+        Category cate = new Category(id, name, type, userId);
+        cate.validate();
+
+        // Kiểm tra danh mục cố định
+        Category existingCate = getCategoryById(id);
+        if (existingCate == null) {
+            throw new SQLException("Không tìm thấy danh mục với id hợp lệ");
+        }
+        if (existingCate.getUserId() == 0 || existingCate.getUserId() == -1) {
+            throw new IllegalArgumentException("Không thể sửa danh mục cố định!");
+        }
+
+        // Kiểm tra tính duy nhất của tên
+        if (isCategoryNameExists(name, type, id)) {
+            throw new IllegalArgumentException("Tên danh mục '" + name + "' với loại '" + type + "' đã tồn tại!");
+        }
         String sql = "UPDATE categories SET name = ?, type = ?, userId = ? WHERE id = ?";
 
         try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql)) {
@@ -94,5 +124,78 @@ public class CategoryServices {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    // Phương thức kiểm tra tính duy nhất của tên danh mục
+    private boolean isCategoryNameExists(String name, String type, int excludeId) throws SQLException {
+        List<Category> categories = getCatetogires();
+        for (Category cate : categories) {
+            if (cate.getName().equalsIgnoreCase(name) && cate.getType().equals(type) && cate.getId() != excludeId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Phương thức hỗ trợ để lấy danh mục theo id
+    private Category getCategoryById(int id) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            PreparedStatement stm = conn.prepareStatement("SELECT * FROM categories WHERE id = ?");
+            stm.setInt(1, id);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("userId"));
+            }
+        }
+        return null;
+    }
+
+    public List<Category> getCateByTypeFromBudget(String type) throws SQLException {
+        List<Category> cates = new ArrayList<>();
+        int currentUserId = UserSessionServices.getCurrentUser().getId();
+
+        try (Connection conn = JdbcUtils.getConn()) {
+            // Chỉ chọn những category có type tồn tại trong bảng budget
+            PreparedStatement stm = conn.prepareStatement("SELECT * FROM categories \n"
+                    + "            WHERE type = ? \n"
+                    + "              AND (userId IS NULL OR userId = ?) \n"
+                    + "              AND EXISTS (\n"
+                    + "                  SELECT 1 FROM budget \n"
+                    + "                  WHERE budget.type = categories.type\n"
+                    + "              )");
+            stm.setString(1, type);
+            stm.setInt(2, currentUserId);
+
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                Category c = new Category(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("type"),
+                        rs.getInt("userId")
+                );
+                cates.add(c);
+            }
+        }
+        return cates;
+    }
+
+    // Phương thức lấy tên danh mục từ ID
+    public String getCategoryByIdForBudget(int id) {
+        String name = null; // Giá trị mặc định nếu không tìm thấy
+        String query = "SELECT name FROM categories WHERE id = ?"; // Câu truy vấn SQL
+
+        try (Connection conn = JdbcUtils.getConn(); // Kết nối đến CSDL
+                 PreparedStatement stm = conn.prepareStatement(query)) {
+
+            stm.setInt(1, id); // Thiết lập giá trị ID
+            ResultSet rs = stm.executeQuery(); // Thực thi truy vấn
+            if (rs.next()) {
+                name = rs.getString("name"); // Lấy tên danh mục từ kết quả
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Xử lý ngoại lệ
+        }
+        return name; // Trả về tên danh mục hoặc null
     }
 }

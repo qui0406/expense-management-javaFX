@@ -1,16 +1,37 @@
+.Subject {
+    -fx-font-size: 25;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2D82B5;
+    /*    -fx-text-alignment: center;*/
+}
+.txtLogin{
+    -fx-text-fill: #2D82B5;
+    -fx-font-weight: bold;
 
-.BtnLogin {
-    -fx-background-color: skyblue;
+}
+.button {
+    -fx-background-color: #2D82B5;
+    -fx-text-fill: white;
+    -fx-margin: 10 10;
+    -fx-padding: 6 12 6 12;
+}
+
+.button:hover {
+    -fx-background-color: #53A6D8;
+}
+
+/*.BtnLogin {
+    -fx-background-color: #2D82B5;
 }
 
 .BtnLogin:hover {
-    -fx-background-color: aliceblue;
+    -fx-background-color: #53A6D8;
 }
 
-.BtnSwitchRegister {
+*/.BtnSwitchRegister {
     -fx-background-color: skyblue;
 }
 
 .BtnSwitchRegister:hover {
-     -fx-background-color: aliceblue;
+    -fx-background-color: #2D82B5;
 }

@@ -18,6 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 /**
@@ -26,10 +27,13 @@ import javafx.stage.Stage;
  * @author DELL
  */
 public class SelectModeController implements Initializable {
+
     BudgetServices budgetServices = new BudgetServices();
 
-    @FXML Button btBudget;
-    @FXML Button btEditBudget;
+    @FXML
+    Button btBudget;
+    @FXML
+    Pane contentPane;
 
     /**
      * Initializes the controller class.
@@ -44,26 +48,10 @@ public class SelectModeController implements Initializable {
                 Logger.getLogger(SelectModeController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        
-        btEditBudget.setOnAction(event -> {
-            try {
-                switchToEditBudget(event);
-            } catch (IOException ex) {
-                Logger.getLogger(SelectModeController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
 
     }
 
     public void switchToBudget(ActionEvent event) throws IOException {
-        if(!budgetServices.isBudgetExistForCurrentMonth()){
-            App.setRoot("budget", 1000, 1000);
-        }
-    }
-
-    public void switchToEditBudget(ActionEvent event) throws IOException {
-        if(budgetServices.isBudgetExistForCurrentMonth()){
-            App.setRoot("editbudget", 1000, 1000);
-        }
+        App.setContentPane(contentPane, "budget");
     }
 }
