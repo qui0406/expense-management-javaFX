@@ -1,0 +1,5 @@
+.chart-label {
+    -fx-font-size: 11px;
+    -fx-fill: #333;
+    -fx-font-weight: bold;
+}

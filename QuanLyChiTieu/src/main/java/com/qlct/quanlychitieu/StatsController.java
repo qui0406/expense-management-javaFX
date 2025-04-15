@@ -61,6 +61,10 @@ public class StatsController implements Initializable {
     public  ComboBox<String> cbType;
     
     @FXML public Label lbUsername;
+    
+    @FXML public Button btnSwitchAddTransaction;
+    
+    @FXML public Button btnSwitchBudget;
 
     
     public StatsController() {
@@ -85,9 +89,14 @@ public class StatsController implements Initializable {
         cbType.setValue("Chi");
     }
     
-     @FXML
-    private void switchTransaction() throws IOException{
+    @FXML
+    public void switchTransaction() throws IOException{
         App.setRoot("FXTransactions", 900, 700);
+    }
+    
+    @FXML 
+    public void switchBudget() throws IOException{
+        App.setRoot("budget", 900, 700);
     }
 
  
@@ -134,6 +143,8 @@ public class StatsController implements Initializable {
                 }
             });
             
+            
+            
             loadColumnsByMonth();
             loadData(statsServices.getExpenseCurrentMonth(cbType.getValue()));
             
@@ -156,7 +167,7 @@ public class StatsController implements Initializable {
         }
     }
 
-    public  void switchSceneTable(String fxmlFile) {
+    public void switchSceneTable(String fxmlFile) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             Parent root = loader.load();
