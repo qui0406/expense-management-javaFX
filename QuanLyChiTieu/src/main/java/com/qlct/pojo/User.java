@@ -4,6 +4,7 @@
  */
 package com.qlct.pojo;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -19,9 +20,10 @@ public class User {
     private String password;
     private String email;
     private String avatar;
-    private DateTimeFormatter createdDate;
+    private LocalDateTime createdDate;
+    
 
-    public User(int id, String firstName, String lastName, String username, String password, String email, String avatar, DateTimeFormatter createdDate) {
+    public User(int id, String firstName, String lastName, String username, String password, String email, String avatar, LocalDateTime createdDate) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -189,14 +191,14 @@ public class User {
     /**
      * @return the createdDate
      */
-    public DateTimeFormatter getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
     /**
      * @param createdDate the createdDate to set
      */
-    public void setCreatedDate(DateTimeFormatter createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 }

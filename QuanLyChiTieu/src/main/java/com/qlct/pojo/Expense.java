@@ -140,6 +140,10 @@ public class Expense {
     public void setToDate(LocalDate toDate) {
         this.toDate = toDate;
     }
+
+    /**
+     * @return the id
+     */
     
    
 

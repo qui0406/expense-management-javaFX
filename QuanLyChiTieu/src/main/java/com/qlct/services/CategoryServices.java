@@ -125,6 +125,7 @@ public class CategoryServices {
             e.printStackTrace();
         }
     }
+
     // Phương thức kiểm tra tính duy nhất của tên danh mục
     private boolean isCategoryNameExists(String name, String type, int excludeId) throws SQLException {
         List<Category> categories = getCatetogires();
@@ -135,6 +136,7 @@ public class CategoryServices {
         }
         return false;
     }
+
     // Phương thức hỗ trợ để lấy danh mục theo id
     private Category getCategoryById(int id) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
@@ -146,5 +148,54 @@ public class CategoryServices {
             }
         }
         return null;
+    }
+
+    public List<Category> getCateByTypeFromBudget(String type) throws SQLException {
+        List<Category> cates = new ArrayList<>();
+        int currentUserId = UserSessionServices.getCurrentUser().getId();
+
+        try (Connection conn = JdbcUtils.getConn()) {
+            // Chỉ chọn những category có type tồn tại trong bảng budget
+            PreparedStatement stm = conn.prepareStatement("SELECT * FROM categories \n"
+                    + "            WHERE type = ? \n"
+                    + "              AND (userId IS NULL OR userId = ?) \n"
+                    + "              AND EXISTS (\n"
+                    + "                  SELECT 1 FROM budget \n"
+                    + "                  WHERE budget.type = categories.type\n"
+                    + "              )");
+            stm.setString(1, type);
+            stm.setInt(2, currentUserId);
+
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                Category c = new Category(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("type"),
+                        rs.getInt("userId")
+                );
+                cates.add(c);
+            }
+        }
+        return cates;
+    }
+
+    // Phương thức lấy tên danh mục từ ID
+    public String getCategoryByIdForBudget(int id) {
+        String name = null; // Giá trị mặc định nếu không tìm thấy
+        String query = "SELECT name FROM categories WHERE id = ?"; // Câu truy vấn SQL
+
+        try (Connection conn = JdbcUtils.getConn(); // Kết nối đến CSDL
+                 PreparedStatement stm = conn.prepareStatement(query)) {
+
+            stm.setInt(1, id); // Thiết lập giá trị ID
+            ResultSet rs = stm.executeQuery(); // Thực thi truy vấn
+            if (rs.next()) {
+                name = rs.getString("name"); // Lấy tên danh mục từ kết quả
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Xử lý ngoại lệ
+        }
+        return name; // Trả về tên danh mục hoặc null
     }
 }
