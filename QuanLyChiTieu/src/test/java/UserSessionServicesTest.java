@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  */
 public class UserSessionServicesTest {
    private static final String TEST_USERNAME = "test_user";
-   private static UserSessionServices userSessionServices = new UserSessionServices(TEST_USERNAME);
+   private static final UserSessionServices userSessionServices = new UserSessionServices(TEST_USERNAME);
    
    @Test
     public void testLoginAndGetCurrentUser() throws Exception {
@@ -34,6 +34,7 @@ public class UserSessionServicesTest {
             Connection conn = mock(Connection.class);
             PreparedStatement stm = mock(PreparedStatement.class);
             ResultSet rs = mock(ResultSet.class);
+            
 
             mockedJdbc.when(com.qlct.pojo.JdbcUtils::getConn).thenReturn(conn);
             when(conn.prepareStatement(anyString())).thenReturn(stm);
@@ -42,9 +43,9 @@ public class UserSessionServicesTest {
             // Giả lập dữ liệu ResultSet
             when(rs.next()).thenReturn(true);
             when(rs.getInt("id")).thenReturn(1);
-            when(rs.getString("firstName")).thenReturn("Nguyen");
-            when(rs.getString("lastName")).thenReturn("Van A");
-            when(rs.getString("email")).thenReturn("test@example.com");
+            when(rs.getString("first_name")).thenReturn("Quí");
+            when(rs.getString("last_name")).thenReturn("Trần Lê");
+            when(rs.getString("email")).thenReturn("qui@gmail.com");
 
             // Gọi login
             UserSessionServices.login(TEST_USERNAME);
@@ -52,10 +53,10 @@ public class UserSessionServicesTest {
             User currentUser = UserSessionServices.getCurrentUser();
             Assertions.assertNotNull(currentUser);
             Assertions.assertEquals(1, currentUser.getId());
-            Assertions.assertEquals("Nguyen", currentUser.getFirstName());
-            Assertions.assertEquals("Van A", currentUser.getLastName());
+            Assertions.assertEquals("Quí", currentUser.getFirstName());
+            Assertions.assertEquals("Trần Lê", currentUser.getLastName());
             Assertions.assertEquals("test_user", currentUser.getUsername());
-            Assertions.assertEquals("test@example.com", currentUser.getEmail());
+            Assertions.assertEquals("qui@gmail.com", currentUser.getEmail());
         }
     }
     
@@ -72,9 +73,9 @@ public class UserSessionServicesTest {
             when(stm.executeQuery()).thenReturn(rs);
             when(rs.next()).thenReturn(true);
             when(rs.getInt("id")).thenReturn(1);
-            when(rs.getString("firstName")).thenReturn("Nguyen");
-            when(rs.getString("lastName")).thenReturn("Van A");
-            when(rs.getString("email")).thenReturn("test@example.com");
+            when(rs.getString("first_name")).thenReturn("Trần Lê");
+            when(rs.getString("last_name")).thenReturn("Quí");
+            when(rs.getString("email")).thenReturn("qui@gmail.com");
 
             UserSessionServices.login(TEST_USERNAME);
         }
@@ -96,9 +97,9 @@ public class UserSessionServicesTest {
             when(stm.executeQuery()).thenReturn(rs);
             when(rs.next()).thenReturn(true);
             when(rs.getInt("id")).thenReturn(1);
-            when(rs.getString("firstName")).thenReturn("Nguyen");
-            when(rs.getString("lastName")).thenReturn("Van A");
-            when(rs.getString("email")).thenReturn("test@example.com");
+            when(rs.getString("first_name")).thenReturn("Trần Lê");
+            when(rs.getString("last_name")).thenReturn("Quí");
+            when(rs.getString("email")).thenReturn("qui@gmail.com");
 
             UserSessionServices.login(TEST_USERNAME);
 
