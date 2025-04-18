@@ -142,7 +142,8 @@ public class Budget {
     public String toString() {
         return "Budget{" +
                "categoryId=" + categoryId +
-               ", amountBudget=" + amountBudget +
+               ",amountBudget=" + amountBudget +
+                ",createdDate=" + createdDate +
                ", type='" + type + '\'' +
                '}';
     }
