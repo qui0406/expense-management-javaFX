@@ -94,20 +94,22 @@ public class BudgetServices {
         }
     }
 
-    public double validateInput(String input) {
+    public double validateAmount(String input) {
         if (input == null || input.trim().isEmpty()) {     // Kiem tra o nhap lieu
-            updateStatus(lblStatus, "Không được để trống ô này", "-fx-text-fill: red;");
-            return 0.0;     // Tra ve gia tri mac dinh 
+            throw new IllegalArgumentException("Không được để trống ô này");
+        }
+
+        // Kich thuoc du lieu nhap vao qua dai
+        if (input.length() > 20) {
+            throw new IllegalArgumentException("Giá trị nhập vào quá lớn");
         }
 
         // Loai bo cac so 0 du thua 
         input = input.replaceFirst("^0+(?!$)", "");
-        if (!isValidAmount(input)) {
-            Platform.runLater(() -> {
-                updateStatus(lblStatus, "Giá trị nhập vào không hợp lệ", "-fx-text-fill: red;");
-            });
-            return 0.0;     // Tra ve gia tri mac dinh 
 
+        // Kiem tra kieu gia tri nhap vao da hop le chua
+        if (!isValidAmount(input)) {
+            throw new IllegalArgumentException("Giá trị nhập vào không hợp lệ");
         }
 
         double amount = Double.parseDouble(input);
@@ -124,23 +126,26 @@ public class BudgetServices {
     }
 
     public void insertBudgetTODB(String input, String budgetType, String categoryName) throws SQLException {
-        double amount = validateInput(input);
+        double amount = validateAmount(input);
         int currentUserId = UserSessionServices.getCurrentUser().getId();
         int categoryId = getIdByName(categoryName);
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareCall("INSERT INTO budget (amountBudget, userId,type, category_id) VALUES (?,?,?,?)");
+            PreparedStatement stm = conn.prepareCall("INSERT INTO budget (amount, user_id ,type, category_id) VALUES (?,?,?,?)");
             stm.setDouble(1, amount);
             stm.setInt(2, currentUserId);
             stm.setString(3, budgetType);
             stm.setInt(4, categoryId);
-            int rowsInserted = stm.executeUpdate();
-            Platform.runLater(() -> {
-                if (rowsInserted > 0) {
-                    updateStatus(lblStatus, "✅ Thêm ngân sách thành công!", "-fx-text-fill: green;");
-                } else {
-                    updateStatus(lblStatus, "❌ Thêm ngân sách thất bại!", "-fx-text-fill: red;");
-                }
-            });
+            stm.executeUpdate();
+        }
+    }
+
+    public boolean tryInsertBudget(String input, String budgetType, String categoryName) {
+        try {
+            insertBudgetTODB(input, budgetType, categoryName);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -152,8 +157,8 @@ public class BudgetServices {
         double total = 0.0; // Bien luu gia tri tong chi tieu
 
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareStatement("SELECT SUM(amountBudget) "
-                    + "FROM budget WHERE MONTH(createdDate) = ? AND YEAR(createdDate) = ? AND userId = ? "
+            PreparedStatement stm = conn.prepareStatement("SELECT SUM(amount) "
+                    + "FROM budget WHERE MONTH(date) = ? AND YEAR(date) = ? AND user_id = ? "
                     + "AND type = N'Chi'");
             stm.setInt(1, currentMonth);
             stm.setInt(2, currentYear);
@@ -176,7 +181,7 @@ public class BudgetServices {
         int currentYear = currentDate.getYear();
         double total = 0.0; // Bien luu gia tri tong chi tieu
         String sql = "SELECT SUM(t.amount) "
-                + "FROM transaction t JOIN categories c ON t.category_id = c.id "
+                + "FROM transaction t JOIN category c ON t.category_id = c.id "
                 + "WHERE c.type = N'Chi' AND t.user_id =  ? AND MONTH(t.date) = ? AND YEAR(t.date) = ?";
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
@@ -194,33 +199,32 @@ public class BudgetServices {
         return total;
     }
 
-    public boolean isBudgetValid(double newBudget, double totalSpent) {
-        return newBudget >= totalSpent;
+    public boolean isBudgetValid(double newBudget, double oldBudget) {
+        return newBudget >= oldBudget;
     }
 
     public void updateBudgetTODB(String input, int budgetId) throws SQLException {
         int currentUserId = UserSessionServices.getCurrentUser().getId();
-        double amount = validateInput(input);
+        double amount = validateAmount(input);
         try (Connection conn = JdbcUtils.getConn()) {
-                try (PreparedStatement stm2 = conn.prepareCall("UPDATE budget SET amountBudget =  ? WHERE id = ? AND userId = ?")) {
-                    stm2.setDouble(1, amount);
-                    stm2.setInt(2, budgetId);
-                    stm2.setInt(3, currentUserId);
-                    int rowsUpdated = stm2.executeUpdate();
-
-                    Platform.runLater(() -> {
-                        if (rowsUpdated > 0) {
-                            lblStatusInEdit.setText("✅ Cập nhật ngân sách thành công!");
-                            lblStatusInEdit.setStyle("-fx-text-fill: green;");
-                        } else {
-                            lblStatusInEdit.setText("❌ Cập nhật ngân sách thất bại!");
-                            lblStatusInEdit.setStyle("-fx-text-fill: red;");
-                        }
-                    });
-                }
+            try (PreparedStatement stm2 = conn.prepareCall("UPDATE budget SET amount =  ? WHERE id = ? AND user_id = ?")) {
+                stm2.setDouble(1, amount);
+                stm2.setInt(2, budgetId);
+                stm2.setInt(3, currentUserId);
+                stm2.executeUpdate();
             }
+        }
     }
 
+    public boolean tryUpdateBudget(int budgetId, String input, String budgetType, int categoryId) {
+        try {
+            updateBudgetTODB(input, budgetId);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public boolean isBudgetExistForCurrentMonth(int id, boolean byCategory) {
         LocalDate currentDate = LocalDate.now();
@@ -230,13 +234,13 @@ public class BudgetServices {
 
         String sql;
         if (byCategory == true) {
-            sql = "SELECT id, createdDate "
+            sql = "SELECT id, date "
                     + "FROM budget "
-                    + "WHERE MONTH(createdDate) = ? AND YEAR(createdDate) = ? AND userId = ? AND categoryId = ?";
+                    + "WHERE MONTH(date) = ? AND YEAR(date) = ? AND user_id = ? AND category_id = ?";
         } else {
-            sql = "SELECT id, createdDate "
+            sql = "SELECT id, date "
                     + "FROM budget "
-                    + "WHERE MONTH(createdDate) = ? AND YEAR(createdDate) = ? AND userId = ? AND id = ?";
+                    + "WHERE MONTH(date) = ? AND YEAR(date) = ? AND user_id = ? AND id = ?";
         }
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
@@ -247,9 +251,6 @@ public class BudgetServices {
             ResultSet rs = stm.executeQuery();
 
             if (rs.next() && rs.getInt(1) > 0) {
-                int budgetId = rs.getInt("id");
-                LocalDate date = rs.getObject("createdDate", LocalDate.class);
-                System.out.println("Budget ID: " + budgetId + " | Created Date: " + date);
                 return true; // Ngân sách tồn tại
             }
 
@@ -264,17 +265,17 @@ public class BudgetServices {
         int currentUserId = UserSessionServices.getCurrentUser().getId(); // Lấy ID người dùng hiện tại
 
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM budget WHERE userId = ?");
+            PreparedStatement stm = conn.prepareStatement("SELECT * FROM budget WHERE user_id = ?");
             stm.setInt(1, currentUserId);
             ResultSet rs = stm.executeQuery();
 
             while (rs.next()) {
                 Budget budget = new Budget();
                 budget.setId(rs.getInt("id"));
-                budget.setAmountBudget(rs.getDouble("amountBudget"));
-                budget.setUserId(rs.getInt("userId"));
+                budget.setAmountBudget(rs.getDouble("amount"));
+                budget.setUserId(rs.getInt("user_id"));
                 budget.setType(rs.getString("type"));
-                budget.setCreatedDate(rs.getObject("createdDate", LocalDate.class));
+                budget.setCreatedDate(rs.getObject("date", LocalDate.class));
                 budget.setCategoryId(rs.getInt("category_id"));
                 budgets.add(budget); // Thêm ngân sách vào danh sách
             }
@@ -288,7 +289,7 @@ public class BudgetServices {
     public int getIdByName(String name) {
         int id = -1; // Giá trị mặc định nếu không tìm thấy
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareStatement("SELECT id FROM categories WHERE name = ?");
+            PreparedStatement stm = conn.prepareStatement("SELECT id FROM category WHERE name = ?");
             stm.setString(1, name);
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
@@ -298,6 +299,14 @@ public class BudgetServices {
             e.printStackTrace(); // Xử lý ngoại lệ
         }
         return id;
+    }
+
+    public boolean isBudgetWithinLimit(double expenses, double budget) {
+        if (budget == 0) {
+            return false;
+        }
+        double percentage = (expenses / budget) * 100;
+        return percentage < 80;
     }
 
 }

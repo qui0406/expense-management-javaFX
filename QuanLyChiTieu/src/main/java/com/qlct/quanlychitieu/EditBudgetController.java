@@ -62,20 +62,25 @@ public class EditBudgetController implements Initializable {
         loadTableData();
         loadColumns();
         btnEditBudget.setOnAction(e -> {
+            int budgetId = editingBudget.getId();
+            double amount = editingBudget.getAmountBudget();
+            String inputText = txtInputBudget.getText();
+            double validatedAmount = validateInput(inputText);
+            if (validatedAmount <= 0) {
+                return;
+            }
             try {
-                int budgetId = editingBudget.getId();
-                double amount = editingBudget.getAmountBudget();
-                if (budgetServices.isBudgetValid(Double.parseDouble(txtInputBudget.getText()), amount)==true) {
-                    budgetServices.updateBudgetTODB(txtInputBudget.getText(), budgetId);
-                }
-                else {
+                if (budgetServices.isBudgetValid(Double.parseDouble(inputText), amount) == true) {
+                    budgetServices.updateBudgetTODB(inputText, budgetId);
+                    handleUpdateBudget(budgetId, inputText, editingBudget.getType(), editingBudget.getCategoryId());
+                } else {
                     Platform.runLater(() -> {
-                    lblStatusInEdit.setText("Ngân sách không hợp lệ. "
-                            + "Bạn đã chi tiêu trong tháng này. "
-                            + "Vui lòng nhập ngân sách mới lớn hơn hoặc bằng ngân sách hiện tại!!!");
-                    lblStatusInEdit.setStyle("-fx-text-fill: red;");
-                });
-                return;    //Dung thuc hien neu ngan sach khong hop le
+                        lblStatusInEdit.setText("Ngân sách không hợp lệ. "
+                                + "Bạn đã chi tiêu trong tháng này. "
+                                + "Vui lòng nhập ngân sách mới lớn hơn hoặc bằng ngân sách hiện tại!!!");
+                        lblStatusInEdit.setStyle("-fx-text-fill: red;");
+                    });
+                    return;    //Dung thuc hien neu ngan sach khong hop le
                 }
             } catch (SQLException ex) {
                 budgetServices.updateStatus(lblStatusInEdit, "❌ Lỗi kết nối CSDL", "-fx-text-fill: red;");
@@ -146,5 +151,37 @@ public class EditBudgetController implements Initializable {
                 .collect(Collectors.toList());
 
         tbBudget.setItems(FXCollections.observableList(filteredBudgets));
+    }
+
+    public void updateStatus(Label label, String message, String style) {
+        Platform.runLater(() -> {
+            label.setText(message);
+            label.setStyle(style);
+        });
+    }
+
+    public double validateInput(String input) {
+        try {
+            return budgetServices.validateAmount(input);
+        } catch (IllegalArgumentException e) {
+            Platform.runLater(() -> {
+                updateStatus(lblStatusInEdit, e.getMessage(), "-fx-text-fill: red;");
+            });
+            return 0.0;
+        }
+    }
+
+    public void handleUpdateBudget(int budgetId, String input, String budgetType, int categoryId) {
+        try {
+            boolean success = budgetServices.tryUpdateBudget(budgetId, input, budgetType, categoryId);
+
+            if (success) {
+                updateStatus(lblStatusInEdit, "✅ Cập nhật ngân sách thành công!", "-fx-text-fill: green;");
+            } else {
+                updateStatus(lblStatusInEdit, "❌ Cập nhật ngân sách thất bại!", "-fx-text-fill: red;");
+            }
+        } catch (NumberFormatException e) {
+            updateStatus(lblStatusInEdit, "❌ Số tiền không hợp lệ!", "-fx-text-fill: red;");
+        }
     }
 }
