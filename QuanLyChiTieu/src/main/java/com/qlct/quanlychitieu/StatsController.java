@@ -91,7 +91,7 @@ public class StatsController implements Initializable {
     
     @FXML
     public void switchTransaction() throws IOException{
-        App.setRoot("FXTransactions", 900, 700);
+        App.setRoot("FXTransactions", 900, 750);
     }
     
     @FXML 

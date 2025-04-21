@@ -38,7 +38,7 @@ public class AuthController implements Initializable{
         
         if(LoginServices.checkUserAuth(username, password)){
             UserSessionServices.login(username);
-            App.setRoot("baocaothongketheobang", 900, 750);
+            App.setRoot("FXTransactions", 900, 750);
         }
         else {
             Utils.showAlert("Incorrect", null, "Incorrect");
