@@ -6,7 +6,6 @@ package com.qlct.quanlychitieu;
 
 import com.qlct.pojo.Expense;
 import com.qlct.services.StatsServices;
-import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -15,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,8 +26,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
@@ -65,6 +68,8 @@ public class StatsController implements Initializable {
     @FXML public Button btnSwitchAddTransaction;
     
     @FXML public Button btnSwitchBudget;
+    
+    @FXML public Button logoutStats;
 
     
     public StatsController() {
@@ -143,6 +148,8 @@ public class StatsController implements Initializable {
                 }
             });
             
+            logoutStats.setOnAction(event -> logoutStatsTable("login.fxml"));
+            
             
             
             loadColumnsByMonth();
@@ -152,6 +159,22 @@ public class StatsController implements Initializable {
         } catch (SQLException ex) {
             Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        fromDate.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                setDisable(empty || date.isAfter(LocalDate.now())); // Không cho chọn sau hôm nay
+            }
+        });
+
+        toDate.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                setDisable(empty || date.isAfter(LocalDate.now())); // Không cho chọn sau hôm nay
+            }
+        });
 
     }
 
@@ -159,13 +182,14 @@ public class StatsController implements Initializable {
     public void handleComboBoxTable() {
         String selectedOption = cbChoseTable.getValue();
         if (selectedOption.equals("Thống kê theo bảng")) {
-            System.out.println(selectedOption);
             switchSceneTable("baocaothongketheobang.fxml");
         } else if (selectedOption.equals("Thống kê theo biểu đồ")) {
-            System.out.println(selectedOption);
             switchSceneTable("baocaothongketheobieudo.fxml");
         }
     }
+    
+   
+
 
     public void switchSceneTable(String fxmlFile) {
         try {
@@ -215,21 +239,49 @@ public class StatsController implements Initializable {
         tbExpenses.setItems(expenses);
     }
     
-    public void filterDate(Event e) throws SQLException{
+    public void filterDate(Event e) throws SQLException {
         LocalDate selectedFromDate = fromDate.getValue();
         LocalDate selectedToDate = toDate.getValue();
-        
-        if (selectedFromDate != null && selectedToDate != null) {
-            List<Expense> filteredExpenses = statsServices.getExpensesFilterByDate(selectedFromDate, selectedToDate, cbType.getValue());
-            loadData(filteredExpenses);
-        } else {
-            System.out.println("Vui lòng chọn cả hai ngày bắt đầu và kết thúc!");
-            Utils.showAlert("Vui lòng chọn cả hai ngày bắt đầu và kết thúc!", null, "Vui lòng chọn cả hai ngày bắt đầu và kết thúc!");
+        LocalDate today = LocalDate.now();
+
+        // Kiểm tra có bỏ trống ngày không
+        if (selectedFromDate == null || selectedToDate == null) {
+            Utils.showAlert(
+                "Thiếu thông tin!",
+                null,
+                "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc."
+            );
+            return;
         }
+
+        // Kiểm tra ngày tương lai
+        if (selectedFromDate.isAfter(today) || selectedToDate.isAfter(today)) {
+            Utils.showAlert(
+                "Ngày không hợp lệ!",
+                null,
+                "Không được chọn ngày trong tương lai. Vui lòng chọn ngày không vượt quá hôm nay."
+            );
+            return;
+        }
+
+        // Kiểm tra khoảng ngày hợp lệ
+        if (selectedFromDate.isAfter(selectedToDate)) {
+            Utils.showAlert(
+                "Khoảng ngày không hợp lệ!",
+                null,
+                "Ngày bắt đầu không được lớn hơn ngày kết thúc."
+            );
+            return;
+        }
+
+        // Gọi service để lọc dữ liệu
+        List<Expense> filteredExpenses = statsServices.getExpensesFilterByDate(
+            selectedFromDate, selectedToDate, cbType.getValue()
+        );
+        loadData(filteredExpenses);
     }
-    
-    
-    
+
+
     public void loadColumnsByMonth() {
         TableColumn<Expense, String> colCategoryId = new TableColumn<>("Số thứ tự");
         colCategoryId.setCellValueFactory(new PropertyValueFactory<>("categoryId"));
@@ -266,6 +318,35 @@ public class StatsController implements Initializable {
             tbStatsByMonth.setItems(expenses);
         } catch (SQLException ex) {
             Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
+    public void logoutStatsTable(String fxmlFile) {
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.setTitle("Xác nhận đăng xuất");
+        confirmAlert.setHeaderText(null);
+        confirmAlert.setContentText("Bạn có chắc chắn muốn đăng xuất không?");
+
+        // Hiển thị và chờ người dùng chọn
+        Optional<ButtonType> result = confirmAlert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+                Parent root = loader.load();
+                Stage stage = (Stage)logoutStats.getScene().getWindow();
+                Scene scene = new Scene(root, 650, 500);
+                stage.setScene(scene);
+                stage.setWidth(650);  // Set width explicitly
+                stage.setHeight(500);
+                stage.centerOnScreen();
+                stage.show();
+            } catch (IOException e) {
+                Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, "Lỗi khi đăng xuất: ", e);
+                Utils.showAlert("Lỗi hệ thống!", null, "Không thể đăng xuất. Vui lòng thử lại.");
+            }
+        } else {
+            // Người dùng chọn Cancel hoặc đóng hộp thoại → không làm gì cả
         }
     }
 
