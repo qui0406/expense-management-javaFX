@@ -19,7 +19,7 @@
          <children>
             <Text fx:id="txtUsername" layoutX="50.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="96.27655029296875" />
             <Button layoutX="28.0" layoutY="152.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="141.0" styleClass="btnSideBar" text="Thêm giao dịch" />
-            <Button layoutX="27.0" layoutY="213.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="141.0" styleClass="btnSideBar" text="Thêm ngân sách" />
+            <Button layoutX="27.0" layoutY="213.0" mnemonicParsing="false" onAction="#switchBudget" prefHeight="30.0" prefWidth="141.0" styleClass="btnSideBar" text="Thêm ngân sách" />
             <ImageView fitHeight="45.0" fitWidth="50.0" layoutX="73.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../icons/User.png" />

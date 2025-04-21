@@ -25,11 +25,11 @@ public class CategoryServices {
         List<Category> cates = new ArrayList<>();
         int currentUserId = UserSessionServices.getCurrentUser().getId();
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareCall("SELECT * FROM categories WHERE userId IS NULL OR userId = ?");
+            PreparedStatement stm = conn.prepareCall("SELECT * FROM category WHERE user_id IS NULL OR user_id = ?");
             stm.setInt(1, currentUserId);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("userId"));
+                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("user_id"));
                 cates.add(c);
             }
         }
@@ -41,12 +41,12 @@ public class CategoryServices {
         int currentUserId = UserSessionServices.getCurrentUser().getId();
 
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareCall("SELECT * FROM categories WHERE type = ? AND (userId IS NULL OR userId = ?)");
+            PreparedStatement stm = conn.prepareCall("SELECT * FROM category WHERE type = ? AND (user_id IS NULL OR user_id = ?)");
             stm.setString(1, type);
             stm.setInt(2, currentUserId);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("userId"));
+                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("user_id"));
                 cates.add(c);
             }
         }
@@ -60,7 +60,7 @@ public class CategoryServices {
             throw new IllegalArgumentException("Tên danh mục '" + cate.getName() + "' với loại '" + cate.getType() + "' đã tồn tại!");
         }
         try (Connection conn = JdbcUtils.getConn()) {
-            String newTran = "INSERT INTO categories (name, type, userId) VALUE (?, ?, ?)";
+            String newTran = "INSERT INTO category (name, type, user_id) VALUE (?, ?, ?)";
             PreparedStatement stm = conn.prepareStatement(newTran);
             stm.setString(1, cate.getName());
             stm.setString(2, cate.getType());
@@ -82,7 +82,7 @@ public class CategoryServices {
             throw new IllegalArgumentException("Không thể xóa danh mục cố định!");
         }
         try (Connection conn = JdbcUtils.getConn()) {
-            String delCate = "DELETE FROM categories WHERE id =  ?";
+            String delCate = "DELETE FROM category WHERE id =  ?";
             PreparedStatement stm = conn.prepareStatement(delCate);
             stm.setInt(1, id);
             int rowsAffected = stm.executeUpdate();
@@ -113,7 +113,7 @@ public class CategoryServices {
         if (isCategoryNameExists(name, type, id)) {
             throw new IllegalArgumentException("Tên danh mục '" + name + "' với loại '" + type + "' đã tồn tại!");
         }
-        String sql = "UPDATE categories SET name = ?, type = ?, userId = ? WHERE id = ?";
+        String sql = "UPDATE category SET name = ?, type = ?, user_id = ? WHERE id = ?";
 
         try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setString(1, name);
@@ -125,7 +125,6 @@ public class CategoryServices {
             e.printStackTrace();
         }
     }
-
     // Phương thức kiểm tra tính duy nhất của tên danh mục
     private boolean isCategoryNameExists(String name, String type, int excludeId) throws SQLException {
         List<Category> categories = getCatetogires();
@@ -136,32 +135,30 @@ public class CategoryServices {
         }
         return false;
     }
-
     // Phương thức hỗ trợ để lấy danh mục theo id
     private Category getCategoryById(int id) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM categories WHERE id = ?");
+            PreparedStatement stm = conn.prepareStatement("SELECT * FROM category WHERE id = ?");
             stm.setInt(1, id);
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
-                return new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("userId"));
+                return new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("user_id"));
             }
         }
         return null;
     }
-
     public List<Category> getCateByTypeFromBudget(String type) throws SQLException {
         List<Category> cates = new ArrayList<>();
         int currentUserId = UserSessionServices.getCurrentUser().getId();
 
         try (Connection conn = JdbcUtils.getConn()) {
             // Chỉ chọn những category có type tồn tại trong bảng budget
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM categories \n"
+            PreparedStatement stm = conn.prepareStatement("SELECT * FROM category \n"
                     + "            WHERE type = ? \n"
-                    + "              AND (userId IS NULL OR userId = ?) \n"
+                    + "              AND (user_id IS NULL OR user_id = ?) \n"
                     + "              AND EXISTS (\n"
                     + "                  SELECT 1 FROM budget \n"
-                    + "                  WHERE budget.type = categories.type\n"
+                    + "                  WHERE budget.type = category.type\n"
                     + "              )");
             stm.setString(1, type);
             stm.setInt(2, currentUserId);
@@ -179,11 +176,11 @@ public class CategoryServices {
         }
         return cates;
     }
-
+    
     // Phương thức lấy tên danh mục từ ID
     public String getCategoryByIdForBudget(int id) {
         String name = null; // Giá trị mặc định nếu không tìm thấy
-        String query = "SELECT name FROM categories WHERE id = ?"; // Câu truy vấn SQL
+        String query = "SELECT name FROM category WHERE id = ?"; // Câu truy vấn SQL
 
         try (Connection conn = JdbcUtils.getConn(); // Kết nối đến CSDL
                  PreparedStatement stm = conn.prepareStatement(query)) {

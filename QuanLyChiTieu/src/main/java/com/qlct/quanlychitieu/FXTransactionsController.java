@@ -398,14 +398,21 @@ public class FXTransactionsController implements Initializable {
         txtAmount.clear();
         txtNote.clear();
         btDate.setValue(LocalDate.now());
+        btnSave.setOnAction(this::addHandler);
     }
 
     public void clearHandler(ActionEvent e) {
         clearForm();
     }
+
     @FXML
     private void switchBCTK() throws IOException {
         App.setRoot("baocaothongketheobang", 935, 750);
+    }
+
+    @FXML
+    public void switchBudget() throws IOException {
+        App.setRoot("budget", 900, 700);
     }
 
     public void editCategory(MouseEvent e) throws IOException {
