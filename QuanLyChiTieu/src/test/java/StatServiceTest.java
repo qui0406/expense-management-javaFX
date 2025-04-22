@@ -127,7 +127,6 @@ public class StatServiceTest {
     @Order(1)
     public void testGetExpenseCurrentMonthWithChi() throws SQLException {
         List<Expense> expenses = statsServices.getExpenseCurrentMonth("Chi");
-
         assertNotNull(expenses);
         assertFalse(expenses.isEmpty(), "Không có dữ liệu thống kê cho tháng hiện tại.");
         for (Expense e : expenses) {

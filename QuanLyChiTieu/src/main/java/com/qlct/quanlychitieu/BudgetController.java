@@ -6,22 +6,17 @@ package com.qlct.quanlychitieu;
 
 import com.qlct.pojo.Budget;
 import com.qlct.pojo.Category;
-import com.qlct.pojo.User;
 import com.qlct.services.BudgetServices;
 import com.qlct.services.CategoryServices;
-import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -39,7 +34,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
@@ -107,12 +101,12 @@ public class BudgetController implements Initializable {
         });
 
         // Hiển thị username của người dùng hiện tại
-        User currentUser = UserSessionServices.getCurrentUser();
-        if (currentUser != null) {
-            txtUsername.setText(currentUser.getUsername());
-        } else {
-            txtUsername.setText("Chưa đăng nhập");
-        }
+//        User currentUser = UserSessionServices.getCurrentUser();
+//        if (currentUser != null) {
+//            txtUsername.setText(currentUser.getUsername());
+//        } else {
+//            txtUsername.setText("Chưa đăng nhập");
+//        }
 
 //        btAddTrans.setOnAction(e -> {
 //            try {

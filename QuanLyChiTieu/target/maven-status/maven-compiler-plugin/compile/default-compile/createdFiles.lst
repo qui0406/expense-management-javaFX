@@ -18,7 +18,6 @@ com\qlct\quanlychitieu\Utils.class
 com\qlct\services\UserSessionServices.class
 com\qlct\quanlychitieu\FXTransactionsController$2.class
 com\qlct\quanlychitieu\StatsController.class
-com\qlct\quanlychitieu\StatsController$4.class
 com\qlct\services\StatsServices.class
 com\qlct\quanlychitieu\EditBudgetController$1.class
 com\qlct\services\LoginServices.class

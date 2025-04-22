@@ -153,12 +153,12 @@ public class CategoryServices {
 
         try (Connection conn = JdbcUtils.getConn()) {
             // Chỉ chọn những category có type tồn tại trong bảng budget
-            PreparedStatement stm = conn.prepareStatement("SELECT * FROM category \n"
-                    + "            WHERE type = ? \n"
-                    + "              AND (user_id IS NULL OR user_id = ?) \n"
-                    + "              AND EXISTS (\n"
-                    + "                  SELECT 1 FROM budget \n"
-                    + "                  WHERE budget.type = category.type\n"
+            PreparedStatement stm = conn.prepareStatement("SELECT * FROM category "
+                    + "            WHERE type = ? "
+                    + "              AND (user_id IS NULL OR user_id = ?) "
+                    + "              AND EXISTS ("
+                    + "                  SELECT 1 FROM budget "
+                    + "                  WHERE budget.type = category.type"
                     + "              )");
             stm.setString(1, type);
             stm.setInt(2, currentUserId);
