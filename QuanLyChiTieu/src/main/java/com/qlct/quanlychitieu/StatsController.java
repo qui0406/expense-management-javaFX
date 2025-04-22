@@ -2,6 +2,7 @@ package com.qlct.quanlychitieu;
 
 import com.qlct.pojo.Expense;
 import com.qlct.services.StatsServices;
+import com.qlct.services.UserSessionServices;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -63,7 +64,8 @@ public class StatsController implements Initializable {
 
             setUpComboBoxStats();
             setUpFilterStats();
-            logoutStats.setOnAction(event -> logoutStatsTable("login.fxml"));
+            logoutStats.setOnAction(event -> Utils.logout(logoutStats, "login.fxml"));
+
 
             loadColumnsByMonth();
             loadDataByMonth();
@@ -88,12 +90,12 @@ public class StatsController implements Initializable {
 
     @FXML
     public void switchTransaction() throws IOException {
-        App.setRoot("FXTransactions", 900, 750);
+        App.setRoot("FXTransactions", 1200, 800);
     }
 
     @FXML
     public void switchBudget() throws IOException {
-        App.setRoot("budget", 900, 700);
+        App.setRoot("budget", 1200, 800);
     }
 
     private void setUpComboBoxStats() {
@@ -229,25 +231,4 @@ public class StatsController implements Initializable {
         loadData(filteredExpenses);
     }
 
-    public void logoutStatsTable(String fxmlFile) {
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Xác nhận đăng xuất");
-        confirmAlert.setHeaderText(null);
-        confirmAlert.setContentText("Bạn có chắc chắn muốn đăng xuất không?");
-
-        Optional<ButtonType> result = confirmAlert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
-                Parent root = loader.load();
-                Stage stage = (Stage) logoutStats.getScene().getWindow();
-                stage.setScene(new Scene(root, 650, 500));
-                stage.centerOnScreen();
-                stage.show();
-            } catch (IOException e) {
-                Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, "Lỗi khi đăng xuất: ", e);
-                Utils.showAlert("Lỗi hệ thống!", null, "Không thể đăng xuất. Vui lòng thử lại.");
-            }
-        }
-    }
 }

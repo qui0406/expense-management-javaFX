@@ -22,9 +22,9 @@ public class StatsServices {
 
         //String sql = "{call stats_current_month(?, ?)}";
         String sql = "SELECT \n"
-                + "category.id, \n"
-                + "category.name AS name, \n"
-                + "COALESCE(SUM(transaction.amount), 0) AS amount\n"
+                + "    category.id, \n"
+                + "    category.name AS name, \n"
+                + "    COALESCE(SUM(transaction.amount), 0) AS amount\n"
                 + "FROM \n"
                 + "    user\n"
                 + "JOIN \n"
@@ -37,8 +37,8 @@ public class StatsServices {
                 + "               AND MONTH(transaction.date) = MONTH(CURRENT_DATE)\n"
                 + "               AND YEAR(transaction.date) = YEAR(CURRENT_DATE)\n"
                 + "WHERE \n"
-                + "    user.id = ?"
-                + "    AND category.type = ?"
+                + "    user.id = ?\n"
+                + "    AND category.type = ?\n"
                 + "GROUP BY \n"
                 + "    category.id, category.name\n"
                 + "ORDER BY \n"
@@ -80,8 +80,8 @@ public class StatsServices {
                 + "               AND transaction.category_id = category.id\n"
                 + "WHERE \n"
                 + "    user.id = ?\n"
-                + "    AND category.type =?\n"
-                + "    AND transaction.date BETWEEN from_date AND to_date\n"
+                + "    AND category.type = ?\n"
+                + "    AND transaction.date BETWEEN ? AND ?\n"
                 + "GROUP BY \n"
                 + "    category.id, category.name\n"
                 + "ORDER BY \n"
@@ -110,7 +110,7 @@ public class StatsServices {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
         //String sql = "{call stats_month_expense(?, ?)}";
-        String sql = "SELECT \n"
+        String sql = "	SELECT \n"
                 + "    MONTH(transaction.date) AS month, \n"
                 + "    COALESCE(SUM(transaction.amount), 0) AS total_amount\n"
                 + "FROM \n"
@@ -127,8 +127,8 @@ public class StatsServices {
                 + "    AND YEAR(transaction.date) = YEAR(CURDATE())\n"
                 + "GROUP BY \n"
                 + "    MONTH(transaction.date)\n"
-                + "ORDER BY \n"
-                + "    MONTH(transaction.date)";
+                + "ORDER BY \n" +
+              "MONTH(transaction.date);";
 
         try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, userId);

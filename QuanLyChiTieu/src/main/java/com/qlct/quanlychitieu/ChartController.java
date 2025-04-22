@@ -64,7 +64,8 @@ public class ChartController implements Initializable {
         setupComboBoxHandlers();
         setupButtonHandlers();
         
-        logoutChart.setOnAction(event -> logoutStatsChart("login.fxml"));
+        logoutChart.setOnAction(event -> Utils.logout(logoutChart, "login.fxml"));
+
 
         try {
             loadData(statsServices.getExpenseCurrentMonth(cbTypeChart.getValue()));
@@ -118,31 +119,6 @@ public class ChartController implements Initializable {
         });
     }
 
-    // Handle the logout action
-    private void logoutStatsChart(String fxmlFile) {
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Xác nhận đăng xuất");
-        confirmAlert.setHeaderText(null);
-        confirmAlert.setContentText("Bạn có chắc chắn muốn đăng xuất không?");
-
-        Optional<ButtonType> result = confirmAlert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
-                Parent root = loader.load();
-                Stage stage = (Stage) logoutChart.getScene().getWindow();
-                Scene scene = new Scene(root, 650, 500);
-                stage.setScene(scene);
-                stage.setWidth(650);  // Set width explicitly
-                stage.setHeight(500);
-                stage.centerOnScreen();
-                stage.show();
-            } catch (IOException e) {
-                Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, "Lỗi khi đăng xuất: ", e);
-                Utils.showAlert("Lỗi hệ thống!", null, "Không thể đăng xuất. Vui lòng thử lại.");
-            }
-        }
-    }
 
     // Handle date filtering
     private void filterDate(Event e) throws SQLException {
