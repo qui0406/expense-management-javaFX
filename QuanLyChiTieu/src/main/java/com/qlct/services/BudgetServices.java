@@ -286,7 +286,7 @@ public class BudgetServices {
     }
 
     // Phương thức lấy ID từ tên danh mục
-    public int getIdByName(String name) {
+    public int getIdByName(String name) throws SQLException {
         int id = -1; // Giá trị mặc định nếu không tìm thấy
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement("SELECT id FROM category WHERE name = ?");
@@ -297,6 +297,7 @@ public class BudgetServices {
             }
         } catch (SQLException e) {
             e.printStackTrace(); // Xử lý ngoại lệ
+            throw e;
         }
         return id;
     }

@@ -8,14 +8,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.qlct.pojo.JdbcUtils;
 import com.qlct.pojo.User;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import static org.mockito.Mockito.*;
-import org.mockito.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import static org.junit.jupiter.api.Assertions.*;
+
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -28,7 +30,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 public class TestBudgetServices {
 
-    private BudgetServices budgetServices = new BudgetServices();
+    private BudgetServices budgetServices;
+    private Connection mockConn;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        budgetServices = new BudgetServices();
+        mockConn = mock(Connection.class);
+    }
 
     @Test
     public void testIsValidAmount_invalidString() {
@@ -135,120 +144,134 @@ public class TestBudgetServices {
         Assertions.assertFalse(budgetServices.isBudgetWithinLimit(90000.0, 100000.0));
     }
 
-//    @Test
-//    void testInsertBudgetToDB_withNullUser() throws Exception {
-//        // Arrange
-//        String input = "12345.67";
-//        String budgetType = "income";
-//        String categoryName = "Food";
-//
-//        try (
-//                MockedStatic<JdbcUtils> mockedJdbc = mockStatic(JdbcUtils.class); MockedStatic<UserSessionServices> mockedSession = mockStatic(UserSessionServices.class)) {
-//            BudgetServices service = spy(new BudgetServices());
-//
-//            Connection mockConn = mock(Connection.class);
-//            PreparedStatement mockStm = mock(PreparedStatement.class);
-//
-//            mockedJdbc.when(JdbcUtils::getConn).thenReturn(mockConn);
-//            when(mockConn.prepareStatement(anyString())).thenReturn(mockStm);
-//
-//            // Case where getCurrentUser returns null
-//            mockedSession.when(UserSessionServices::getCurrentUser).thenReturn(null);
-//
-//            // mock getIdByName
-//            doReturn(88).when(service).getIdByName(categoryName);
-//
-//            // Act & Assert: Check if exception or appropriate behavior happens when user is null
-//            assertThrows(NullPointerException.class, () -> service.insertBudgetTODB(input, budgetType, categoryName));
-//        }
-//    }
-//
-//    @Test
-//    void testInsertBudgetToDB_withMockedUser() throws Exception {
-//        // Arrange
-//        String input = "12345.67";
-//        String budgetType = "income";
-//        String categoryName = "Food";
-//
-//        try (
-//                MockedStatic<JdbcUtils> mockedJdbc = mockStatic(JdbcUtils.class); MockedStatic<UserSessionServices> mockedSession = mockStatic(UserSessionServices.class)) {
-//            BudgetServices service = spy(new BudgetServices());
-//
-//            Connection mockConn = mock(Connection.class);
-//            PreparedStatement mockStm = mock(PreparedStatement.class);
-//
-//            mockedJdbc.when(JdbcUtils::getConn).thenReturn(mockConn);
-//            when(mockConn.prepareStatement(anyString())).thenReturn(mockStm);
-//
-//            // Case where getCurrentUser returns a mocked user object
-//            User mockUser = mock(User.class);
-//            when(mockUser.getId()).thenReturn(999);
-//            mockedSession.when(UserSessionServices::getCurrentUser).thenReturn(mockUser);
-//
-//            // mock getIdByName
-//            doReturn(88).when(service).getIdByName(categoryName);
-//
-//            // Act
-//            service.insertBudgetTODB(input, budgetType, categoryName);
-//
-//            // Assert
-//            verify(mockStm).setDouble(1, 12345.67);
-//            verify(mockStm).setInt(2, 999);
-//            verify(mockStm).setString(3, budgetType);
-//            verify(mockStm).setInt(4, 88);
-//            verify(mockStm).executeUpdate();
-//            verify(mockStm).close(); // auto-close
-//        }
-//    }
+    @Test
+    public void testGetIdByName_found() throws SQLException {
+        PreparedStatement mockStmt = mock(PreparedStatement.class);
+        ResultSet mockRs = mock(ResultSet.class);
 
-//    private MockedStatic<UserSessionServices> userSessionMock;
-//    private MockedStatic<JdbcUtils> jdbcUtilsMock;
-//    @Mock
-//    private Connection connection;
-//
-//    @Mock
-//    private PreparedStatement preparedStatement;
-//
-//    @Mock
-//    private ResultSet resultSet;
-//
-//    @Mock
-//    private User mockUser;
-//
-//    @BeforeEach
-//    public void setUp() throws Exception {
-//        userSessionMock = mockStatic(UserSessionServices.class);
-//        jdbcUtilsMock = mockStatic(JdbcUtils.class);
-//
-//        when(UserSessionServices.getCurrentUser()).thenReturn(mockUser);
-//        when(mockUser.getId()).thenReturn(1);
-//        when(JdbcUtils.getConn()).thenReturn(connection);
-//    }
-//
-//    @AfterEach
-//    public void tearDown() {
-//        userSessionMock.close();
-//        jdbcUtilsMock.close();
-//    }
-//
-//    
-//    @Test
-//    public void testGetIdByName_ReturnsCorrectId() throws Exception {
-//        when(connection.prepareStatement(any(String.class))).thenReturn(preparedStatement);
-//        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-//        when(resultSet.next()).thenReturn(true);
-//        when(resultSet.getInt("id")).thenReturn(99);
-//
-//        int result = budgetServices.getIdByName("Ăn uống");
-//        assertEquals(99, result);
-//    }
-//
-//    @Mock
-//    private Connection mockConnection;
-//
-//    @Mock
-//    private PreparedStatement mockStatement;
-//
-//    @Mock
-//    private UserSessionServices userSessionServices;
+        when(mockConn.prepareStatement("SELECT id FROM category WHERE name = ?")).thenReturn(mockStmt);
+        when(mockStmt.executeQuery()).thenReturn(mockRs);
+        when(mockRs.next()).thenReturn(true);
+        when(mockRs.getInt("id")).thenReturn(1);
+
+        try (MockedStatic<JdbcUtils> jdbcUtilsMockedStatic = mockStatic(JdbcUtils.class)) {
+            jdbcUtilsMockedStatic.when(JdbcUtils::getConn).thenReturn(mockConn);
+
+            int result = budgetServices.getIdByName("Ăn uống");
+
+            assertEquals(1, result);
+            verify(mockStmt).setString(1, "Ăn uống");
+            verify(mockStmt).executeQuery();
+        }
+    }
+
+    @Test
+    public void testGetIdByName_notFound() throws SQLException {
+        PreparedStatement mockStmt = mock(PreparedStatement.class);
+        ResultSet mockRs = mock(ResultSet.class);
+
+        when(mockConn.prepareStatement("SELECT id FROM category WHERE name = ?")).thenReturn(mockStmt);
+        when(mockStmt.executeQuery()).thenReturn(mockRs);
+        when(mockRs.next()).thenReturn(false);
+
+        try (MockedStatic<JdbcUtils> jdbcUtilsMockedStatic = mockStatic(JdbcUtils.class)) {
+            jdbcUtilsMockedStatic.when(JdbcUtils::getConn).thenReturn(mockConn);
+
+            int result = budgetServices.getIdByName("Nghỉ ngơi");
+
+            assertEquals(-1, result);
+            verify(mockStmt).setString(1, "Nghỉ ngơi");
+            verify(mockStmt).executeQuery();
+        }
+    }
+
+    @Test
+    public void testGetIdByName_sqlException() throws SQLException {
+        // Giả lập trường hợp SQLException xảy ra khi tạo PreparedStatement
+        when(mockConn.prepareStatement("SELECT id FROM category WHERE name = ?")).thenThrow(new SQLException("Database error"));
+
+        try (MockedStatic<JdbcUtils> jdbcUtilsMockedStatic = mockStatic(JdbcUtils.class)) {
+            jdbcUtilsMockedStatic.when(JdbcUtils::getConn).thenReturn(mockConn);
+
+            // Kiểm tra nếu SQLException được ném ra khi gọi phương thức
+            Assertions.assertThrows(SQLException.class, () -> {
+                budgetServices.getIdByName("Nghỉ ngơi");
+            });
+        }
+    }
+
+    @Test
+    public void testInsertBudgetTODB_successfulInsert() throws SQLException {
+        // Mock các đối tượng cần thiết
+        Connection mockConn1 = mock(Connection.class);
+        User mockUser = new User(1, "John", "Doe", "johndoe", "johndoe@example.com");
+        PreparedStatement mockStmtSelect = mock(PreparedStatement.class);
+        PreparedStatement mockStmtInsert = mock(PreparedStatement.class);
+        ResultSet mockRs = mock(ResultSet.class);
+
+        // Mock câu SELECT id từ category
+        when(mockConn1.prepareStatement(eq("SELECT id FROM category WHERE name = ?"))).thenReturn(mockStmtSelect);
+        when(mockStmtSelect.executeQuery()).thenReturn(mockRs);
+        when(mockRs.next()).thenReturn(true);
+        when(mockRs.getInt("id")).thenReturn(2); // ID giả cho "Ăn uống"
+
+        // Mock câu INSERT (không ném exception)
+        when(mockConn1.prepareStatement(eq("INSERT INTO budget (amount, user_id ,type, category_id) VALUES (?,?,?,?)")))
+                .thenReturn(mockStmtInsert);
+
+        try (MockedStatic<UserSessionServices> userSessionMock = mockStatic(UserSessionServices.class)) {
+            userSessionMock.when(UserSessionServices::getCurrentUser).thenReturn(mockUser);
+
+            try (MockedStatic<JdbcUtils> jdbcUtilsMockedStatic = mockStatic(JdbcUtils.class)) {
+                jdbcUtilsMockedStatic.when(JdbcUtils::getConn).thenReturn(mockConn1);
+
+                BudgetServices budgetServices = new BudgetServices();
+                // Gọi hàm cần test, không mong đợi exception
+                Assertions.assertDoesNotThrow(() -> {
+                    budgetServices.insertBudgetTODB("50000", "Chi", "Ăn uống");
+                });
+
+                // Kiểm tra xem lệnh insert có được gọi đúng không
+                verify(mockStmtInsert).setDouble(1, 50000.0);
+                verify(mockStmtInsert).setInt(2, 1); // ID user
+                verify(mockStmtInsert).setString(3, "Thu");
+                verify(mockStmtInsert).setInt(4, 2); // ID category
+                verify(mockStmtInsert).executeUpdate();
+            }
+        }
+    }
+
+    @Test
+    public void testInsertBudgetTODB_withSQLException() throws SQLException {
+        User mockUser = new User(1, "John", "Doe", "johndoe", "johndoe@example.com");
+
+        Connection mockConn = mock(Connection.class);
+        PreparedStatement mockStmtSelect = mock(PreparedStatement.class);
+        ResultSet mockRs = mock(ResultSet.class);
+
+        PreparedStatement mockStmtInsert = mock(PreparedStatement.class);
+
+        // Mock cho truy vấn SELECT
+        when(mockConn.prepareStatement(eq("SELECT id FROM category WHERE name = ?"))).thenReturn(mockStmtSelect);
+        when(mockStmtSelect.executeQuery()).thenReturn(mockRs);
+        when(mockRs.next()).thenReturn(true); // Giả lập có kết quả
+        when(mockRs.getInt("id")).thenReturn(1); // ID giả
+
+        // Mock cho INSERT: ném SQLException
+        when(mockConn.prepareStatement(eq("INSERT INTO budget (amount, user_id ,type, category_id) VALUES (?,?,?,?)")))
+                .thenThrow(new SQLException("Database error"));
+
+        try (MockedStatic<UserSessionServices> userSessionMock = mockStatic(UserSessionServices.class)) {
+            userSessionMock.when(UserSessionServices::getCurrentUser).thenReturn(mockUser);
+
+            try (MockedStatic<JdbcUtils> jdbcUtilsMockedStatic = mockStatic(JdbcUtils.class)) {
+                jdbcUtilsMockedStatic.when(JdbcUtils::getConn).thenReturn(mockConn);
+
+                Assertions.assertThrows(SQLException.class, () -> {
+                    BudgetServices budgetServices = new BudgetServices();
+                    budgetServices.insertBudgetTODB("abc", "Chi", "Ăn uống");
+                });
+            }
+        }
+    }
 }
