@@ -29,7 +29,7 @@ public class CategoryServices {
             stm.setInt(1, currentUserId);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("userId"));
+                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("user_id"));
                 cates.add(c);
             }
         }
@@ -46,7 +46,7 @@ public class CategoryServices {
             stm.setInt(2, currentUserId);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("userId"));
+                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("user_id"));
                 cates.add(c);
             }
         }
