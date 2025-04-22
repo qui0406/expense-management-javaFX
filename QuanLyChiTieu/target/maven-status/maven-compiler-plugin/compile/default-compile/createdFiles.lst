@@ -5,7 +5,6 @@ com\qlct\services\TransactionServices.class
 com\qlct\pojo\User.class
 com\qlct\quanlychitieu\StatsController$2.class
 com\qlct\quanlychitieu\BudgetController$1.class
-com\qlct\quanlychitieu\SelectModeController.class
 com\qlct\quanlychitieu\ChartController.class
 com\qlct\pojo\Category.class
 com\qlct\quanlychitieu\FXEditCategoryController$1.class
