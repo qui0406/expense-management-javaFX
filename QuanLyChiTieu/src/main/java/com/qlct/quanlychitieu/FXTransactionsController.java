@@ -125,6 +125,7 @@ public class FXTransactionsController implements Initializable {
         this.loadColumns();
         this.loadTableData();
         logoutBtnTransaction.setOnAction(event -> logoutTransaction("login.fxml"));
+        btnSave.setOnAction(this::addHandler);
 
     }
 

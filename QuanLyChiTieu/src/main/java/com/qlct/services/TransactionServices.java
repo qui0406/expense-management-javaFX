@@ -43,23 +43,44 @@ public class TransactionServices {
         return transactions;
     }
 
-    public void addTransaction(Transaction tran) {
-        tran.validate();
+    public boolean addTransaction(Transaction tran) {
+    tran.validate();
 
-        try (Connection conn = JdbcUtils.getConn()) {
-            String newTran = "INSERT INTO transaction (amount, note, date, category_id, user_id) VALUE (?, ?, ?, ?,?)";
-            PreparedStatement stm = conn.prepareStatement(newTran);
-            stm.setDouble(1, tran.getAmount());
-            stm.setString(2, tran.getNote());
-            stm.setDate(3, java.sql.Date.valueOf(tran.getDate()));
-            stm.setInt(4, tran.getCategoryId());
-            stm.setInt(5, tran.getUserId());
-            stm.executeUpdate();
-
-        } catch (SQLException ex) {
-            Logger.getLogger(TransactionServices.class.getName()).log(Level.SEVERE, null, ex);
+    try (Connection conn = JdbcUtils.getConn()) {
+        // Kiểm tra nếu auto-commit đã bị tắt
+        if (!conn.getAutoCommit()) {
+            conn.setAutoCommit(true);
         }
+        
+        String newTran = "INSERT INTO transaction (amount, note, date, category_id, user_id) VALUES (?, ?, ?, ?, ?)";
+        PreparedStatement stm = conn.prepareStatement(newTran);
+        stm.setDouble(1, tran.getAmount());
+        stm.setString(2, tran.getNote());
+        stm.setDate(3, java.sql.Date.valueOf(tran.getDate()));
+        stm.setInt(4, tran.getCategoryId());
+        stm.setInt(5, tran.getUserId());
+        
+        int rowsInserted = stm.executeUpdate();
+        
+        // Kiểm tra xem dữ liệu đã được thêm thành công chưa
+        if (rowsInserted > 0) {
+            System.out.println("---- Giao dịch đã được thêm thành công ----");
+            System.out.println("Amount: " + tran.getAmount());
+            System.out.println("Note: " + tran.getNote());
+            System.out.println("Date: " + tran.getDate());
+            System.out.println("CategoryId: " + tran.getCategoryId());
+            System.out.println("UserId: " + tran.getUserId());
+            return true;
+        } else {
+            System.out.println("---- Không thể thêm giao dịch ----");
+            return false;
+        }
+
+    } catch (SQLException ex) {
+        Logger.getLogger(TransactionServices.class.getName()).log(Level.SEVERE, "Lỗi khi thêm giao dịch", ex);
+        return false;
     }
+}
 
     public void deleteTransaction(int id) {
         try (Connection conn = JdbcUtils.getConn()) {
