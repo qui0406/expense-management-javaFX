@@ -11,6 +11,9 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
@@ -79,6 +82,35 @@ public class Utils {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         return formatter.format(amount);
     }
+    
+    public static void logout(Button logoutButton, String fxmlFile) {
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.setTitle("Xác nhận đăng xuất");
+        confirmAlert.setHeaderText(null);
+        confirmAlert.setContentText("Bạn có chắc chắn muốn đăng xuất không?");
 
+        Optional<ButtonType> result = confirmAlert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                UserSessionServices.logout();// Đăng xuất
+                System.out.println("User logged out.");  // Log kiểm tra
+                FXMLLoader loader = new FXMLLoader(Utils.class.getResource(fxmlFile));
+                Parent root = loader.load();
+                Stage stage = (Stage) logoutButton.getScene().getWindow();
+                stage.setScene(new Scene(root, 650, 500));
+                stage.setMinHeight(500);
+                stage.setMinWidth(650);
+                stage.centerOnScreen();
+                stage.show();
+            } catch (IOException e) {
+                Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, "Lỗi khi đăng xuất: ", e);
+                Utils.showAlert("Lỗi hệ thống!", null, "Không thể đăng xuất. Vui lòng thử lại.");
+            }
+        }
+    }
+
+
+
+  
     
 }
