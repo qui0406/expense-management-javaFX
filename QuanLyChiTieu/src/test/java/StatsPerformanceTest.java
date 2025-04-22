@@ -56,12 +56,12 @@ public class StatsPerformanceTest {
             LocalDate date = today.minusDays(random.nextInt(180));
 
             Transaction transaction = new Transaction(
-                0,
-                amount,
-                categoryId,
-                date,
-                "Performance test transaction #" + i,
-                mockUser.getId()
+                    0,
+                    amount,
+                    categoryId,
+                    date,
+                    "Performance test transaction #" + i,
+                    mockUser.getId()
             );
 
             transactionServices.addTransaction(transaction);
@@ -90,4 +90,4 @@ public class StatsPerformanceTest {
         System.out.println("Time to get yearly statistics: " + timeElapsedMs + " ms");
         assertTrue(timeElapsedMs < 3000, "Getting yearly statistics should take less than 3 seconds");
     }
-}
+    }
