@@ -29,7 +29,7 @@ public class CategoryServices {
             stm.setInt(1, currentUserId);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("user_id"));
+                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("userId"));
                 cates.add(c);
             }
         }
@@ -46,7 +46,7 @@ public class CategoryServices {
             stm.setInt(2, currentUserId);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("user_id"));
+                Category c = new Category(rs.getInt("id"), rs.getString("name"), rs.getString("type"), rs.getInt("userId"));
                 cates.add(c);
             }
         }
@@ -125,16 +125,18 @@ public class CategoryServices {
             e.printStackTrace();
         }
     }
+
     // Phương thức kiểm tra tính duy nhất của tên danh mục
     private boolean isCategoryNameExists(String name, String type, int excludeId) throws SQLException {
-        List<Category> categories = getCatetogires();
-        for (Category cate : categories) {
+        List<Category> category = getCatetogires();
+        for (Category cate : category) {
             if (cate.getName().equalsIgnoreCase(name) && cate.getType().equals(type) && cate.getId() != excludeId) {
                 return true;
             }
         }
         return false;
     }
+
     // Phương thức hỗ trợ để lấy danh mục theo id
     private Category getCategoryById(int id) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
@@ -147,6 +149,7 @@ public class CategoryServices {
         }
         return null;
     }
+
     public List<Category> getCateByTypeFromBudget(String type) throws SQLException {
         List<Category> cates = new ArrayList<>();
         int currentUserId = UserSessionServices.getCurrentUser().getId();
@@ -169,14 +172,14 @@ public class CategoryServices {
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("type"),
-                        rs.getInt("userId")
+                        rs.getInt("user_id")
                 );
                 cates.add(c);
             }
         }
         return cates;
     }
-    
+
     // Phương thức lấy tên danh mục từ ID
     public String getCategoryByIdForBudget(int id) {
         String name = null; // Giá trị mặc định nếu không tìm thấy
