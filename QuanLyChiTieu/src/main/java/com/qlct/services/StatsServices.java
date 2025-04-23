@@ -15,35 +15,58 @@ import javafx.event.Event;
 
 public class StatsServices {
 
-     private Expense expense;
+    private Expense expense;
 
     public List<Expense> getExpenseCurrentMonth(String type) throws SQLException {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
 
-        String sql = "{call stats_current_month(?, ?)}";
-//        String sql = "SELECT \n"
-//                + "    category.id, \n"
-//                + "    category.name AS name, \n"
-//                + "    COALESCE(SUM(transaction.amount), 0) AS amount\n"
-//                + "FROM \n"
-//                + "    user, transaction, category\n"
-//                + "WHERE \n"
-//                + "    user.id = transaction.user_id \n"
-//                + "    AND category.id = transaction.category_id\n"
-//                + "    AND user.id = ?\n"
-//                + "    AND category.type = ?\n"
-//                + "    AND MONTH(transaction.date) = MONTH(CURRENT_DATE)\n"
-//                + "    AND YEAR(transaction.date) = YEAR(CURRENT_DATE)\n"
-//                + "GROUP BY \n"
-//                + "    category.id, category.name\n"
-//                + "ORDER BY \n"
-//                + "    category.id;";
+//        String sql = "{call stats_current_month(?, ?)}";
+        String sql
+                = "SELECT \n"
+                + "    category.id, \n"
+                + "    category.name AS name, \n"
+                + "    COALESCE(SUM(transaction.amount), 0) AS amount\n"
+                + "FROM \n"
+                + "    user\n"
+                + "JOIN \n"
+                + "    user_cate ON user.id = user_cate.user_id\n"
+                + "JOIN \n"
+                + "    category ON category.id = user_cate.category_id\n"
+                + "LEFT JOIN \n"
+                + "    transaction ON transaction.user_id = user.id \n"
+                + "               AND transaction.category_id = category.id\n"
+                + "               AND MONTH(transaction.date) = MONTH(CURRENT_DATE)\n"
+                + "               AND YEAR(transaction.date) = YEAR(CURRENT_DATE)\n"
+                + "WHERE \n"
+                + "    user.id = ? AND category.type = ?\n"
+                + "GROUP BY \n"
+                + "    category.id, category.name\n"
+                + "UNION\n"
+                + "SELECT \n"
+                + "    category.id, \n"
+                + "    category.name AS name, \n"
+                + "    0 AS amount\n"
+                + "FROM \n"
+                + "    category\n"
+                + "WHERE \n"
+                + "    category.is_default = 1 AND category.type = ?\n"
+                + "    AND category.id NOT IN (\n"
+                + "        SELECT category.id\n"
+                + "        FROM user\n"
+                + "        JOIN user_cate ON user.id = user_cate.user_id\n"
+                + "        JOIN category ON category.id = user_cate.category_id\n"
+                + "        WHERE user.id = ?\n"
+                + "    )\n"
+                + "ORDER BY id;";
 
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setInt(1, userId);
             stm.setString(2, type);
+            stm.setString(3, type);
+            stm.setInt(4, userId);
+
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 int category_id = rs.getInt("id");
@@ -60,30 +83,52 @@ public class StatsServices {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
 
-         String sql = "{call stats_filter_by_date(?, ?, ?, ?)}";
-//        String sql = "SELECT \n"
-//                + "    category.id, \n"
-//                + "    category.name AS name, \n"
-//                + "    COALESCE(SUM(transaction.amount), 0) AS amount\n"
-//                + "FROM \n"
-//                + "    user, transaction, category\n"
-//                + "WHERE \n"
-//                + "    user.id = transaction.user_id \n"
-//                + "    AND category.id = transaction.category_id\n"
-//                + "    AND user.id = ?\n"
-//                + "    AND category.type = ?\n"
-//                + "  AND transaction.date BETWEEN ? AND ?  "
-//                + "GROUP BY \n"
-//                + "    category.id, category.name\n"
-//                + "ORDER BY \n"
-//                + "    category.id;";
-
+//        String sql = "{call stats_filter_by_date(?, ?, ?, ?)}";
+        String sql = "SELECT \n"
+                + "    category.id, \n"
+                + "    category.name AS name, \n"
+                + "    COALESCE(SUM(transaction.amount), 0) AS amount\n"
+                + "FROM \n"
+                + "    user\n"
+                + "JOIN \n"
+                + "    user_cate ON user.id = user_cate.user_id\n"
+                + "JOIN \n"
+                + "    category ON category.id = user_cate.category_id\n"
+                + "LEFT JOIN \n"
+                + "    transaction ON transaction.user_id = user.id \n"
+                + "               AND transaction.category_id = category.id\n"
+                + "               AND MONTH(transaction.date) = MONTH(CURRENT_DATE)\n"
+                + "               AND YEAR(transaction.date) = YEAR(CURRENT_DATE)\n"
+                + "WHERE \n"
+                + "    user.id =? AND category.type = ?\n"
+                + "    AND transaction.date BETWEEN ? AND ?\n"
+                + "GROUP BY \n"
+                + "    category.id, category.name\n"
+                + "UNION\n"
+                + "SELECT \n"
+                + "    category.id, \n"
+                + "    category.name AS name, \n"
+                + "    0 AS amount\n"
+                + "FROM \n"
+                + "    category\n"
+                + "WHERE \n"
+                + "    category.is_default = 1 AND category.type = ?\n"
+                + "    AND category.id NOT IN (\n"
+                + "        SELECT category.id\n"
+                + "        FROM user\n"
+                + "        JOIN user_cate ON user.id = user_cate.user_id\n"
+                + "        JOIN category ON category.id = user_cate.category_id\n"
+                + "        WHERE user.id = ?\n"
+                + "    )\n"
+                + "ORDER BY id;";
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setInt(1, userId);
             stm.setString(2, type);
             stm.setDate(3, Date.valueOf(fromDate));
             stm.setDate(4, Date.valueOf(toDate));
+            stm.setString(5, type);
+            stm.setInt(6, userId);
             ResultSet rs = stm.executeQuery();
 
             while (rs.next()) {
@@ -100,25 +145,25 @@ public class StatsServices {
     public List<Expense> getMonthlyExpenses(String type) throws SQLException {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
-        String sql = "{call stats_month_expense(?, ?)}";
-//        String sql
-//                = "SELECT \n"
-//                + "    MONTH(transaction.date) AS month, \n"
-//                + "    COALESCE(SUM(transaction.amount), 0) AS total_amount\n"
-//                + "FROM \n"
-//                + "    user\n"
-//                + "JOIN \n"
-//                + "    transaction ON user.id = transaction.user_id\n"
-//                + "JOIN \n"
-//                + "    category ON transaction.category_id = category.id\n"
-//                + "WHERE \n"
-//                + "    user.id = ?\n"
-//                + "    AND category.type = ?\n"
-//                + "    AND YEAR(transaction.date) = YEAR(CURDATE())\n"
-//                + "GROUP BY \n"
-//                + "    MONTH(transaction.date)\n"
-//                + "ORDER BY \n"
-//                + "    MONTH(transaction.date);";
+        // String sql = "{call stats_month_expense(?, ?)}";
+        String sql = "SELECT \n"
+                + "    MONTH(transaction.date) AS month, \n"
+                + "    COALESCE(SUM(transaction.amount), 0) AS total_amount\n"
+                + "FROM \n"
+                + "    user\n"
+                + "JOIN \n"
+                + "    user_cate ON user.id = user_cate.user_id\n"
+                + "JOIN \n"
+                + "    category ON user_cate.category_id = category.id\n"
+                + "LEFT JOIN \n"
+                + "    transaction ON category.id = transaction.category_id\n"
+                + "WHERE \n"
+                + "    (user.id = ? AND category.type = ?) \n"
+                + "    AND YEAR(transaction.date) = YEAR(CURDATE())\n"
+                + "GROUP BY \n"
+                + "    MONTH(transaction.date)\n"
+                + "ORDER BY \n"
+                + "    MONTH(transaction.date);";
 
         try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, userId);
@@ -135,11 +180,5 @@ public class StatsServices {
         }
         return expenseList;
     }
-    
-    
-    
-    
-    
-
 
 }
