@@ -136,7 +136,7 @@ public class BudgetController implements Initializable {
                 return;
             }
             try {
-                int categoryId = budgetServices.getIdByName(selectedCate);
+                int categoryId = budgetServices.getIdByName(selectedCate, currentUser.getId());
                 if (budgetServices.isBudgetExistForCurrentMonth(categoryId, true)) {
                     budgetServices.updateStatus(lblStatus, "Ngân sách cho danh mục này đã tồn tại trong tháng!", "-fx-text-fill: red;");
                     return;

@@ -128,7 +128,7 @@ public class BudgetServices {
     public void insertBudgetTODB(String input, String budgetType, String categoryName) throws SQLException {
         double amount = validateAmount(input);
         int currentUserId = UserSessionServices.getCurrentUser().getId();
-        int categoryId = getIdByName(categoryName);
+        int categoryId = getIdByName(categoryName, currentUserId);
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareCall("INSERT INTO budget (amount, user_id ,type, category_id) VALUES (?,?,?,?)");
             stm.setDouble(1, amount);
@@ -290,11 +290,16 @@ public class BudgetServices {
     }
 
     // Phương thức lấy ID từ tên danh mục
-    public int getIdByName(String name) throws SQLException {
+    public int getIdByName(String name, int userId) throws SQLException {
         int id = -1; // Giá trị mặc định nếu không tìm thấy
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareStatement("SELECT id FROM category WHERE name = ?");
+            PreparedStatement stm = conn.prepareStatement("SELECT c.id \r\n" + //
+                                "        FROM category c, user_cate uc \n" + //
+                                "        WHERE c.id = uc.category_id AND c.name = ? \n" + //
+                                "        AND (c.is_default = 1 OR uc.user_id = ?)\n" + //
+                                "        LIMIT 1");
             stm.setString(1, name);
+            stm.setInt(2, userId);
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
                 id = rs.getInt("id");
