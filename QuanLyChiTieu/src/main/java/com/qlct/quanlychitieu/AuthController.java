@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
+
 public class AuthController implements Initializable {
 
     @FXML private TextField txtUsername;
@@ -39,6 +40,8 @@ public class AuthController implements Initializable {
             System.out.println("Login failed for: " + username);
             Utils.showAlert("Tên đăng nhập hoặc mật khẩu không chính xác!", null, "Lỗi đăng nhập");
         }
+        
+        
     }
 
 

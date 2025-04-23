@@ -1,6 +1,8 @@
 com\qlct\pojo\Expense.class
 com\qlct\pojo\Transaction.class
+com\qlct\quanlychitieu\ChartController$2.class
 com\qlct\services\CategoryServices.class
+com\qlct\services\ChartServices.class
 com\qlct\services\TransactionServices.class
 com\qlct\pojo\User.class
 com\qlct\quanlychitieu\StatsController$2.class
@@ -30,4 +32,5 @@ com\qlct\quanlychitieu\TransactionManager.class
 com\qlct\pojo\Budget.class
 com\qlct\services\BudgetServices.class
 com\qlct\quanlychitieu\BudgetController$2.class
+com\qlct\quanlychitieu\ChartController$1.class
 com\qlct\quanlychitieu\AuthController.class

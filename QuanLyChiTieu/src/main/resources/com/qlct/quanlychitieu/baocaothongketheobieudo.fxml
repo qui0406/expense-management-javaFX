@@ -47,21 +47,21 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="796.0" prefWidth="1150.0" style="-fx-background-color: aliceblue;" stylesheets="@style/baocaothongketheobang.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.ChartController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="796.0" prefWidth="1150.0" style="-fx-background-color: aliceblue;" stylesheets="@style/chart.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.ChartController">
    <children>
       <Label layoutX="532.0" layoutY="14.0" prefHeight="46.0" prefWidth="254.0" styleClass="Subject" text="Báo cáo thống kê">
          <font>
             <Font size="31.0" />
          </font>
       </Label>
-      <PieChart fx:id="pieChart" layoutX="245.0" layoutY="155.0" prefHeight="248.0" prefWidth="254.0" style="-fx-background-color: bisque;">
+      <PieChart fx:id="pieChart" layoutX="245.0" layoutY="139.0" prefHeight="251.0" prefWidth="254.0" style="-fx-background-color: bisque;">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
       </PieChart>
       <Label layoutX="283.0" layoutY="91.0" text="Từ ngày" />
       <Label layoutX="634.0" layoutY="91.0" text="Đến ngày" />
-      <BarChart fx:id="barChart" layoutX="547.0" layoutY="158.0" prefHeight="270.0" prefWidth="337.0">
+      <BarChart fx:id="barChart" layoutX="560.0" layoutY="151.0" prefHeight="264.0" prefWidth="337.0">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
@@ -69,7 +69,7 @@
           <NumberAxis prefHeight="230.0" prefWidth="30.0" side="LEFT" />
         </yAxis>
       </BarChart>
-      <LineChart fx:id="lineChart" layoutX="245.0" layoutY="471.0" prefHeight="213.0" prefWidth="629.0" style="-fx-background-color: sklyblue;" stylesheets="@style/chart.css">
+      <LineChart fx:id="lineChart" layoutX="245.0" layoutY="437.0" prefHeight="213.0" prefWidth="629.0" style="-fx-background-color: sklyblue;" stylesheets="@style/chart.css">
          <xAxis>
             <CategoryAxis side="BOTTOM" />
          </xAxis>

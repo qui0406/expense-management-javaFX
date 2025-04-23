@@ -1,6 +1,7 @@
 package com.qlct.quanlychitieu;
 
 import com.qlct.pojo.Expense;
+import com.qlct.services.ChartServices;
 import com.qlct.services.StatsServices;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,9 +15,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -29,10 +28,10 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.DateCell;
 
 public class ChartController implements Initializable {
 
@@ -49,9 +48,11 @@ public class ChartController implements Initializable {
     @FXML private Button logoutChart;
 
     private final StatsServices statsServices;
+    private final ChartServices chartServices;  // Declare ChartServices
 
     public ChartController() {
         this.statsServices = new StatsServices();
+        this.chartServices = new ChartServices();  // Initialize ChartServices
     }
 
     @Override
@@ -66,13 +67,31 @@ public class ChartController implements Initializable {
         
         logoutChart.setOnAction(event -> Utils.logout(logoutChart, "login.fxml"));
 
-
         try {
             loadData(statsServices.getExpenseCurrentMonth(cbTypeChart.getValue()));
             loadDataByMonth();
         } catch (SQLException ex) {
             Logger.getLogger(ChartController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        checkChoseFutureDate();
+    }
+    
+    private void checkChoseFutureDate() {
+        fromDateChart.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                setDisable(empty || date.isAfter(LocalDate.now()));
+            }
+        });
+
+        toDateChart.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                setDisable(empty || date.isAfter(LocalDate.now()));
+            }
+        });
     }
 
     // Load combo box options for chart type selection
@@ -119,7 +138,6 @@ public class ChartController implements Initializable {
         });
     }
 
-
     // Handle date filtering
     private void filterDate(Event e) throws SQLException {
         LocalDate selectedFromDate = fromDateChart.getValue();
@@ -155,62 +173,9 @@ public class ChartController implements Initializable {
         }
     }
 
-    // Load pie chart with expenses data
-    public void loadPieChart(List<Expense> expenses) {
-        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        double total = expenses.stream().mapToDouble(Expense::getAmount).sum();
-
-        for (Expense expense : expenses) {
-            pieChartData.add(new PieChart.Data(expense.getCategoryName(), expense.getAmount()));
-        }
-
-        pieChart.setData(pieChartData);
-        pieChart.setTitle("Biểu đồ chi tiêu");
-        pieChart.setLabelsVisible(false);
-        pieChart.setLegendVisible(true);
-        pieChart.setMinSize(280, 280);
-        pieChart.setPrefSize(280, 280);
-
-        for (PieChart.Data data : pieChart.getData()) {
-            double percent = (data.getPieValue() / total) * 100;
-            data.nameProperty().set(String.format("%s - %.1f%%", data.getName(), percent));
-        }
-    }
-
-    // Load bar chart with expenses data
-    public void loadBarChart(List<Expense> expenses) {
-        barChart.getData().clear();
-        barChart.setMinSize(600, 300);
-        barChart.setPrefSize(600, 300);
-
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        for (Expense expense : expenses) {
-            XYChart.Data<String, Number> data = new XYChart.Data<>(expense.getCategoryName(), expense.getAmount());
-            series.getData().add(data);
-        }
-
-        barChart.getData().add(series);
-    }
-
-    // Load line chart with expenses data
-    public void loadLineChart(List<Expense> expenses) {
-        lineChart.getData().clear();
-        lineChart.setTitle("Chi tiêu theo danh mục");
-        lineChart.setPrefSize(850, 350);
-        lineChart.setMinSize(850, 350);
-
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        for (Expense expense : expenses) {
-            XYChart.Data<String, Number> data = new XYChart.Data<>(expense.getCategoryName(), expense.getAmount());
-            series.getData().add(data);
-        }
-
-        lineChart.getData().add(series);
-    }
-
     // Load expenses data into charts
     public void loadData(List<Expense> expenseList) throws SQLException {
-        if (expenseList == null || expenseList.isEmpty()) {
+       if (expenseList == null || expenseList.isEmpty()) {
             pieChart.setVisible(false);
             lineChart.setVisible(false);
             pieChart.getData().clear();
@@ -222,8 +187,8 @@ public class ChartController implements Initializable {
         lineChart.setVisible(true);
 
         ObservableList<Expense> expenses = FXCollections.observableArrayList(expenseList);
-        loadPieChart(expenses);
-        loadBarChart(expenseList);
+        chartServices.loadPieChart(pieChart, expenses);
+        chartServices.loadBarChart(barChart, expenses);  // Call loadBarChart from ChartServices
     }
 
     // Load monthly expenses data for the line chart
@@ -238,10 +203,13 @@ public class ChartController implements Initializable {
             }
 
             lineChart.setVisible(true);
-            loadLineChart(expensesByMonth);
+            chartServices.loadLineChart(lineChart, expensesByMonth);
+
 
         } catch (SQLException ex) {
             Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+
 }

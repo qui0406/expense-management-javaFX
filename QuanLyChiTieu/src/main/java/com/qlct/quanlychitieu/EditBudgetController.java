@@ -68,9 +68,7 @@ public class EditBudgetController implements Initializable {
                     handleUpdateBudget(budgetId, inputText, editingBudget.getType(), editingBudget.getCategoryId());
                 } else {
                     Platform.runLater(() -> {
-                        lblStatusInEdit.setText("Ngân sách không hợp lệ. "
-                                + "Bạn đã chi tiêu trong tháng này. "
-                                + "Vui lòng nhập ngân sách mới lớn hơn hoặc bằng ngân sách hiện tại!!!");
+                        lblStatusInEdit.setText("Ngân sách nhập vào phải lớn hơn chi tiêu hiện tại");
                         lblStatusInEdit.setStyle("-fx-text-fill: red;");
                     });
                     return;    //Dung thuc hien neu ngan sach khong hop le
