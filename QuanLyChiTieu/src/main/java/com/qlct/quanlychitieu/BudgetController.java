@@ -120,6 +120,7 @@ public class BudgetController implements Initializable {
         loadColumns();
 
         btnAddBudget.setOnAction(e -> {
+            btnAddBudget.setDisable(true);
             String selectedType = cbType.getValue(); // Lấy giá trị đã chọn từ ComboBox
             String selectedCate = cbCate.getValue();
             String inputText = txtInputBudget.getText();
@@ -137,18 +138,21 @@ public class BudgetController implements Initializable {
             }
             try {
                 int categoryId = budgetServices.getIdByName(selectedCate, currentUser.getId());
+                System.out.println("Category ID: " + categoryId);
                 if (budgetServices.isBudgetExistForCurrentMonth(categoryId, true)) {
                     budgetServices.updateStatus(lblStatus, "Ngân sách cho danh mục này đã tồn tại trong tháng!", "-fx-text-fill: red;");
                     return;
                 }
-                budgetServices.insertBudgetTODB(inputText, selectedType, selectedCate);
                 handleAddBudget(inputText, selectedType, selectedCate);
+                budgetServices.setLblTotal(lblTotal);
+                updateBudgetProgress(progressBarTotal, progressBarUsed, budgetServices.getTotalBudget(), budgetServices.getTotalUsed());
             } catch (SQLException ex) {
                 budgetServices.updateStatus(lblStatus, "Lỗi kết nối CSDL", "-fx-text-fill: red;");
                 ex.printStackTrace(); //In ra lỗi console để debug
+            } finally {
+                btnAddBudget.setDisable(false); // Luôn bật lại sau khi xử lý xong
             }
         });
-
     }
     
     @FXML
@@ -187,8 +191,6 @@ public class BudgetController implements Initializable {
         EditBudgetController controller = loader.getController();
         controller.setEditingBudget(selectedBudget);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
-//        dialog.initModality(Modality.APPLICATION_MODAL);
-//        dialog.initOwner(((Node) event.getSource()).getScene().getWindow());
         dialog.showAndWait();
     }
 
@@ -211,7 +213,6 @@ public class BudgetController implements Initializable {
             protected void updateItem(String categoryName, boolean empty) {
                 super.updateItem(categoryName, empty);
                 if (getTableRow() != null) {
-                    System.out.println("TableRow is not null");
                     System.out.println("TableRow Item: " + getTableRow().getItem()); // In ra item của TableRow
                 } else {
                     System.out.println("TableRow is null");

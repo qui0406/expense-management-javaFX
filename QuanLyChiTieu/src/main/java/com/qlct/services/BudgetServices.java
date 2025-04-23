@@ -88,7 +88,7 @@ public class BudgetServices {
     }
 
     public double validateAmount(String input) {
-        if (input == null || input.trim().isEmpty()) {     // Kiem tra o nhap lieu
+        if (input == null || input.trim().isEmpty()) { // Kiem tra o nhap lieu
             throw new IllegalArgumentException("Không được để trống ô này");
         }
 
@@ -97,7 +97,7 @@ public class BudgetServices {
             throw new IllegalArgumentException("Giá trị nhập vào quá lớn");
         }
 
-        // Loai bo cac so 0 du thua 
+        // Loai bo cac so 0 du thua
         input = input.replaceFirst("^0+(?!$)", "");
 
         // Kiem tra kieu gia tri nhap vao da hop le chua
@@ -111,7 +111,7 @@ public class BudgetServices {
             throw new IllegalArgumentException("Không được nhập số âm.");
         }
 
-        // Lam tron 2 chu so thap phan 
+        // Lam tron 2 chu so thap phan
         DecimalFormat df = new DecimalFormat("#.##");
         double parsedAmount = Double.parseDouble(input);
         amount = Double.valueOf(df.format(parsedAmount));
@@ -122,8 +122,15 @@ public class BudgetServices {
         double amount = validateAmount(input);
         int currentUserId = UserSessionServices.getCurrentUser().getId();
         int categoryId = getIdByName(categoryName, currentUserId);
+
+        // 👉 CHẶN LUÔN nếu không tìm thấy ID danh mục
+        if (categoryId == -1) {
+            throw new SQLException("Không tìm thấy danh mục có tên: " + categoryName + " cho userId: " + currentUserId);
+        }
+
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareCall("INSERT INTO budget (amount, user_id ,type, category_id) VALUES (?,?,?,?)");
+            PreparedStatement stm = conn.prepareCall(
+                    "INSERT INTO budget (amount, user_id ,type, category_id) VALUES (?,?,?,?)");
             stm.setDouble(1, amount);
             stm.setInt(2, currentUserId);
             stm.setString(3, budgetType);
@@ -161,7 +168,7 @@ public class BudgetServices {
             ResultSet rs = stm.executeQuery();
 
             if (rs.next()) {
-                total = rs.getDouble(1);    // Lay gia tri tong
+                total = rs.getDouble(1); // Lay gia tri tong
             }
         } catch (SQLException e) {
             System.out.println("Không thể truy xuất dữ liệu");
@@ -186,7 +193,7 @@ public class BudgetServices {
             ResultSet rs = stm.executeQuery();
 
             if (rs.next()) {
-                total = rs.getDouble(1);    // Lay gia tri tong
+                total = rs.getDouble(1); // Lay gia tri tong
             }
         } catch (SQLException e) {
             System.out.println("Không thể truy xuất dữ liệu");
@@ -202,7 +209,8 @@ public class BudgetServices {
         int currentUserId = UserSessionServices.getCurrentUser().getId();
         double amount = validateAmount(input);
         try (Connection conn = JdbcUtils.getConn()) {
-            try (PreparedStatement stm2 = conn.prepareCall("UPDATE budget SET amount =  ? WHERE id = ? AND user_id = ?")) {
+            try (PreparedStatement stm2 = conn
+                    .prepareCall("UPDATE budget SET amount =  ? WHERE id = ? AND user_id = ?")) {
                 stm2.setDouble(1, amount);
                 stm2.setInt(2, budgetId);
                 stm2.setInt(3, currentUserId);
@@ -286,11 +294,11 @@ public class BudgetServices {
     public int getIdByName(String name, int userId) throws SQLException {
         int id = -1; // Giá trị mặc định nếu không tìm thấy
         try (Connection conn = JdbcUtils.getConn()) {
-            PreparedStatement stm = conn.prepareStatement("SELECT c.id \r\n" + //
-                                "        FROM category c, user_cate uc \n" + //
-                                "        WHERE c.id = uc.category_id AND c.name = ? \n" + //
-                                "        AND (c.is_default = 1 OR uc.user_id = ?)\n" + //
-                                "        LIMIT 1");
+            PreparedStatement stm = conn.prepareStatement("SELECT c.id "
+                    + "FROM category c "
+                    + "LEFT JOIN user_cate uc ON c.id = uc.category_id "
+                    + "WHERE c.name = ? AND (c.is_default = 1 OR (c.is_default = 0 AND uc.user_id = ?)) "
+                    + "LIMIT 1;");
             stm.setString(1, name);
             stm.setInt(2, userId);
             ResultSet rs = stm.executeQuery();
