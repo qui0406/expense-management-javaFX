@@ -104,7 +104,7 @@ public class BudgetController implements Initializable {
             }
         });
         
-        btnLogoutBudget.setOnAction(event -> logoutBudget("login.fxml"));
+        btnLogoutBudget.setOnAction(event -> Utils.logout(btnLogoutBudget, "login.fxml"));
 
          //Hiển thị username của người dùng hiện tại
         User currentUser = UserSessionServices.getCurrentUser();

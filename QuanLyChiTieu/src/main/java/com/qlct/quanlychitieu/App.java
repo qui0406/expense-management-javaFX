@@ -25,6 +25,8 @@ public class App extends Application {
         stage.setResizable(false);
         stage.show();
     }
+    
+    
 
     static void setRoot(String fxml, double width, double height) throws IOException {
         Parent root = loadFXML(fxml);

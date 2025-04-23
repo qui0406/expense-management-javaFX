@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.Alert;
 import javafx.scene.control.DateCell;
 
 public class ChartController implements Initializable {
@@ -114,6 +115,8 @@ public class ChartController implements Initializable {
         choiceBox.add(String.valueOf(currentYear - 2));
         cbChoseYear.setItems(FXCollections.observableList(choiceBox));
     }
+    
+    
 
     // Load combo box options for expense type selection (Chi, Thu)
     private void loadComboBoxType() {
@@ -173,21 +176,21 @@ public class ChartController implements Initializable {
     }
 
     // Handle the change of chart view
-    private void handleComboBoxChart() {
+    public void handleComboBoxChart() {
         String selectedOption = cbChoseChart.getValue();
-        if (selectedOption.equals("Thống kê theo bảng")) {
-            switchSceneChart("baocaothongketheobang.fxml");
-        } else if (selectedOption.equals("Thống kê theo biểu đồ")) {
-            // Re-load the data and make sure barChart is visible
-            barChart.setVisible(true);
-            lineChart.setVisible(true); // Ensure both charts are visible
-            try {
-                loadData(statsServices.getExpenseCurrentMonth(cbTypeChart.getValue()));
-                loadDataByMonth(); // Update monthly data for line chart
-            } catch (SQLException ex) {
-                Logger.getLogger(ChartController.class.getName()).log(Level.SEVERE, null, ex);
+        try {
+            if ("Thống kê theo bảng".equals(selectedOption)) {
+                App.setRoot("baocaothongketheobang", 1200, 800);
+            } else if ("Thống kê theo biểu đồ".equals(selectedOption)) {
+                App.setRoot("baocaothongketheobieudo", 1200, 800);
             }
-            switchSceneChart("baocaothongketheobieudo.fxml");
+        } catch (IOException e) {
+            System.err.println("Lỗi khi chuyển scene: " + e.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Lỗi");
+            alert.setHeaderText("Không thể chuyển màn hình");
+            alert.setContentText("Vui lòng thử lại sau.");
+            alert.showAndWait();
         }
     }
 
@@ -240,5 +243,15 @@ public class ChartController implements Initializable {
         } catch (SQLException ex) {
             Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    @FXML
+    public void switchTransaction() throws IOException {
+        App.setRoot("FXTransactions", 1200, 800);
+    }
+
+    @FXML
+    public void switchBudget() throws IOException {
+        App.setRoot("budget", 1200, 800);
     }
 }

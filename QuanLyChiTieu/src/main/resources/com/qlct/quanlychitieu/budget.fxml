@@ -15,22 +15,26 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <BorderPane prefHeight="706.0" prefWidth="824.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.BudgetController">
    <left>
-      <AnchorPane prefHeight="783.0" prefWidth="181.0" styleClass="sideBar" stylesheets="@style/budget.css" BorderPane.alignment="CENTER">
+      <AnchorPane minWidth="200.0" prefHeight="706.0" prefWidth="200.0" styleClass="sideBar" stylesheets="@style/budget.css" BorderPane.alignment="CENTER">
          <children>
-            <Text fx:id="txtUsername" layoutX="50.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="txtUsername" textAlignment="CENTER" wrappingWidth="96.27655029296875" />
-            <Button layoutX="28.0" layoutY="152.0" mnemonicParsing="false" onAction="#switchTransaction" prefHeight="30.0" prefWidth="141.0" styleClass="btnSideBar" text="Thêm giao dịch" />
-            <Button layoutX="27.0" layoutY="213.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="141.0" styleClass="btnSideBar" text="Thêm ngân sách" />
-            <ImageView fitHeight="45.0" fitWidth="50.0" layoutX="73.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
+            <Text fx:id="txtUsername" fill="#1e1b1b" layoutY="116.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="txtUsername" text="Username" textAlignment="CENTER" wrappingWidth="201.0765380859375">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font></Text>
+            <Button layoutX="12.0" layoutY="150.0" mnemonicParsing="false" onAction="#switchTransaction" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Thêm giao dịch" />
+            <Button layoutX="12.0" layoutY="215.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" style="-fx-background-color: blue;" styleClass="btnSideBar" text="Thêm ngân sách" />
+            <ImageView fitHeight="45.0" fitWidth="60.0" layoutX="75.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../icons/User.png" />
                </image>
             </ImageView>
-            <Button layoutX="26.0" layoutY="269.0" mnemonicParsing="false" onAction="#switchStats" prefHeight="30.0" prefWidth="141.0" styleClass="btnSideBar" text="Báo cáo thống kê" />
-            <Button fx:id="btnLogoutBudget" layoutX="24.0" layoutY="328.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="144.0" styleClass="btnSideBar" text="Đăng xuất" />
+            <Button layoutX="12.0" layoutY="280.0" mnemonicParsing="false" onAction="#switchStats" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Báo cáo thống kê" />
+            <Button fx:id="btnLogoutBudget" layoutX="12.0" layoutY="345.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Đăng xuất" />
          </children>
       </AnchorPane>
    </left>

@@ -2,7 +2,6 @@ package com.qlct.quanlychitieu;
 
 import com.qlct.pojo.Category;
 import com.qlct.services.CategoryServices;
-import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -14,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -24,7 +24,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -197,17 +196,7 @@ public class FXEditCategoryController implements Initializable {
     }
 
     public void backToTransactions(MouseEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXTransactions.fxml"));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) ((ImageView) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException ex) {
-            Utils.getAlert("Lỗi khi quay lại giao diện giao dịch: " + ex.getMessage()).show();
-            Logger.getLogger(FXEditCategoryController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        SceneController.switchScene((Node) event.getSource(), "FXTransactions.fxml", 1200, 800);
     }
+
 }

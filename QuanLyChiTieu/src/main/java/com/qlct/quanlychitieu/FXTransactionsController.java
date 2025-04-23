@@ -124,7 +124,7 @@ public class FXTransactionsController implements Initializable {
         btDate.setValue(LocalDate.now());
         this.loadColumns();
         this.loadTableData();
-        logoutBtnTransaction.setOnAction(event -> logoutTransaction("login.fxml"));
+        logoutBtnTransaction.setOnAction(event -> Utils.logout(logoutBtnTransaction, "login.fxml"));
         btnSave.setOnAction(this::addHandler);
 
     }
@@ -439,31 +439,31 @@ public class FXTransactionsController implements Initializable {
         }
     }
     
-    public void logoutTransaction(String fxmlFile) {
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Xác nhận đăng xuất");
-        confirmAlert.setHeaderText(null);
-        confirmAlert.setContentText("Bạn có chắc chắn muốn đăng xuất không?");
-
-        // Hiển thị và chờ người dùng chọn
-        Optional<ButtonType> result = confirmAlert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
-                Parent root = loader.load();
-                Stage stage = (Stage)logoutBtnTransaction.getScene().getWindow();
-                Scene scene = new Scene(root, 650, 500);
-                stage.setScene(scene);
-                stage.setWidth(650);  // Set width explicitly
-                stage.setHeight(500); // Set height explicitly
-                stage.centerOnScreen();
-                stage.show();
-            } catch (IOException e) {
-                Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, "Lỗi khi đăng xuất: ", e);
-                Utils.showAlert("Lỗi hệ thống!", null, "Không thể đăng xuất. Vui lòng thử lại.");
-            }
-        } else {
-            // Người dùng chọn Cancel hoặc đóng hộp thoại → không làm gì cả
-        }
-    }
+//    public void logoutTransaction(String fxmlFile) {
+//        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+//        confirmAlert.setTitle("Xác nhận đăng xuất");
+//        confirmAlert.setHeaderText(null);
+//        confirmAlert.setContentText("Bạn có chắc chắn muốn đăng xuất không?");
+//
+//        // Hiển thị và chờ người dùng chọn
+//        Optional<ButtonType> result = confirmAlert.showAndWait();
+//        if (result.isPresent() && result.get() == ButtonType.OK) {
+//            try {
+//                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+//                Parent root = loader.load();
+//                Stage stage = (Stage)logoutBtnTransaction.getScene().getWindow();
+//                Scene scene = new Scene(root, 650, 500);
+//                stage.setScene(scene);
+//                stage.setWidth(650);  // Set width explicitly
+//                stage.setHeight(500); // Set height explicitly
+//                stage.centerOnScreen();
+//                stage.show();
+//            } catch (IOException e) {
+//                Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, "Lỗi khi đăng xuất: ", e);
+//                Utils.showAlert("Lỗi hệ thống!", null, "Không thể đăng xuất. Vui lòng thử lại.");
+//            }
+//        } else {
+//            // Người dùng chọn Cancel hoặc đóng hộp thoại → không làm gì cả
+//        }
+//    }
 }

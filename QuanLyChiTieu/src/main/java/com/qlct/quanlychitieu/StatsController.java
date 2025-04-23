@@ -162,23 +162,22 @@ public class StatsController implements Initializable {
 
     public void handleComboBoxTable() {
         String selectedOption = cbChoseTable.getValue();
-        if ("Thống kê theo bảng".equals(selectedOption)) {
-            switchSceneTable("baocaothongketheobang.fxml");
-        } else if ("Thống kê theo biểu đồ".equals(selectedOption)) {
-            switchSceneTable("baocaothongketheobieudo.fxml");
+        try {
+            if ("Thống kê theo bảng".equals(selectedOption)) {
+                App.setRoot("baocaothongketheobang", 1200, 800);
+            } else if ("Thống kê theo biểu đồ".equals(selectedOption)) {
+                App.setRoot("baocaothongketheobieudo", 1200, 800);
+            }
+        } catch (IOException e) {
+            System.err.println("Lỗi khi chuyển scene: " + e.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Lỗi");
+            alert.setHeaderText("Không thể chuyển màn hình");
+            alert.setContentText("Vui lòng thử lại sau.");
+            alert.showAndWait();
         }
     }
 
-    public void switchSceneTable(String fxmlFile) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
-            Parent root = loader.load();
-            Stage stage = (Stage) cbChoseTable.getScene().getWindow();
-            stage.setScene(new Scene(root));
-        } catch (IOException e) {
-            System.out.println("Failed to load FXML: " + e);
-        }
-    }
 
     public void loadColumnsCurrentMonth() {
         tbExpenses.getColumns().setAll(createCommonColumns());
