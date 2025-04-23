@@ -21,7 +21,7 @@ public class StatsServices {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
 
-//        String sql = "{call stats_current_month(?, ?)}";
+        //String sql = "{call stats_current_month(?, ?)}";
         String sql
                 = "SELECT \n"
                 + "    category.id, \n"
@@ -42,30 +42,17 @@ public class StatsServices {
                 + "    user.id = ? AND category.type = ?\n"
                 + "GROUP BY \n"
                 + "    category.id, category.name\n"
-                + "UNION\n"
-                + "SELECT \n"
-                + "    category.id, \n"
-                + "    category.name AS name, \n"
-                + "    0 AS amount\n"
-                + "FROM \n"
-                + "    category\n"
-                + "WHERE \n"
-                + "    category.is_default = 1 AND category.type = ?\n"
-                + "    AND category.id NOT IN (\n"
-                + "        SELECT category.id\n"
-                + "        FROM user\n"
-                + "        JOIN user_cate ON user.id = user_cate.user_id\n"
-                + "        JOIN category ON category.id = user_cate.category_id\n"
-                + "        WHERE user.id = ?\n"
-                + "    )\n"
-                + "ORDER BY id;";
+                + "HAVING \n"
+                + "    amount > 0\n"
+                + "ORDER BY \n"
+                + "    category.id;";
 
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setInt(1, userId);
             stm.setString(2, type);
-            stm.setString(3, type);
-            stm.setInt(4, userId);
+//            stm.setString(3, type);
+//            stm.setInt(4, userId);
 
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
@@ -97,38 +84,22 @@ public class StatsServices {
                 + "LEFT JOIN \n"
                 + "    transaction ON transaction.user_id = user.id \n"
                 + "               AND transaction.category_id = category.id\n"
-                + "               AND MONTH(transaction.date) = MONTH(CURRENT_DATE)\n"
-                + "               AND YEAR(transaction.date) = YEAR(CURRENT_DATE)\n"
+                + "               AND transaction.date BETWEEN ? AND ?\n"
                 + "WHERE \n"
-                + "    user.id =? AND category.type = ?\n"
-                + "    AND transaction.date BETWEEN ? AND ?\n"
+                + "    user.id = ? AND category.type = ?\n"
                 + "GROUP BY \n"
                 + "    category.id, category.name\n"
-                + "UNION\n"
-                + "SELECT \n"
-                + "    category.id, \n"
-                + "    category.name AS name, \n"
-                + "    0 AS amount\n"
-                + "FROM \n"
-                + "    category\n"
-                + "WHERE \n"
-                + "    category.is_default = 1 AND category.type = ?\n"
-                + "    AND category.id NOT IN (\n"
-                + "        SELECT category.id\n"
-                + "        FROM user\n"
-                + "        JOIN user_cate ON user.id = user_cate.user_id\n"
-                + "        JOIN category ON category.id = user_cate.category_id\n"
-                + "        WHERE user.id = ?\n"
-                + "    )\n"
-                + "ORDER BY id;";
+                + "HAVING \n"
+                + "    amount > 0\n"
+                + "ORDER BY \n"
+                + "    category.id;";
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
-            stm.setInt(1, userId);
-            stm.setString(2, type);
-            stm.setDate(3, Date.valueOf(fromDate));
-            stm.setDate(4, Date.valueOf(toDate));
-            stm.setString(5, type);
-            stm.setInt(6, userId);
+            
+            stm.setDate(1, Date.valueOf(fromDate));
+            stm.setDate(2, Date.valueOf(toDate));
+            stm.setInt(3, userId);
+            stm.setString(4, type);
             ResultSet rs = stm.executeQuery();
 
             while (rs.next()) {

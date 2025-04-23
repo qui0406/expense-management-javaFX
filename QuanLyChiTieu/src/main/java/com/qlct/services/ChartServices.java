@@ -41,9 +41,16 @@ public class ChartServices {
 
         XYChart.Series<String, Number> series = new XYChart.Series<>();
 
-        String[] colors = {
-            "#F44336", "#2196F3", "#4CAF50", "#FFC107", "#9C27B0", "#009688", "#795548"
+        String[] colors = {          
+            "#00BCD4", // Xanh ngọc
+            "#CDDC39", // Vàng chanh
+            "#673AB7",  // Tím đậm
+            "#E91E63", // Hồng đậm
+            "#3F51B5", // Xanh lam đậm
+            "#8BC34A", // Xanh lá non
+            "#FF9800", // Cam
         };
+
 
         int i = 0;
         for (Expense expense : expenses) {
