@@ -35,40 +35,44 @@ public class ChartServices {
     }
 
     public void loadBarChart(BarChart<String, Number> chart, List<Expense> expenses) {
-        chart.getData().clear();
-        chart.setMinSize(600, 300);
-        chart.setPrefSize(600, 300);
+    // Xóa hết dữ liệu cũ trong biểu đồ
+    chart.getData().clear();
+    chart.setMinSize(600, 300);
+    chart.setPrefSize(600, 300);
 
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
+    // Tạo một series mới để thêm vào biểu đồ
+    XYChart.Series<String, Number> series = new XYChart.Series<>();
 
-        String[] colors = {          
-            "#00BCD4", // Xanh ngọc
-            "#CDDC39", // Vàng chanh
-            "#673AB7",  // Tím đậm
-            "#E91E63", // Hồng đậm
-            "#3F51B5", // Xanh lam đậm
-            "#8BC34A", // Xanh lá non
-            "#FF9800", // Cam
-        };
+    String[] colors = {          
+        "#00BCD4", // Xanh ngọc
+        "#CDDC39", // Vàng chanh
+        "#673AB7",  // Tím đậm
+        "#E91E63", // Hồng đậm
+        "#3F51B5", // Xanh lam đậm
+        "#8BC34A", // Xanh lá non
+        "#FF9800", // Cam
+    };
 
+    int i = 0;
+    // Thêm các dữ liệu vào biểu đồ
+    for (Expense expense : expenses) {
+        XYChart.Data<String, Number> data = new XYChart.Data<>(expense.getCategoryName(), expense.getAmount());
+        series.getData().add(data);
 
-        int i = 0;
-        for (Expense expense : expenses) {
-            XYChart.Data<String, Number> data = new XYChart.Data<>(expense.getCategoryName(), expense.getAmount());
-            series.getData().add(data);
+        final int colorIndex = i % colors.length;
+        data.nodeProperty().addListener((obs, oldNode, newNode) -> {
+            if (newNode != null) {
+                newNode.setStyle("-fx-bar-fill: " + colors[colorIndex] + ";");
+            }
+        });
 
-            final int colorIndex = i % colors.length;
-            data.nodeProperty().addListener((obs, oldNode, newNode) -> {
-                if (newNode != null) {
-                    newNode.setStyle("-fx-bar-fill: " + colors[colorIndex] + ";");
-                }
-            });
-
-            i++;
-        }
-
-        chart.getData().add(series);
+        i++;
     }
+
+    // Thêm series vào biểu đồ
+    chart.getData().add(series);
+}
+
 
 
     public void loadLineChart(LineChart<String, Number> chart, List<Expense> expenses) {

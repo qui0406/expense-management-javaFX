@@ -46,13 +46,14 @@ public class ChartController implements Initializable {
     @FXML public Label lbUsernameChart;
     @FXML public ImageView imgViewChart;
     @FXML private Button logoutChart;
+    @FXML private ComboBox<String> cbChoseYear;
 
     private final StatsServices statsServices;
-    private final ChartServices chartServices;  // Declare ChartServices
+    private final ChartServices chartServices;
 
     public ChartController() {
         this.statsServices = new StatsServices();
-        this.chartServices = new ChartServices();  // Initialize ChartServices
+        this.chartServices = new ChartServices();
     }
 
     @Override
@@ -62,9 +63,10 @@ public class ChartController implements Initializable {
 
         loadComboBoxChart();
         loadComboBoxType();
+        loadComboBoxChoseYear();
         setupComboBoxHandlers();
         setupButtonHandlers();
-        
+
         logoutChart.setOnAction(event -> Utils.logout(logoutChart, "login.fxml"));
 
         try {
@@ -103,6 +105,16 @@ public class ChartController implements Initializable {
         cbChoseChart.setItems(FXCollections.observableList(choiceBox));
     }
 
+    private void loadComboBoxChoseYear() {
+        int currentYear = LocalDate.now().getYear();
+        cbChoseYear.setValue(String.valueOf(currentYear));
+        List<String> choiceBox = new ArrayList<>();
+        choiceBox.add(String.valueOf(currentYear));
+        choiceBox.add(String.valueOf(currentYear - 1));
+        choiceBox.add(String.valueOf(currentYear - 2));
+        cbChoseYear.setItems(FXCollections.observableList(choiceBox));
+    }
+
     // Load combo box options for expense type selection (Chi, Thu)
     private void loadComboBoxType() {
         cbTypeChart.setValue("Chi");
@@ -115,6 +127,7 @@ public class ChartController implements Initializable {
     // Setup handlers for combo box selection
     private void setupComboBoxHandlers() {
         cbChoseChart.setOnAction(event -> handleComboBoxChart());
+
         cbTypeChart.setOnAction(event -> {
             try {
                 fromDateChart.setValue(null);
@@ -122,6 +135,14 @@ public class ChartController implements Initializable {
                 loadData(statsServices.getExpenseCurrentMonth(cbTypeChart.getValue()));
                 loadDataByMonth();
             } catch (SQLException ex) {
+                Logger.getLogger(ChartController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+
+        cbChoseYear.setOnAction(event -> {
+            try {
+                loadDataByMonth();
+            } catch (Exception ex) {
                 Logger.getLogger(ChartController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
@@ -157,6 +178,15 @@ public class ChartController implements Initializable {
         if (selectedOption.equals("Thống kê theo bảng")) {
             switchSceneChart("baocaothongketheobang.fxml");
         } else if (selectedOption.equals("Thống kê theo biểu đồ")) {
+            // Re-load the data and make sure barChart is visible
+            barChart.setVisible(true);
+            lineChart.setVisible(true); // Ensure both charts are visible
+            try {
+                loadData(statsServices.getExpenseCurrentMonth(cbTypeChart.getValue()));
+                loadDataByMonth(); // Update monthly data for line chart
+            } catch (SQLException ex) {
+                Logger.getLogger(ChartController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             switchSceneChart("baocaothongketheobieudo.fxml");
         }
     }
@@ -175,41 +205,40 @@ public class ChartController implements Initializable {
 
     // Load expenses data into charts
     public void loadData(List<Expense> expenseList) throws SQLException {
-       if (expenseList == null || expenseList.isEmpty()) {
+        if (expenseList == null || expenseList.isEmpty()) {
             pieChart.setVisible(false);
             lineChart.setVisible(false);
+            barChart.setVisible(false);
             pieChart.getData().clear();
             lineChart.getData().clear();
+            barChart.getData().clear();
             return;
         }
 
         pieChart.setVisible(true);
         lineChart.setVisible(true);
+        barChart.setVisible(true);
 
         ObservableList<Expense> expenses = FXCollections.observableArrayList(expenseList);
         chartServices.loadPieChart(pieChart, expenses);
-        chartServices.loadBarChart(barChart, expenses);  // Call loadBarChart from ChartServices
+        chartServices.loadBarChart(barChart, expenses);
     }
 
     // Load monthly expenses data for the line chart
     public void loadDataByMonth() {
         try {
-            List<Expense> expensesByMonth = statsServices.getMonthlyExpenses(cbTypeChart.getValue());
-
+            int currentYear = Integer.parseInt(cbChoseYear.getValue());
+            String type = cbTypeChart.getValue();
+            List<Expense> expensesByMonth = statsServices.getMonthlyExpenses(type , currentYear);
             if (expensesByMonth == null || expensesByMonth.isEmpty()) {
-                barChart.setVisible(false);
-                barChart.getData().clear();
+                lineChart.setVisible(false);
+                lineChart.getData().clear();
                 return;
             }
-
             lineChart.setVisible(true);
             chartServices.loadLineChart(lineChart, expensesByMonth);
-
-
         } catch (SQLException ex) {
             Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-
 }

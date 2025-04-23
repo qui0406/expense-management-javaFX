@@ -40,6 +40,7 @@ public class StatsController implements Initializable {
     @FXML private Label lbUsername;
     @FXML private TableView<Expense> tbExpenses;
     @FXML private TableView<Expense> tbStatsByMonth;
+    @FXML private ComboBox<String> cbChoseYearStats;
 
     public StatsServices statsServices;
 
@@ -53,6 +54,7 @@ public class StatsController implements Initializable {
         try {
             loadComboBoxType(); // cbType cần được gán giá trị trước
             loadComboBoxTableCurrentMonth();
+            loadComboBoxChoseYear();
             cbChoseTable.setOnAction(event -> handleComboBoxTable());
 
             if (cbType.getValue() != null) {
@@ -107,6 +109,25 @@ public class StatsController implements Initializable {
                 Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
+        
+        cbChoseYearStats.setOnAction(event -> {
+            try {
+                loadDataByMonth();
+            } catch (Exception ex) {
+                Logger.getLogger(ChartController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+
+    }
+    
+    private void loadComboBoxChoseYear() {
+        int currentYear = LocalDate.now().getYear();
+        cbChoseYearStats.setValue(String.valueOf(currentYear));
+        List<String> choiceBox = new ArrayList<>();
+        choiceBox.add(String.valueOf(currentYear));
+        choiceBox.add(String.valueOf(currentYear - 1));
+        choiceBox.add(String.valueOf(currentYear - 2));
+        cbChoseYearStats.setItems(FXCollections.observableList(choiceBox));
     }
 
     private void setUpFilterStats() {
@@ -136,6 +157,8 @@ public class StatsController implements Initializable {
             }
         });
     }
+    
+    
 
     public void handleComboBoxTable() {
         String selectedOption = cbChoseTable.getValue();
@@ -197,7 +220,9 @@ public class StatsController implements Initializable {
 
     public void loadDataByMonth() {
         try {
-            List<Expense> expensesByMonth = statsServices.getMonthlyExpenses(cbType.getValue());
+            int currentYear = Integer.parseInt(cbChoseYearStats.getValue());
+            String type = cbType.getValue();
+            List<Expense> expensesByMonth = statsServices.getMonthlyExpenses(cbType.getValue(), currentYear);
             ObservableList<Expense> expenses = FXCollections.observableArrayList(expensesByMonth);
             tbStatsByMonth.setItems(expenses);
         } catch (SQLException ex) {
@@ -228,5 +253,16 @@ public class StatsController implements Initializable {
         List<Expense> filteredExpenses = statsServices.getExpensesFilterByDate(selectedFromDate, selectedToDate, cbType.getValue());
         loadData(filteredExpenses);
     }
+    
+//    public void loadDataByMonthFiltered(LocalDate from, LocalDate to) {
+//        try {
+//            List<Expense> expensesByMonth = statsServices.getMonthlyExpenses(from, to, cbType.getValue());
+//            ObservableList<Expense> expenses = FXCollections.observableArrayList(expensesByMonth);
+//            tbStatsByMonth.setItems(expenses);
+//        } catch (SQLException ex) {
+//            Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
+
 
 }

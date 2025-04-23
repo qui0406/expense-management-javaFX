@@ -56,5 +56,6 @@
       <Button fx:id="filter" layoutX="1084.0" layoutY="118.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" text="Lọc" />
       <ComboBox fx:id="cbType" layoutX="970.0" layoutY="118.0" prefHeight="34.0" prefWidth="95.0" promptText="Chi" />
       <Label layoutX="478.0" layoutY="404.0" text="Thống kê theo tháng hiện tại" />
+      <ComboBox fx:id="cbChoseYearStats" layoutX="224.0" layoutY="421.0" prefWidth="150.0" />
    </children>
 </Pane>

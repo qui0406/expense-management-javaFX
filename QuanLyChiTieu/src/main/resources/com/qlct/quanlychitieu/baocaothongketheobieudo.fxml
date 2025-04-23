@@ -105,5 +105,6 @@
       <ComboBox fx:id="cbChoseChart" layoutX="980.0" layoutY="82.0" prefHeight="35.0" prefWidth="160.0" promptText="Thống kê theo bảng" />
       <ComboBox fx:id="cbTypeChart" layoutX="980.0" layoutY="128.0" prefHeight="34.0" prefWidth="95.0" promptText="Chi" />
       <Button fx:id="btnFilterChart" layoutX="1094.0" layoutY="128.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" text="Lọc" />
+      <ComboBox fx:id="cbChoseYear" layoutX="245.0" layoutY="437.0" prefWidth="150.0" />
    </children>
 </Pane>
