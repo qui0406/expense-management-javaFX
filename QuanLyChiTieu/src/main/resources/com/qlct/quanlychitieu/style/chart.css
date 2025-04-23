@@ -3,3 +3,44 @@
     -fx-fill: #333;
     -fx-font-weight: bold;
 }
+
+.chart {
+    -fx-padding: 20;
+    -fx-background-color: transparent;
+    -fx-legend-visible: true;
+    -fx-legend-side: bottom;
+}
+
+.chart-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.chart-pie-label {
+    -fx-fill: #000;
+    -fx-font-size: 12px;
+}
+
+.default-color0.chart-pie { -fx-pie-color: #4CAF50; }
+.default-color1.chart-pie { -fx-pie-color: #2196F3; }
+.default-color2.chart-pie { -fx-pie-color: #FFC107; }
+.default-color3.chart-pie { -fx-pie-color: #F44336; }
+
+
+.default-color0.chart-series-line { -fx-stroke: #4CAF50; }
+.default-color1.chart-series-line { -fx-stroke: #2196F3; }
+.default-color2.chart-series-line { -fx-stroke: #FFC107; }
+
+.default-color0.chart-bar { -fx-bar-fill: #4CAF50; }   /* Xanh lá */
+.default-color1.chart-bar { -fx-bar-fill: #2196F3; }   /* Xanh dương */
+.default-color2.chart-bar { -fx-bar-fill: #FFC107; }   /* Vàng */
+.default-color3.chart-bar { -fx-bar-fill: #F44336; }   /* Đỏ */
+.default-color4.chart-bar { -fx-bar-fill: #9C27B0; }   /* Tím */
+.default-color5.chart-bar { -fx-bar-fill: #009688; }   /* Teal */
+.default-color6.chart-bar { -fx-bar-fill: #795548; }   /* Nâu */

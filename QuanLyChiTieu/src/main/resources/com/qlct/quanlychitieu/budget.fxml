@@ -22,14 +22,15 @@
       <AnchorPane prefHeight="783.0" prefWidth="181.0" styleClass="sideBar" stylesheets="@style/budget.css" BorderPane.alignment="CENTER">
          <children>
             <Text fx:id="txtUsername" layoutX="50.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="txtUsername" textAlignment="CENTER" wrappingWidth="96.27655029296875" />
-            <Button layoutX="28.0" layoutY="152.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="141.0" styleClass="btnSideBar" text="Thêm giao dịch" />
+            <Button layoutX="28.0" layoutY="152.0" mnemonicParsing="false" onAction="#switchTransaction" prefHeight="30.0" prefWidth="141.0" styleClass="btnSideBar" text="Thêm giao dịch" />
             <Button layoutX="27.0" layoutY="213.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="141.0" styleClass="btnSideBar" text="Thêm ngân sách" />
             <ImageView fitHeight="45.0" fitWidth="50.0" layoutX="73.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../icons/User.png" />
                </image>
             </ImageView>
-            <Button layoutX="26.0" layoutY="269.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="141.0" styleClass="btnSideBar" text="Báo cáo thống kê" />
+            <Button layoutX="26.0" layoutY="269.0" mnemonicParsing="false" onAction="#switchStats" prefHeight="30.0" prefWidth="141.0" styleClass="btnSideBar" text="Báo cáo thống kê" />
+            <Button fx:id="btnLogoutBudget" layoutX="24.0" layoutY="328.0" mnemonicParsing="false" prefHeight="33.0" prefWidth="144.0" styleClass="btnSideBar" text="Đăng xuất" />
          </children>
       </AnchorPane>
    </left>

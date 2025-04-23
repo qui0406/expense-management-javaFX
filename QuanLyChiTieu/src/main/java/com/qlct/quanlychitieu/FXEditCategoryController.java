@@ -6,7 +6,6 @@ import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,6 +75,13 @@ public class FXEditCategoryController implements Initializable {
             {
                 btnDelete.setOnAction(evt -> {
                     Category cate = getTableView().getItems().get(getIndex());
+
+                    // Kiểm tra nếu đây là danh mục mặc định thì không cho xóa
+                    if (cate.isDefault()) {
+                        Utils.getAlert("Không thể xóa danh mục mặc định của hệ thống!").show();
+                        return;
+                    }
+
                     Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
                     confirmation.setTitle("Xác nhận xóa");
                     confirmation.setHeaderText("Bạn có chắc chắn muốn xóa danh mục này?");
@@ -114,7 +120,7 @@ public class FXEditCategoryController implements Initializable {
                     setGraphic(null);
                 } else {
                     Category cate = getTableView().getItems().get(getIndex());
-                    if (cate.getUserId() == 0 || cate.getUserId() == -1) { // Ẩn nút cho danh mục cố định
+                    if (cate.isDefault()) { // Ẩn nút cho danh mục cố định
                         setGraphic(null);
                     } else {
                         setGraphic(btnGroup);
@@ -147,7 +153,7 @@ public class FXEditCategoryController implements Initializable {
         // Gọi service để cập nhật danh mục
         try {
             CategoryServices cs = new CategoryServices();
-            cs.updateCategory(categoryId, name, type, UserSessionServices.getCurrentUser().getId());
+            cs.updateCategory(categoryId, name, type);
             Utils.getAlert("Cập nhật danh mục thành công").show();
             clearForm();
             loadTableData();
@@ -164,12 +170,22 @@ public class FXEditCategoryController implements Initializable {
         String name = txtName.getText().trim();
         String type = cbType.getSelectionModel().getSelectedItem();
 
+        // Kiểm tra dữ liệu đầu vào
+        if (name == null || name.isEmpty()) {
+            Utils.getAlert("Tên danh mục không được để trống!").show();
+            return;
+        }
+        if (type == null) {
+            Utils.getAlert("Vui lòng chọn loại danh mục!").show();
+            return;
+        }
+
         // Gọi service để thêm danh mục
         try {
             CategoryServices cs = new CategoryServices();
-            Category cate = new Category(0,name, type, UserSessionServices.getCurrentUser().getId());
+            Category cate = new Category(0, name, type, false);
             cs.addCategory(cate);
-            Utils.getAlert("Add successful!").show();
+            Utils.getAlert("Thêm danh mục thành công!").show();
             clearForm();
             loadTableData();
         } catch (IllegalArgumentException ex) {

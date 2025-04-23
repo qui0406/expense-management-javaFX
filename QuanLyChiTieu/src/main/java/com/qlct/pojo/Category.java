@@ -1,21 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.qlct.pojo;
-
 
 public class Category {
     private int id;
     private String name;
     private String type;
-    private int userId;
+    private boolean isDefault; // Để xác định danh mục cố định
 
-    public Category(int id, String name, String type, int userId) {
+    public Category(int id, String name, String type) {
         this.id = id;
         this.name = name;
         this.type = type;
-        this.userId = userId;
+    }
+
+    public Category(int id, String name, String type, boolean isDefault) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.isDefault = isDefault;
     }
 
     public Category(int id) {
@@ -26,7 +27,6 @@ public class Category {
     public String toString() {
         return this.name; // Trả về tên danh mục
     }
-
 
     /**
      * @return the id
@@ -71,21 +71,20 @@ public class Category {
     }
 
     /**
-     * @return the userId
+     * @return nếu danh mục là mặc định (cố định)
      */
-    public int getUserId() {
-        return userId;
+    public boolean isDefault() {
+        return isDefault;
     }
 
     /**
-     * @param userId the userId to set
+     * @param isDefault set trạng thái mặc định
      */
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setDefault(boolean isDefault) {
+        this.isDefault = isDefault;
     }
 
-// Phương thức validate để kiểm tra ràng buộc
-
+    // Phương thức validate để kiểm tra ràng buộc
     public void validate() throws IllegalArgumentException {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Tên danh mục không được để trống!");
@@ -100,5 +99,4 @@ public class Category {
             throw new IllegalArgumentException("Loại danh mục phải là 'Chi' hoặc 'Thu'!");
         }
     }
-
 }

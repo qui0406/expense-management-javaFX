@@ -1,6 +1,5 @@
 package com.qlct.services;
 
-
 import com.qlct.pojo.Expense;
 import com.qlct.pojo.JdbcUtils;
 import com.qlct.services.UserSessionServices;
@@ -12,20 +11,49 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.event.Event;
 
 public class StatsServices {
+
     private Expense expense;
 
     public List<Expense> getExpenseCurrentMonth(String type) throws SQLException {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
 
-        String sql = "{call stats_current_month(?, ?)}";
-        
+        //String sql = "{call stats_current_month(?, ?)}";
+        String sql
+                = "SELECT \n"
+                + "    category.id, \n"
+                + "    category.name AS name, \n"
+                + "    COALESCE(SUM(transaction.amount), 0) AS amount\n"
+                + "FROM \n"
+                + "    user\n"
+                + "JOIN \n"
+                + "    user_cate ON user.id = user_cate.user_id\n"
+                + "JOIN \n"
+                + "    category ON category.id = user_cate.category_id\n"
+                + "LEFT JOIN \n"
+                + "    transaction ON transaction.user_id = user.id \n"
+                + "               AND transaction.category_id = category.id\n"
+                + "               AND MONTH(transaction.date) = MONTH(CURRENT_DATE)\n"
+                + "               AND YEAR(transaction.date) = YEAR(CURRENT_DATE)\n"
+                + "WHERE \n"
+                + "    user.id = ? AND category.type = ?\n"
+                + "GROUP BY \n"
+                + "    category.id, category.name\n"
+                + "HAVING \n"
+                + "    amount > 0\n"
+                + "ORDER BY \n"
+                + "    category.id;";
+
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setInt(1, userId);
             stm.setString(2, type);
+//            stm.setString(3, type);
+//            stm.setInt(4, userId);
+
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 int category_id = rs.getInt("id");
@@ -42,15 +70,36 @@ public class StatsServices {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
 
-        String sql = "{call stats_filter_by_date(?, ?, ?, ?)}";
-
-
+//        String sql = "{call stats_filter_by_date(?, ?, ?, ?)}";
+        String sql = "SELECT \n"
+                + "    category.id, \n"
+                + "    category.name AS name, \n"
+                + "    COALESCE(SUM(transaction.amount), 0) AS amount\n"
+                + "FROM \n"
+                + "    user\n"
+                + "JOIN \n"
+                + "    user_cate ON user.id = user_cate.user_id\n"
+                + "JOIN \n"
+                + "    category ON category.id = user_cate.category_id\n"
+                + "LEFT JOIN \n"
+                + "    transaction ON transaction.user_id = user.id \n"
+                + "               AND transaction.category_id = category.id\n"
+                + "               AND transaction.date BETWEEN ? AND ?\n"
+                + "WHERE \n"
+                + "    user.id = ? AND category.type = ?\n"
+                + "GROUP BY \n"
+                + "    category.id, category.name\n"
+                + "HAVING \n"
+                + "    amount > 0\n"
+                + "ORDER BY \n"
+                + "    category.id;";
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
-            stm.setInt(1, userId);
-            stm.setString(2, type);
-            stm.setDate(3, Date.valueOf(fromDate));
-            stm.setDate(4, Date.valueOf(toDate));
+            
+            stm.setDate(1, Date.valueOf(fromDate));
+            stm.setDate(2, Date.valueOf(toDate));
+            stm.setInt(3, userId);
+            stm.setString(4, type);
             ResultSet rs = stm.executeQuery();
 
             while (rs.next()) {
@@ -66,11 +115,28 @@ public class StatsServices {
 
     public List<Expense> getMonthlyExpenses(String type) throws SQLException {
         List<Expense> expenseList = new ArrayList<>();
-        int userId = UserSessionServices.getCurrentUser().getId();      
-        String sql="{call stats_month_expense(?, ?)}";
+        int userId = UserSessionServices.getCurrentUser().getId();
+        // String sql = "{call stats_month_expense(?, ?)}";
+        String sql = "SELECT \n"
+                + "    MONTH(transaction.date) AS month, \n"
+                + "    COALESCE(SUM(transaction.amount), 0) AS total_amount\n"
+                + "FROM \n"
+                + "    user\n"
+                + "JOIN \n"
+                + "    user_cate ON user.id = user_cate.user_id\n"
+                + "JOIN \n"
+                + "    category ON user_cate.category_id = category.id\n"
+                + "LEFT JOIN \n"
+                + "    transaction ON category.id = transaction.category_id\n"
+                + "WHERE \n"
+                + "    (user.id = ? AND category.type = ?) \n"
+                + "    AND YEAR(transaction.date) = YEAR(CURDATE())\n"
+                + "GROUP BY \n"
+                + "    MONTH(transaction.date)\n"
+                + "ORDER BY \n"
+                + "    MONTH(transaction.date);";
 
-        try (Connection conn = JdbcUtils.getConn();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
+        try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, userId);
             stm.setString(2, type);
 
@@ -85,4 +151,5 @@ public class StatsServices {
         }
         return expenseList;
     }
+
 }
