@@ -8,7 +8,8 @@ import java.sql.SQLException;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class LoginServices {
-
+    
+    
     public static boolean checkUserAuth(String username, String password) throws SQLException {
         String sql = "SELECT password FROM user WHERE username = ?";
         try (Connection conn = JdbcUtils.getConn()) {
@@ -23,6 +24,7 @@ public class LoginServices {
         return false;
     }
 
+    
     public static boolean registerUser(String firstName, String lastName, String username, String password, String email) throws SQLException {
         String sql = "INSERT INTO user (username, password, email, first_name, last_name, created_date) VALUES (?, ?, ?, ?, ?, NOW())";
 

@@ -21,6 +21,11 @@ public class Expense {
     private LocalDate fromDate;
     private LocalDate toDate;
     
+    public Expense(String type, int userId){
+         this.userId = userId;
+        this.type= type;
+    }
+    
     public Expense(int userId, String type, int categoryId, String categoryName, double amount) {
         this.userId = userId;
         this.type= type;

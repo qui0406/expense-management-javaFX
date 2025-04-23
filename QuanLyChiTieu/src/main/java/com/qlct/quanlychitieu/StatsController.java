@@ -51,21 +51,19 @@ public class StatsController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         Utils.loadUsername(lbUsername);
         try {
-            if (cbChoseTable == null) {
-                Utils.getAlert("Không tồn tại!");
-            } else {
-                loadComboBoxType();
-                loadComboBoxTableCurrentMonth();
-                cbChoseTable.setOnAction(event -> handleComboBoxTable());
-            }
+            loadComboBoxType(); // cbType cần được gán giá trị trước
+            loadComboBoxTableCurrentMonth();
+            cbChoseTable.setOnAction(event -> handleComboBoxTable());
 
-            loadColumnsCurrentMonth();
-            loadData(statsServices.getExpenseCurrentMonth(cbType.getValue()));
+            if (cbType.getValue() != null) {
+//                statsServices.getValidatedFilteredExpenses(fromDate, toDate, cbType.getValue());
+                loadColumnsCurrentMonth();
+                loadData(statsServices.getExpenseCurrentMonth(cbType.getValue()));
+            }
 
             setUpComboBoxStats();
             setUpFilterStats();
             logoutStats.setOnAction(event -> Utils.logout(logoutStats, "login.fxml"));
-
 
             loadColumnsByMonth();
             loadDataByMonth();

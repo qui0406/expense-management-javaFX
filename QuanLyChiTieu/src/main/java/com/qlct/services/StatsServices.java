@@ -11,10 +11,11 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.event.Event;
 
 public class StatsServices {
 
-    private Expense expense;
+     private Expense expense;
 
     public List<Expense> getExpenseCurrentMonth(String type) throws SQLException {
         List<Expense> expenseList = new ArrayList<>();
@@ -134,4 +135,11 @@ public class StatsServices {
         }
         return expenseList;
     }
+    
+    
+    
+    
+    
+
+
 }
