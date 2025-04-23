@@ -95,7 +95,7 @@ public class StatsServices {
                 + "    category.id;";
         try (Connection conn = JdbcUtils.getConn()) {
             PreparedStatement stm = conn.prepareStatement(sql);
-            
+
             stm.setDate(1, Date.valueOf(fromDate));
             stm.setDate(2, Date.valueOf(toDate));
             stm.setInt(3, userId);
@@ -113,7 +113,7 @@ public class StatsServices {
         return expenseList;
     }
 
-    public List<Expense> getMonthlyExpenses(String type) throws SQLException {
+    public List<Expense> getMonthlyExpenses(String type, int year) throws SQLException {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
         // String sql = "{call stats_month_expense(?, ?)}";
@@ -126,19 +126,19 @@ public class StatsServices {
                 + "    user_cate ON user.id = user_cate.user_id\n"
                 + "JOIN \n"
                 + "    category ON user_cate.category_id = category.id\n"
-                + "LEFT JOIN \n"
-                + "    transaction ON category.id = transaction.category_id\n"
+                + "JOIN \n"
+                + "    transaction ON category.id = transaction.category_id AND YEAR(transaction.date) = ?\n"
                 + "WHERE \n"
-                + "    (user.id = ? AND category.type = ?) \n"
-                + "    AND YEAR(transaction.date) = YEAR(CURDATE())\n"
+                + "    user.id = ? AND category.type = ?\n"
                 + "GROUP BY \n"
                 + "    MONTH(transaction.date)\n"
                 + "ORDER BY \n"
                 + "    MONTH(transaction.date);";
 
         try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql)) {
-            stm.setInt(1, userId);
-            stm.setString(2, type);
+            stm.setInt(1, year);
+            stm.setInt(2, userId);
+            stm.setString(3, type);
 
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {

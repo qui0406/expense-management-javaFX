@@ -256,7 +256,7 @@ public class EditBudgetController implements Initializable {
                     return;    //Dung thuc hien neu ngan sach khong hop le
                 }
             } catch (SQLException ex) {
-                budgetServices.updateStatus(lblStatusInEdit, "❌ Lỗi kết nối CSDL", "-fx-text-fill: red;");
+                budgetServices.updateStatus(lblStatusInEdit, "Lỗi kết nối CSDL", "-fx-text-fill: red;");
                 ex.printStackTrace(); //In ra lỗi console để debug
             }
         });
@@ -349,12 +349,12 @@ public class EditBudgetController implements Initializable {
             boolean success = budgetServices.tryUpdateBudget(budgetId, input, budgetType, categoryId);
 
             if (success) {
-                updateStatus(lblStatusInEdit, "✅ Cập nhật ngân sách thành công!", "-fx-text-fill: green;");
+                updateStatus(lblStatusInEdit, "Cập nhật ngân sách thành công!", "-fx-text-fill: green;");
             } else {
-                updateStatus(lblStatusInEdit, "❌ Cập nhật ngân sách thất bại!", "-fx-text-fill: red;");
+                updateStatus(lblStatusInEdit, "Cập nhật ngân sách thất bại!", "-fx-text-fill: red;");
             }
         } catch (NumberFormatException e) {
-            updateStatus(lblStatusInEdit, "❌ Số tiền không hợp lệ!", "-fx-text-fill: red;");
+            updateStatus(lblStatusInEdit, "Số tiền không hợp lệ!", "-fx-text-fill: red;");
         }
     }
 }

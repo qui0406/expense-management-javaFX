@@ -28,7 +28,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -91,9 +90,9 @@ public class BudgetController implements Initializable {
         budgetServices.setLblStatus(lblStatus);
         budgetServices.setLblTotal(lblTotal);
         budgetServices.setLblTotalMoneyUsed(lblTotalMoneyUsed);
-
-        double currentUsed = budgetServices.getTotalUsed();
-        System.out.println("Tiền đã chi" + currentUsed);
+        Platform.runLater(() -> {
+            showBudgetWarning(budgetServices.getTotalUsed(), budgetServices.getTotalBudget());
+        });
         updateBudgetProgress(progressBarTotal, progressBarUsed, budgetServices.getTotalBudget(), budgetServices.getTotalUsed());
 
         cbType.setItems(FXCollections.observableArrayList("Chi"));
@@ -124,11 +123,11 @@ public class BudgetController implements Initializable {
             String selectedCate = cbCate.getValue();
             String inputText = txtInputBudget.getText();
             if (selectedType == null) {
-                budgetServices.updateStatus(lblStatus, "❌ Vui lòng chọn loại ngân sách!", "-fx-text-fill: red;");
+                budgetServices.updateStatus(lblStatus, "Vui lòng chọn loại ngân sách!", "-fx-text-fill: red;");
                 return;
             }
             if (selectedCate == null) {
-                budgetServices.updateStatus(lblStatus, "❌ Vui lòng chọn danh mục!", "-fx-text-fill: red;");
+                budgetServices.updateStatus(lblStatus, "Vui lòng chọn danh mục!", "-fx-text-fill: red;");
                 return;
             }
             double validatedAmount = validateInput(inputText);
@@ -138,13 +137,13 @@ public class BudgetController implements Initializable {
             try {
                 int categoryId = budgetServices.getIdByName(selectedCate);
                 if (budgetServices.isBudgetExistForCurrentMonth(categoryId, true)) {
-                    budgetServices.updateStatus(lblStatus, "❌ Ngân sách cho danh mục này đã tồn tại trong tháng!", "-fx-text-fill: red;");
+                    budgetServices.updateStatus(lblStatus, "Ngân sách cho danh mục này đã tồn tại trong tháng!", "-fx-text-fill: red;");
                     return;
                 }
                 budgetServices.insertBudgetTODB(inputText, selectedType, selectedCate);
                 handleAddBudget(inputText, selectedType, selectedCate);
             } catch (SQLException ex) {
-                budgetServices.updateStatus(lblStatus, "❌ Lỗi kết nối CSDL", "-fx-text-fill: red;");
+                budgetServices.updateStatus(lblStatus, "Lỗi kết nối CSDL", "-fx-text-fill: red;");
                 ex.printStackTrace(); //In ra lỗi console để debug
             }
         });
@@ -175,7 +174,7 @@ public class BudgetController implements Initializable {
             cbCate.setItems(FXCollections.observableArrayList(categoryNames));
         } catch (SQLException ex) {
             // Cập nhật thông báo lỗi nếu không thể tải danh mục
-            budgetServices.updateStatus(lblStatus, "❌ Không thể tải danh mục", "-fx-text-fill: red;");
+            budgetServices.updateStatus(lblStatus, "Không thể tải danh mục", "-fx-text-fill: red;");
             ex.printStackTrace(); // In ra lỗi console để debug
         }
     }
@@ -309,7 +308,6 @@ public class BudgetController implements Initializable {
 
         // Set màu
         if (!budgetServices.isBudgetWithinLimit(spentAmount, totalBudget)) {
-            showBudgetWarning();
             progressBarUsed.setStyle("-fx-accent: red;");
         } else {
             progressBarUsed.setStyle("-fx-accent: green;");
@@ -321,26 +319,22 @@ public class BudgetController implements Initializable {
         }
     }
 
-    private void showBudgetWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
+    private void showBudgetWarning(double chiTieuHienTai, double nganSach) {
+        // Kiểm tra nếu chưa vượt quá 80% thì không làm gì
+        if (chiTieuHienTai <= nganSach * 0.8) {
+            return;
+        }
+    
+        // Nếu vượt quá 80%, mới hiện cảnh báo
+        Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Cảnh báo ngân sách");
         alert.setHeaderText(null);
         alert.setContentText("Chi tiêu đã vượt quá 80% ngân sách!\nVui lòng kiểm tra lại kế hoạch chi tiêu.");
+    
         ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
-        alert.showAndWait().ifPresent(response -> {
-            if (response == okButton) {
-                try {
-                    // Gọi hàm chuyển sang trang Budget
-                    switchToBudgetScreen();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void switchToBudgetScreen() throws IOException {
-        App.setRoot("budget", 935, 750);
+        alert.getButtonTypes().setAll(okButton);
+    
+        alert.showAndWait(); // Chỉ hiện nếu đủ điều kiện
     }
 
     public void updateStatus(Label label, String message, String style) {
@@ -365,13 +359,13 @@ public class BudgetController implements Initializable {
         try {
             boolean success = budgetServices.tryInsertBudget(input, budgetType, categoryName);
             if (success) {
-                updateStatus(lblStatus, "✅ Thêm ngân sách thành công!", "-fx-text-fill: green;");
+                updateStatus(lblStatus, "Thêm ngân sách thành công!", "-fx-text-fill: green;");
                 loadTableData();
             } else {
-                updateStatus(lblStatus, "❌ Thêm ngân sách thất bại!", "-fx-text-fill: red;");
+                updateStatus(lblStatus, "Thêm ngân sách thất bại!", "-fx-text-fill: red;");
             }
         } catch (Exception e) {
-            updateStatus(lblStatus, "⚠️ Dữ liệu không hợp lệ!", "-fx-text-fill: orange;");
+            updateStatus(lblStatus, "Dữ liệu không hợp lệ!", "-fx-text-fill: orange;");
         }
     }
 
