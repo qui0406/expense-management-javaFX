@@ -15,16 +15,18 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -39,10 +41,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -79,10 +81,7 @@ public class BudgetController implements Initializable {
     @FXML
     private Text txtUsername;
     @FXML
-    private Button btAddTrans;
-    @FXML
-    private Button btBCTK;
-
+    private Button btnLogoutBudget;
     /**
      * Initializes the controller class.
      */
@@ -92,9 +91,9 @@ public class BudgetController implements Initializable {
         budgetServices.setLblStatus(lblStatus);
         budgetServices.setLblTotal(lblTotal);
         budgetServices.setLblTotalMoneyUsed(lblTotalMoneyUsed);
-
-        double currentUsed = budgetServices.getTotalUsed();
-        System.out.println("Tiền đã chi" + currentUsed);
+        Platform.runLater(() -> {
+            showBudgetWarning(budgetServices.getTotalUsed(), budgetServices.getTotalBudget());
+        });
         updateBudgetProgress(progressBarTotal, progressBarUsed, budgetServices.getTotalBudget(), budgetServices.getTotalUsed());
 
         cbType.setItems(FXCollections.observableArrayList("Chi"));
@@ -105,8 +104,10 @@ public class BudgetController implements Initializable {
                 loadCategoriesByType(selectedType);
             }
         });
+        
+        btnLogoutBudget.setOnAction(event -> logoutBudget("login.fxml"));
 
-        // Hiển thị username của người dùng hiện tại
+         //Hiển thị username của người dùng hiện tại
         User currentUser = UserSessionServices.getCurrentUser();
         if (currentUser != null) {
             txtUsername.setText(currentUser.getUsername());
@@ -114,21 +115,7 @@ public class BudgetController implements Initializable {
             txtUsername.setText("Chưa đăng nhập");
         }
 
-//        btAddTrans.setOnAction(e -> {
-//            try {
-//                switchTransaction();
-//            } catch (IOException ex) {
-//                Logger.getLogger(BudgetController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        });
-//
-//        btBCTK.setOnAction(e -> {
-//            try {
-//                switchBCTK();
-//            } catch (IOException ex) {
-//                Logger.getLogger(BudgetController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        });
+        
         loadTableData();
         loadColumns();
 
@@ -162,6 +149,16 @@ public class BudgetController implements Initializable {
             }
         });
 
+    }
+    
+    @FXML
+    public void switchTransaction() throws IOException {
+        App.setRoot("FXTransactions", 1200, 800);
+    }
+
+    @FXML
+    public void switchStats() throws IOException {
+        App.setRoot("baocaothongketheobang", 1200, 800);
     }
 
     private void loadCategoriesByType(String type) {
@@ -312,7 +309,6 @@ public class BudgetController implements Initializable {
 
         // Set màu
         if (!budgetServices.isBudgetWithinLimit(spentAmount, totalBudget)) {
-            showBudgetWarning();
             progressBarUsed.setStyle("-fx-accent: red;");
         } else {
             progressBarUsed.setStyle("-fx-accent: green;");
@@ -324,26 +320,22 @@ public class BudgetController implements Initializable {
         }
     }
 
-    private void showBudgetWarning() {
-        Alert alert = new Alert(AlertType.WARNING);
+    private void showBudgetWarning(double chiTieuHienTai, double nganSach) {
+        // Kiểm tra nếu chưa vượt quá 80% thì không làm gì
+        if (chiTieuHienTai <= nganSach * 0.8) {
+            return;
+        }
+    
+        // Nếu vượt quá 80%, mới hiện cảnh báo
+        Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Cảnh báo ngân sách");
         alert.setHeaderText(null);
         alert.setContentText("Chi tiêu đã vượt quá 80% ngân sách!\nVui lòng kiểm tra lại kế hoạch chi tiêu.");
+    
         ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
-        alert.showAndWait().ifPresent(response -> {
-            if (response == okButton) {
-                try {
-                    // Gọi hàm chuyển sang trang Budget
-                    switchToBudgetScreen();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void switchToBudgetScreen() throws IOException {
-        App.setRoot("budget", 935, 750);
+        alert.getButtonTypes().setAll(okButton);
+    
+        alert.showAndWait(); // Chỉ hiện nếu đủ điều kiện
     }
 
     public void updateStatus(Label label, String message, String style) {
@@ -378,12 +370,25 @@ public class BudgetController implements Initializable {
         }
     }
 
-    private void switchTransaction() throws IOException {
-        App.setRoot("FXTransactions", 935, 750);
-    }
+    public void logoutBudget(String fxmlFile) {
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.setTitle("Xác nhận đăng xuất");
+        confirmAlert.setHeaderText(null);
+        confirmAlert.setContentText("Bạn có chắc chắn muốn đăng xuất không?");
 
-    private void switchBCTK() throws IOException {
-        App.setRoot("baocaothongketheobang", 935, 750);
+        Optional<ButtonType> result = confirmAlert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+                Parent root = loader.load();
+                Stage stage = (Stage) btnLogoutBudget.getScene().getWindow();
+                stage.setScene(new Scene(root, 650, 500));
+                stage.centerOnScreen();
+                stage.show();
+            } catch (IOException e) {
+                Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, "Lỗi khi đăng xuất: ", e);
+                Utils.showAlert("Lỗi hệ thống!", null, "Không thể đăng xuất. Vui lòng thử lại.");
+            }
+        }
     }
-
 }
