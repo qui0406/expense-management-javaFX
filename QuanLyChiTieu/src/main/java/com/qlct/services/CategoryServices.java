@@ -40,6 +40,25 @@ public class CategoryServices {
         }
         return cates;
     }
+    
+//    public String getCategoryByIdForBudget(int id) {
+//        String name = null; // Giá trị mặc định nếu không tìm thấy
+//        String query = "SELECT name FROM category WHERE id = ?"; // Câu truy vấn SQL
+//
+//        try (Connection conn = JdbcUtils.getConn(); // Kết nối đến CSDL
+//                 PreparedStatement stm = conn.prepareStatement(query)) {
+//
+//            stm.setInt(1, id); // Thiết lập giá trị ID
+//            ResultSet rs = stm.executeQuery(); // Thực thi truy vấn
+//            if (rs.next()) {
+//                name = rs.getString("name"); // Lấy tên danh mục từ kết quả
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace(); // Xử lý ngoại lệ
+//        }
+//        return name; // Trả về tên danh mục hoặc null
+//    }
+
 
     public List<Category> getCateByType(String type) throws SQLException {
         List<Category> cates = new ArrayList<>();
