@@ -137,11 +137,11 @@ public class BudgetController implements Initializable {
             String selectedCate = cbCate.getValue();
             String inputText = txtInputBudget.getText();
             if (selectedType == null) {
-                budgetServices.updateStatus(lblStatus, "❌ Vui lòng chọn loại ngân sách!", "-fx-text-fill: red;");
+                budgetServices.updateStatus(lblStatus, "Vui lòng chọn loại ngân sách!", "-fx-text-fill: red;");
                 return;
             }
             if (selectedCate == null) {
-                budgetServices.updateStatus(lblStatus, "❌ Vui lòng chọn danh mục!", "-fx-text-fill: red;");
+                budgetServices.updateStatus(lblStatus, "Vui lòng chọn danh mục!", "-fx-text-fill: red;");
                 return;
             }
             double validatedAmount = validateInput(inputText);
@@ -151,13 +151,13 @@ public class BudgetController implements Initializable {
             try {
                 int categoryId = budgetServices.getIdByName(selectedCate);
                 if (budgetServices.isBudgetExistForCurrentMonth(categoryId, true)) {
-                    budgetServices.updateStatus(lblStatus, "❌ Ngân sách cho danh mục này đã tồn tại trong tháng!", "-fx-text-fill: red;");
+                    budgetServices.updateStatus(lblStatus, "Ngân sách cho danh mục này đã tồn tại trong tháng!", "-fx-text-fill: red;");
                     return;
                 }
                 budgetServices.insertBudgetTODB(inputText, selectedType, selectedCate);
                 handleAddBudget(inputText, selectedType, selectedCate);
             } catch (SQLException ex) {
-                budgetServices.updateStatus(lblStatus, "❌ Lỗi kết nối CSDL", "-fx-text-fill: red;");
+                budgetServices.updateStatus(lblStatus, "Lỗi kết nối CSDL", "-fx-text-fill: red;");
                 ex.printStackTrace(); //In ra lỗi console để debug
             }
         });
@@ -178,7 +178,7 @@ public class BudgetController implements Initializable {
             cbCate.setItems(FXCollections.observableArrayList(categoryNames));
         } catch (SQLException ex) {
             // Cập nhật thông báo lỗi nếu không thể tải danh mục
-            budgetServices.updateStatus(lblStatus, "❌ Không thể tải danh mục", "-fx-text-fill: red;");
+            budgetServices.updateStatus(lblStatus, "Không thể tải danh mục", "-fx-text-fill: red;");
             ex.printStackTrace(); // In ra lỗi console để debug
         }
     }
@@ -368,13 +368,13 @@ public class BudgetController implements Initializable {
         try {
             boolean success = budgetServices.tryInsertBudget(input, budgetType, categoryName);
             if (success) {
-                updateStatus(lblStatus, "✅ Thêm ngân sách thành công!", "-fx-text-fill: green;");
+                updateStatus(lblStatus, "Thêm ngân sách thành công!", "-fx-text-fill: green;");
                 loadTableData();
             } else {
-                updateStatus(lblStatus, "❌ Thêm ngân sách thất bại!", "-fx-text-fill: red;");
+                updateStatus(lblStatus, "Thêm ngân sách thất bại!", "-fx-text-fill: red;");
             }
         } catch (Exception e) {
-            updateStatus(lblStatus, "⚠️ Dữ liệu không hợp lệ!", "-fx-text-fill: orange;");
+            updateStatus(lblStatus, "Dữ liệu không hợp lệ!", "-fx-text-fill: orange;");
         }
     }
 

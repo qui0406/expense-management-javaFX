@@ -136,6 +136,8 @@ public class BudgetServices {
             stm.setString(3, budgetType);
             stm.setInt(4, categoryId);
             stm.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException("Không thể thêm ngân sách vào cơ sở dữ liệu!", e);
         }
     }
 
@@ -213,6 +215,8 @@ public class BudgetServices {
                 stm2.setInt(3, currentUserId);
                 stm2.executeUpdate();
             }
+        } catch (SQLException e) {
+            throw new SQLException("Không thể cập nhật ngân sách vào cơ sở dữ liệu!", e);
         }
     }
 
