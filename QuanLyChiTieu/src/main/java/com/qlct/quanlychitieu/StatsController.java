@@ -2,19 +2,13 @@ package com.qlct.quanlychitieu;
 
 import com.qlct.pojo.Expense;
 import com.qlct.services.StatsServices;
-import com.qlct.services.UserSessionServices;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -58,7 +52,6 @@ public class StatsController implements Initializable {
             cbChoseTable.setOnAction(event -> handleComboBoxTable());
 
             if (cbType.getValue() != null) {
-//                statsServices.getValidatedFilteredExpenses(fromDate, toDate, cbType.getValue());
                 loadColumnsCurrentMonth();
                 loadData(statsServices.getExpenseCurrentMonth(cbType.getValue()));
             }
@@ -72,7 +65,6 @@ public class StatsController implements Initializable {
         } catch (SQLException ex) {
             Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         checkChoseFutureDate();
     }
 
@@ -117,7 +109,6 @@ public class StatsController implements Initializable {
                 Logger.getLogger(ChartController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-
     }
     
     private void loadComboBoxChoseYear() {
@@ -159,7 +150,6 @@ public class StatsController implements Initializable {
     }
     
     
-
     public void handleComboBoxTable() {
         String selectedOption = cbChoseTable.getValue();
         try {
@@ -177,7 +167,6 @@ public class StatsController implements Initializable {
             alert.showAndWait();
         }
     }
-
 
     public void loadColumnsCurrentMonth() {
         tbExpenses.getColumns().setAll(createCommonColumns());
@@ -201,7 +190,7 @@ public class StatsController implements Initializable {
         colAmount.setPrefWidth(300);
         colAmount.setCellFactory(column -> new TableCell<>() {
             private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-
+            
             @Override
             protected void updateItem(Double amount, boolean empty) {
                 super.updateItem(amount, empty);
@@ -235,7 +224,7 @@ public class StatsController implements Initializable {
         LocalDate today = LocalDate.now();
 
         if (selectedFromDate == null || selectedToDate == null) {
-            Utils.showAlert("Thiếu thông tin!", null, "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc.");
+            Utils.showAlert("Vui lòng chọn ngày bắt đầu và ngày kết thúc!", null, "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc.");
             return;
         }
 
@@ -253,15 +242,4 @@ public class StatsController implements Initializable {
         loadData(filteredExpenses);
     }
     
-//    public void loadDataByMonthFiltered(LocalDate from, LocalDate to) {
-//        try {
-//            List<Expense> expensesByMonth = statsServices.getMonthlyExpenses(from, to, cbType.getValue());
-//            ObservableList<Expense> expenses = FXCollections.observableArrayList(expensesByMonth);
-//            tbStatsByMonth.setItems(expenses);
-//        } catch (SQLException ex) {
-//            Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-
-
 }

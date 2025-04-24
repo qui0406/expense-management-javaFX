@@ -3,20 +3,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.qlct.quanlychitieu;
-
 import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.text.NumberFormat;
 import javafx.util.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -61,7 +57,7 @@ public class Utils {
     }
      
     public static void loadUsername(Label lbUsername){
-           lbUsername.setText(UserSessionServices.getCurrentUser().getUsername());
+        lbUsername.setText(UserSessionServices.getCurrentUser().getUsername());
     }
     
     
@@ -69,7 +65,6 @@ public class Utils {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             Parent root = loader.load();
-
             Stage stage = (Stage) btn.getScene().getWindow();
             stage.setScene(new Scene(root));
         } catch (IOException e) { // In ra chi tiết lỗi
@@ -101,9 +96,4 @@ public class Utils {
             }
         }
     }
-
-
-
-  
-    
 }

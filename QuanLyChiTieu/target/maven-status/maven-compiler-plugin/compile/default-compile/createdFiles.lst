@@ -1,4 +1,3 @@
-com\qlct\quanlychitieu\SceneController.class
 com\qlct\pojo\UserCategory.class
 com\qlct\services\UserCategoryServices.class
 com\qlct\pojo\Expense.class

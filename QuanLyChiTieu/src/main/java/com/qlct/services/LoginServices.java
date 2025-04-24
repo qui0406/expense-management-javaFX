@@ -1,11 +1,17 @@
 package com.qlct.services;
 
 import com.qlct.pojo.JdbcUtils;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.mindrot.jbcrypt.BCrypt;
+import org.apache.commons.validator.routines.EmailValidator;
+
 
 public class LoginServices {
     public static boolean checkUserAuth(String username, String password) throws SQLException {
@@ -22,10 +28,6 @@ public class LoginServices {
         return false;
     }
     
-    
-
-
-    
     public static boolean registerUser(String firstName, String lastName, String username, String password, String email) throws SQLException {
         String sql = "INSERT INTO user (username, password, email, first_name, last_name, created_date) VALUES (?, ?, ?, ?, ?, NOW())";
 
@@ -40,7 +42,7 @@ public class LoginServices {
 
             return stm.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); // Ghi log lỗi rõ ràng
+            e.printStackTrace(); 
             return false;
         }
     }
@@ -51,7 +53,7 @@ public class LoginServices {
         if (username.isEmpty()) return "Tên đăng nhập không được để trống!";
         if (username.length() < 3) return "Tên đăng nhập phải từ 3 ký tự trở lên!";
         if (username.length() > 30) return "Tên đăng nhập phải dưới 30 ký tự!";
-        if(isValidUsername(username)) return "Username không được chứa kí tự đặc biệt";
+        if(hasSymbols(username)) return "Username không được chứa kí tự đặc biệt";
         if(isValidEmail(email)) return "Chưa đúng định dạng email";
         if(checkEmailExist(email)) return "Email đã tồn tại";
         if (password.isEmpty()) return "Mật khẩu không được để trống!";
@@ -64,18 +66,11 @@ public class LoginServices {
         if(checkUsernameExist(username)){
             return "Username đã tồn tại!";
         }
-    
         return "";
     }
-    
-    public static boolean isValidUsername(String username) {
-        if (username == null || username.trim().isEmpty()) {
-            return false;
-        }
 
-        // Chỉ cho phép chữ cái, số và dấu gạch dưới
-        String regex = "^[A-Za-z0-9_]+$";
-        return username.matches(regex);
+    public static boolean hasSymbols(String string) {
+        return !string.matches("^[a-zA-Z0-9_]+$"); // Chỉ cho phép chữ, số, gạch dưới
     }
 
 
@@ -100,14 +95,9 @@ public class LoginServices {
         }
     }
     
-    private static boolean isValidEmail(String email) {
-        if (email == null || email.trim().isEmpty()) {
-            return false;
-        }
-        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-        return email.matches(emailRegex);
-    }
+   public static boolean isValidEmail(String email) {
+       EmailValidator validator = EmailValidator.getInstance();
+       return !validator.isValid(email);
+   }
 
-    
-    
 }
