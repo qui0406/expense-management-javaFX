@@ -20,7 +20,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 .Subject {
     -fx-font-size: 30;
     -fx-font-weight: bold;
-    -fx-text-fill: #2D82B5;
+    -fx-text-fill: #eb3600;
     /*    -fx-text-alignment: center;*/
 }
 .button {

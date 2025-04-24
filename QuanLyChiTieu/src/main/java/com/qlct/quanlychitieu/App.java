@@ -19,23 +19,21 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        App.stage = stage; 
+        App.stage = stage;
         scene = new Scene(loadFXML("login"));
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
     }
-    
-    
 
     static void setRoot(String fxml, double width, double height) throws IOException {
         Parent root = loadFXML(fxml);
-        scene.setRoot(root);
-        
+        Scene newScene = new Scene(root, width, height);
+
+        stage.setScene(newScene);
         stage.setResizable(false);
-        stage.setWidth(width);
-        stage.setHeight(height);
         stage.centerOnScreen();
+        stage.show();
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
