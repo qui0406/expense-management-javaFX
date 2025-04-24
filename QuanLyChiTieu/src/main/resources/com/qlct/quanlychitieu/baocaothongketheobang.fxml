@@ -41,7 +41,7 @@
                </styleClass>
             </Label>
 
-            <Button layoutX="12.0" layoutY="150.0" mnemonicParsing="false" onAction="#switchTransaction" prefHeight="40.0" prefWidth="175.0" stylesheets="@style/transaction.css" text="Thêm giao dịch">
+            <Button layoutX="12.0" layoutY="150.0" mnemonicParsing="false" onAction="#switchTransaction" prefHeight="40.0" prefWidth="175.0" stylesheets="@style/transaction.css" text="Thêm giao dịch" textFill="#34ebff">
                <styleClass>
                   <String fx:value="btnSideBar" />
                   <String fx:value="btnFont" />

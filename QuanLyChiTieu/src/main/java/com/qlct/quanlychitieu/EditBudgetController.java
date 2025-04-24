@@ -289,8 +289,8 @@ public class EditBudgetController implements Initializable {
                     Budget budget = getTableRow().getItem();
                     int categoryId = budget.getCategoryId();
                     try {
-//                        String name = categoryServices.getCategoryByIdForBudget(categoryId);
-//                        setText(name != null ? name : "Không xác định");
+                       String name = categoryServices.getCategoryByIdForBudget(categoryId);
+                       setText(name != null ? name : "Không xác định");
                     } catch (Exception e) {
                         setText("Lỗi");
                         e.printStackTrace();
