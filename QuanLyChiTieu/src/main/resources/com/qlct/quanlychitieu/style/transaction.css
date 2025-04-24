@@ -117,3 +117,12 @@ AnchorPane#sidebar .button {
 AnchorPane#sidebar .button:hover {
     -fx-background-color: #53A6D8; /* Màu khi hover, đồng bộ với các button khác */
 }
+
+.btnSave {
+    -fx-background-color: #58bc3c;
+}
+
+.btnCancel {
+    -fx-background-color: #ff5315;
+}
+

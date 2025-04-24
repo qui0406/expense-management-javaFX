@@ -11,11 +11,7 @@ import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -26,7 +22,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -44,6 +39,9 @@ public class FXEditCategoryController implements Initializable {
     @FXML
     private TableView<Category> tbCategory;
 
+    @FXML
+    private Button btnBack;
+
     /**
      * Initializes the controller class.
      */
@@ -53,6 +51,7 @@ public class FXEditCategoryController implements Initializable {
         cbType.setItems(FXCollections.observableArrayList("Chi", "Thu"));
         loadColumns();
         loadTableData();
+        
     }
 
     private void loadColumns() {
@@ -195,8 +194,15 @@ public class FXEditCategoryController implements Initializable {
         }
     }
 
-    public void backToTransactions(MouseEvent event) {
-        SceneController.switchScene((Node) event.getSource(), "FXTransactions.fxml", 1200, 800);
+    @FXML
+    public void backToTransactions(MouseEvent event) throws IOException {
+        System.out.println("Chuyển trang");
+        try {
+            App.setRoot("FXTransactions", 1200, 800);
+            System.out.println("Vo");
+        } catch (Exception ex) {
+            System.out.println("Lỗi");
+        }
     }
 
 }
