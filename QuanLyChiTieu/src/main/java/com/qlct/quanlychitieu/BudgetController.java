@@ -224,7 +224,7 @@ public class BudgetController implements Initializable {
                     int categoryId = budget.getCategoryId();
 
                     try {
-                        String name = categoryServices.getCategoryByIdForBudget(categoryId);
+                        String name = categoryServices.getCategoryNameById(categoryId);
                         setText(name != null ? name : "Không xác định");
                     } catch (Exception e) {
                         setText("Lỗi");
