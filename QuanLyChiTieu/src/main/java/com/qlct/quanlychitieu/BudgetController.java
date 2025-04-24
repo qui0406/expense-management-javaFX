@@ -371,25 +371,4 @@ public class BudgetController implements Initializable {
         }
     }
 
-    public void logoutBudget(String fxmlFile) {
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Xác nhận đăng xuất");
-        confirmAlert.setHeaderText(null);
-        confirmAlert.setContentText("Bạn có chắc chắn muốn đăng xuất không?");
-
-        Optional<ButtonType> result = confirmAlert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
-                Parent root = loader.load();
-                Stage stage = (Stage) btnLogoutBudget.getScene().getWindow();
-                stage.setScene(new Scene(root, 650, 500));
-                stage.centerOnScreen();
-                stage.show();
-            } catch (IOException e) {
-                Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, "Lỗi khi đăng xuất: ", e);
-                Utils.showAlert("Lỗi hệ thống!", null, "Không thể đăng xuất. Vui lòng thử lại.");
-            }
-        }
-    }
 }
