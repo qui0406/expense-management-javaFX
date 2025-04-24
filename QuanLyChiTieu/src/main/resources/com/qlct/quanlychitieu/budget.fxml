@@ -12,11 +12,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -61,82 +57,28 @@
       </AnchorPane>
    </left>
    <center>
-      <GridPane prefHeight="579.0" prefWidth="706.0" styleClass="mainFxmlClass" stylesheets="@style/budget.css" BorderPane.alignment="CENTER">
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="112.79998779296875" minWidth="10.0" prefWidth="112.79998779296875" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="261.800048828125" minWidth="10.0" prefWidth="249.00006103515625" />
-            <ColumnConstraints maxWidth="248.199951171875" minWidth="136.199951171875" prefWidth="136.199951171875" />
-            <ColumnConstraints />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints maxHeight="71.40000381469727" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="190.80001831054688" minHeight="10.0" prefHeight="62.599999999999994" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="261.6000122070312" minHeight="10.0" prefHeight="96.59999389648439" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="285.59999694824216" minHeight="39.19998779296873" prefHeight="49.5999816894531" />
-            <RowConstraints maxHeight="86.20001220703125" minHeight="31.39996337890625" prefHeight="31.39996337890625" />
-            <RowConstraints maxHeight="142.20001220703125" minHeight="31.39996337890625" prefHeight="40.800024414062534" />
-            <RowConstraints maxHeight="143.99997558593748" minHeight="31.39996337890625" prefHeight="31.39996337890625" />
-            <RowConstraints maxHeight="117.00003662109378" minHeight="17.000036621093784" prefHeight="37.40001831054684" />
-            <RowConstraints maxHeight="92.79998168945315" minHeight="22.399987792968773" prefHeight="32.39997558593751" />
-            <RowConstraints maxHeight="134.8" minHeight="22.399987792968773" prefHeight="133.2000244140625" />
-            <RowConstraints maxHeight="134.8" minHeight="22.399987792968773" prefHeight="133.2000244140625" />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" />
-            <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" />
-         </rowConstraints>
+      <Pane prefHeight="200.0" prefWidth="200.0" styleClass="mainFxmlClass" stylesheets="@style/budget.css" BorderPane.alignment="CENTER">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-text" text="NHẬP NGÂN SÁCH" textAlignment="CENTER" wrappingWidth="317.3367614746094" GridPane.columnSpan="4" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-            <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnSpan="4" GridPane.rowIndex="1" GridPane.rowSpan="2">
-               <children>
-                  <HBox prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nhập ngân sách: " wrappingWidth="114.875732421875" />
-                        <TextField fx:id="txtInputBudget" prefHeight="40.0" prefWidth="433.0" promptText="Nhập số tiền ngân sách" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="V" textAlignment="RIGHT" wrappingWidth="36.04380977153778" />
-                     </children>
-                  </HBox>
-                  <HBox prefHeight="100.0" prefWidth="601.0">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Chọn loại ngân sách: " wrappingWidth="114.875732421875" />
-                        <ComboBox fx:id="cbType" prefHeight="37.0" prefWidth="150.0" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Chọn danh mục: " wrappingWidth="114.875732421875" />
-                        <ComboBox fx:id="cbCate" prefHeight="36.0" prefWidth="150.0" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-            <VBox prefHeight="310.0" prefWidth="439.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-               <children>
-                  <Button fx:id="btnAddBudget" mnemonicParsing="false" styleClass="action-button" text="Lưu ngân sách" />
-                  <Label fx:id="lblStatus" prefHeight="44.0" prefWidth="439.0" />
-               </children>
-            </VBox>
-            <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="4">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng ngân sách: " wrappingWidth="114.875732421875" />
-                  <Label fx:id="lblTotal" text="0" />
-               </children>
-            </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="5">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Số tiền đã chi: " wrappingWidth="114.875732421875" />
-                  <Label fx:id="lblTotalMoneyUsed" text="0" />
-               </children>
-            </HBox>
-            <HBox prefHeight="58.0" prefWidth="602.0" GridPane.columnSpan="3" GridPane.rowIndex="6">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Số tiền còn lại: " wrappingWidth="114.875732421875" />
-                  <Label text="0" />
-               </children>
-            </HBox>
-            <ProgressBar fx:id="progressBarTotal" prefHeight="18.0" prefWidth="410.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <Label fx:id="lblPercentage" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-            <TableView fx:id="tbBudget" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="4" GridPane.rowIndex="9" GridPane.rowSpan="6" />
-            <ProgressBar fx:id="progressBarUsed" prefHeight="18.0" prefWidth="249.0" progress="0.0" style="-fx-background-color: red;" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Text layoutX="203.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-text" text="NHẬP NGÂN SÁCH" textAlignment="CENTER" />
+            <Text layoutX="14.0" layoutY="103.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="mainFxmlClass" text="Nhập ngân sách:" />
+            <Text layoutX="14.0" layoutY="151.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chọn loại ngân sách: " />
+            <ComboBox fx:id="cbType" layoutX="144.0" layoutY="134.0" prefWidth="150.0" />
+            <Text layoutX="351.0" layoutY="151.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chọn danh mục: " />
+            <ComboBox fx:id="cbCate" layoutX="460.0" layoutY="134.0" prefWidth="150.0" />
+            <TextField fx:id="txtInputBudget" layoutX="144.0" layoutY="86.0" prefHeight="25.0" prefWidth="466.0" />
+            <Button fx:id="btnAddBudget" layoutX="127.0" layoutY="189.0" mnemonicParsing="false" text="Lưu ngân sách" />
+            <Label fx:id="lblStatus" layoutX="130.0" layoutY="231.0" />
+            <Text layoutX="14.0" layoutY="261.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng ngân sách: " />
+            <Text layoutX="14.0" layoutY="304.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Số tiền đã chi: " />
+            <Text layoutX="14.0" layoutY="350.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Số tiền còn lại: " />
+            <Label fx:id="lblTotal" layoutX="130.0" layoutY="248.0" text="0" />
+            <Label fx:id="lblTotalMoneyUsed" layoutX="130.0" layoutY="291.0" text="0" />
+            <Label layoutX="130.0" layoutY="337.0" text="0" />
+            <ProgressBar fx:id="progressBarTotal" layoutX="159.0" layoutY="374.0" prefHeight="18.0" prefWidth="306.0" progress="0.0" />
+            <ProgressBar fx:id="progressBarUsed" layoutX="159.0" layoutY="374.0" prefHeight="18.0" prefWidth="306.0" progress="0.0" />
+            <Label fx:id="lblPercentage" layoutX="298.0" layoutY="398.0" />
+            <TableView fx:id="tbBudget" layoutX="32.0" layoutY="423.0" prefHeight="256.0" prefWidth="559.0" />
          </children>
-      </GridPane>
+      </Pane>
    </center>
 </BorderPane>
