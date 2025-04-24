@@ -64,7 +64,7 @@ public class AuthController implements Initializable {
         String confirmPassword = txtCofirmPassword.getText().trim();
         String email = txtEmail.getText().trim();
 
-        String error = LoginServices.validateRegisterInput(firstName, lastName, username, password, confirmPassword);
+        String error = LoginServices.validateRegisterInput(firstName, lastName, username, email, password, confirmPassword);
         if (!error.isEmpty()) {
             Utils.showAlert(error, null, "Lỗi đăng ký");
             return;

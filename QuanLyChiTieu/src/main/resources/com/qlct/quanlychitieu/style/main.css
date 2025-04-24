@@ -1,0 +1,18 @@
+
+.btnFont {
+    -fx-font-size: 14;
+}
+
+.btnFontActive {
+    -fx-font-color: #fff;
+    -fx-font-size: 14;
+}
+.btnActive {
+    -fx-backgroud-color:  #443fd7;
+}
+
+.txtUsername {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-fill: #ffffff; /* Màu chữ trắng */
+}

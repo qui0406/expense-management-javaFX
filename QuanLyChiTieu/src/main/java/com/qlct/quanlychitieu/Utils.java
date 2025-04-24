@@ -94,14 +94,7 @@ public class Utils {
             try {
                 UserSessionServices.logout();// Đăng xuất
                 System.out.println("User logged out.");  // Log kiểm tra
-                FXMLLoader loader = new FXMLLoader(Utils.class.getResource(fxmlFile));
-                Parent root = loader.load();
-                Stage stage = (Stage) logoutButton.getScene().getWindow();
-                stage.setScene(new Scene(root, 650, 500));
-                stage.setMinHeight(500);
-                stage.setMinWidth(650);
-                stage.centerOnScreen();
-                stage.show();
+                App.setRoot("login", 650, 500);
             } catch (IOException e) {
                 Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, "Lỗi khi đăng xuất: ", e);
                 Utils.showAlert("Lỗi hệ thống!", null, "Không thể đăng xuất. Vui lòng thử lại.");

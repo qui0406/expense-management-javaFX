@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+<?import java.net.URL?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
@@ -10,9 +12,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1172.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.StatsController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1172.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.StatsController">
    <children>
-      <Label layoutX="413.0" layoutY="14.0" prefHeight="46.0" prefWidth="254.0" style="-fx-text-fill: #2D82B5;" styleClass="Subject" text="Báo cáo thống kê">
+      <Label layoutX="406.0" layoutY="14.0" prefHeight="46.0" prefWidth="324.0" styleClass="Subject" text="BÁO CÁO THỐNG KÊ " textFill="#f43500">
          <font>
             <Font name="System Bold" size="31.0" />
          </font>
@@ -22,40 +24,67 @@
       <DatePicker fx:id="toDate" layoutX="698.0" layoutY="72.0" prefHeight="35.0" prefWidth="190.0" />
       <Label layoutX="272.0" layoutY="81.0" text="Từ ngày" />
       <Label layoutX="631.0" layoutY="81.0" text="Đến ngày" />
-      <Pane layoutY="-3.0" prefHeight="807.0" prefWidth="198.0" style="-fx-background-color: skyblue;" styleClass="txtSidebar" stylesheets="@style/baocaothongketheobang.css">
+      <Pane layoutY="-3.0" prefHeight="807.0" prefWidth="200.0" style="-fx-background-color: skyblue;" styleClass="txtSidebar" stylesheets="@style/baocaothongketheobang.css">
          <children>
             <ImageView fitHeight="58.0" fitWidth="71.0" layoutX="61.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@Screenshot%202025-03-15%20150924.png" />
                </image>
             </ImageView>
-            <Label fx:id="lbUsername" layoutX="61.0" layoutY="101.0" styleClass="txtSidebar" text="Username">
+            <Label fx:id="lbUsername" alignment="CENTER" layoutY="100.0" prefHeight="25.0" prefWidth="200.0" text="Username" textFill="#fffbfb">
                <font>
-                  <Font size="16.0" />
+                  <Font name="System Bold" size="16.0" />
                </font>
+               <styleClass>
+                  <String fx:value="txtUsername" />
+                  <String fx:value="txtUsername" />
+               </styleClass>
             </Label>
 
-            <Button layoutX="9.0" layoutY="146.0" mnemonicParsing="false" onAction="#switchTransaction" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Thêm giao dịch" />
-            <Button layoutX="9.0" layoutY="209.0" mnemonicParsing="false" onAction="#switchBudget" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Thiết lập ngân sách " />
-            <Button layoutX="9.0" layoutY="274.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Báo cáo thống kê" />
-            <ImageView fitHeight="46.0" fitWidth="57.0" layoutX="74.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
+            <Button layoutX="12.0" layoutY="150.0" mnemonicParsing="false" onAction="#switchTransaction" prefHeight="40.0" prefWidth="175.0" stylesheets="@style/transaction.css" text="Thêm giao dịch" textFill="#34ebff">
+               <styleClass>
+                  <String fx:value="btnSideBar" />
+                  <String fx:value="btnFont" />
+               </styleClass></Button>
+            <Button layoutX="12.0" layoutY="215.0" mnemonicParsing="false" onAction="#switchBudget" prefHeight="40.0" prefWidth="175.0" text="Thiết lập ngân sách ">
+               <styleClass>
+                  <String fx:value="btnSideBar" />
+                  <String fx:value="btnFont" />
+               </styleClass></Button>
+            <Button layoutX="12.0" layoutY="280.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" text="Báo cáo thống kê">
+               <styleClass>
+                  <String fx:value="btnActive" />
+                  <String fx:value="btnFontActive" />
+               </styleClass></Button>
+            <ImageView fitHeight="45.0" fitWidth="60.0" layoutX="75.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../icons/User.png" />
                </image>
             </ImageView>
-            <Button fx:id="logoutStats" layoutX="9.0" layoutY="342.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="175.0" style="-fx-background-color: lightgrey;" styleClass="btnSideBar" text="Đăng xuất" />
+            <Button fx:id="logoutStats" layoutX="12.0" layoutY="345.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" text="Đăng xuất">
+               <styleClass>
+                  <String fx:value="btnSideBar" />
+                  <String fx:value="btnFont" />
+               </styleClass></Button>
          </children>
       </Pane>
-      <Label layoutX="441.0" layoutY="708.0" text="Thống kê theo các tháng trnig năm hiện tại ">
+      <Label layoutX="441.0" layoutY="708.0" text="Thống kê theo các tháng trong năm hiện tại " textFill="#3613e4">
          <font>
-            <Font size="15.0" />
+            <Font size="18.0" />
          </font>
       </Label>
       <TableView fx:id="tbExpenses" layoutX="224.0" layoutY="168.0" prefHeight="227.0" prefWidth="903.0" />
       <TableView fx:id="tbStatsByMonth" layoutX="227.0" layoutY="449.0" prefHeight="247.0" prefWidth="896.0" />
       <Button fx:id="filter" layoutX="1084.0" layoutY="118.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" text="Lọc" />
       <ComboBox fx:id="cbType" layoutX="970.0" layoutY="118.0" prefHeight="34.0" prefWidth="95.0" promptText="Chi" />
-      <Label layoutX="478.0" layoutY="404.0" text="Thống kê theo tháng hiện tại" />
-      <ComboBox fx:id="cbChoseYearStats" layoutX="224.0" layoutY="421.0" prefWidth="150.0" />
+      <Label layoutX="478.0" layoutY="404.0" text="Thống kê theo tháng hiện tại" textFill="#5020a1">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <ComboBox fx:id="cbChoseYearStats" layoutX="227.0" layoutY="421.0" prefWidth="150.0" />
    </children>
+   <stylesheets>
+      <URL value="@style/transaction.css" />
+      <URL value="@style/main.css" />
+   </stylesheets>
 </Pane>

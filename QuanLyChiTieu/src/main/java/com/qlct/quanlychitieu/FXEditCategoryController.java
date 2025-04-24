@@ -2,7 +2,6 @@ package com.qlct.quanlychitieu;
 
 import com.qlct.pojo.Category;
 import com.qlct.services.CategoryServices;
-import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -12,10 +11,7 @@ import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -24,10 +20,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -45,6 +39,9 @@ public class FXEditCategoryController implements Initializable {
     @FXML
     private TableView<Category> tbCategory;
 
+    @FXML
+    private Button btnBack;
+
     /**
      * Initializes the controller class.
      */
@@ -54,6 +51,7 @@ public class FXEditCategoryController implements Initializable {
         cbType.setItems(FXCollections.observableArrayList("Chi", "Thu"));
         loadColumns();
         loadTableData();
+        
     }
 
     private void loadColumns() {
@@ -196,18 +194,15 @@ public class FXEditCategoryController implements Initializable {
         }
     }
 
-    public void backToTransactions(MouseEvent event) {
+    @FXML
+    public void backToTransactions(MouseEvent event) throws IOException {
+        System.out.println("Chuyển trang");
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXTransactions.fxml"));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) ((ImageView) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException ex) {
-            Utils.getAlert("Lỗi khi quay lại giao diện giao dịch: " + ex.getMessage()).show();
-            Logger.getLogger(FXEditCategoryController.class.getName()).log(Level.SEVERE, null, ex);
+            App.setRoot("FXTransactions", 1200, 800);
+            System.out.println("Vo");
+        } catch (Exception ex) {
+            System.out.println("Lỗi");
         }
     }
+
 }

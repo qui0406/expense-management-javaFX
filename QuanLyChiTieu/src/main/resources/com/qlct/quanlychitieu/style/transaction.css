@@ -33,7 +33,6 @@ Text.Subject {
 .button.btnSideBar{
     -fx-background-color: #F0F5F9;
     -fx-text-fill: black;
-
 }
 .button {
     -fx-background-color: #2D82B5;
@@ -117,3 +116,12 @@ AnchorPane#sidebar .button {
 AnchorPane#sidebar .button:hover {
     -fx-background-color: #53A6D8; /* Màu khi hover, đồng bộ với các button khác */
 }
+
+.btnSave {
+    -fx-background-color: #58bc3c;
+}
+
+.btnCancel {
+    -fx-background-color: #ff5315;
+}
+
