@@ -135,7 +135,7 @@
             <ProgressBar fx:id="progressBarTotal" prefHeight="18.0" prefWidth="410.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
             <Label fx:id="lblPercentage" GridPane.columnIndex="1" GridPane.rowIndex="8" />
             <TableView fx:id="tbBudget" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="4" GridPane.rowIndex="9" GridPane.rowSpan="6" />
-            <ProgressBar fx:id="progressBarUsed" prefHeight="18.0" prefWidth="249.0" progress="0.0" style="-fx-background-color: red;" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <ProgressBar fx:id="progressBarUsed" prefHeight="18.0" prefWidth="250.0" progress="0.0" style="-fx-background-color: red;" GridPane.columnIndex="1" GridPane.rowIndex="7" />
          </children>
       </GridPane>
    </center>
