@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.event.Event;
 
 public class StatsServices {
 
