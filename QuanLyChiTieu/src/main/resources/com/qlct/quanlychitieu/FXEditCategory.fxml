@@ -9,14 +9,14 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="840" stylesheets="@style/editCategory.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.FXEditCategoryController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="840" style="-fx-background-color: alice;" stylesheets="@style/editCategory.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.FXEditCategoryController">
    <children>
-      <Button mnemonicParsing="false" onMouseClicked="#backToTransactions" text="&lt;">
+      <Button mnemonicParsing="false" onMouseClicked="#backToTransactions" prefHeight="51.0" prefWidth="54.0" text="&lt;">
          <font>
-            <Font name="System Bold" size="18.0" />
+            <Font name="System Bold" size="26.0" />
          </font>
       </Button>
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="lbTy" text="Chỉnh sửa danh mục" textAlignment="CENTER" wrappingWidth="810.6152954101562">
+      <Text fill="#310ef4" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="lbTy" text="CHỈNH SỬA DANH MỤC" textAlignment="CENTER" wrappingWidth="810.6152954101562">
          <font>
             <Font name="System Bold" size="30.0" />
          </font>
@@ -25,8 +25,11 @@
          <VBox.margin>
             <Insets left="30.0" top="20.0" />
          </VBox.margin>
+         <font>
+            <Font size="14.0" />
+         </font>
       </Text>
-      <TextField fx:id="txtName">
+      <TextField fx:id="txtName" prefHeight="30.0" prefWidth="465.0">
          <VBox.margin>
             <Insets left="30.0" right="350.0" top="10.0" />
          </VBox.margin>
@@ -35,18 +38,21 @@
          <VBox.margin>
             <Insets left="30.0" top="10.0" />
          </VBox.margin>
+         <font>
+            <Font size="14.0" />
+         </font>
       </Text>
-      <ComboBox fx:id="cbType" prefWidth="150.0">
+      <ComboBox fx:id="cbType" prefHeight="44.0" prefWidth="254.0">
          <VBox.margin>
             <Insets left="30.0" top="7.0" />
          </VBox.margin>
       </ComboBox>
-      <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#addHandler" text="Thêm">
+      <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#addHandler" prefHeight="51.0" prefWidth="88.0" text="Thêm">
          <VBox.margin>
             <Insets left="30.0" top="10.0" />
          </VBox.margin>
       </Button>
-      <TableView fx:id="tbCategory" prefHeight="380.0" prefWidth="780.0" styleClass="tbType">
+      <TableView fx:id="tbCategory" prefHeight="364.0" prefWidth="774.0" styleClass="tbType">
          <VBox.margin>
             <Insets left="30.0" right="30.0" top="15.0" />
          </VBox.margin>

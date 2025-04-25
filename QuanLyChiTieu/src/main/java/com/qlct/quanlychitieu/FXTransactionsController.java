@@ -10,6 +10,7 @@ import com.qlct.pojo.Transaction;
 import com.qlct.pojo.User;
 import com.qlct.services.CategoryServices;
 import com.qlct.services.TransactionServices;
+import com.qlct.services.UserCategoryServices;
 import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.net.URL;
@@ -17,6 +18,7 @@ import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -92,6 +94,13 @@ public class FXTransactionsController implements Initializable {
      * Initializes the controller class.
      */
     private Map<Integer, Category> categoryCache = new HashMap<>();
+    
+    private UserCategoryServices userCategoryServices = new UserCategoryServices();
+    
+    private List<Integer> listDefaultCategory = new ArrayList<>();
+    private static final int DEFAULT_CATEGORY = 6;
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -108,6 +117,13 @@ public class FXTransactionsController implements Initializable {
             public String toString(LocalDate date) {
                 return date != null ? dateFormatter.format(date) : "";
             }
+        
+        try {
+            addCategoryDefault();
+        } catch (SQLException ex) {
+            Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
 
             @Override
             public LocalDate fromString(String string) {
@@ -154,6 +170,19 @@ public class FXTransactionsController implements Initializable {
         logoutBtnTransaction.setOnAction(event -> Utils.logout(logoutBtnTransaction, "login.fxml"));
         btnSave.setOnAction(this::addHandler);
 
+    }
+    
+    public void addCategoryDefault() throws SQLException{
+        listDefaultCategory = userCategoryServices.getListDefaultCategory();
+        int currentUserId = UserSessionServices.getCurrentUser().getId();
+        
+        System.out.println(currentUserId);
+        System.out.println(listDefaultCategory);
+        for (int x : listDefaultCategory){
+            if(userCategoryServices.isUserDefaultCategoryExists(currentUserId, x)==0){
+                userCategoryServices.assignDefaultCategoriesToUser(currentUserId, x);
+            }
+        }
     }
 
     public void filterTransactions(ActionEvent e) {

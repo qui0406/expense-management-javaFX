@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.event.Event;
 
 public class StatsServices {
 
@@ -51,8 +50,6 @@ public class StatsServices {
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setInt(1, userId);
             stm.setString(2, type);
-//            stm.setString(3, type);
-//            stm.setInt(4, userId);
 
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
@@ -135,7 +132,8 @@ public class StatsServices {
                 + "ORDER BY \n"
                 + "    MONTH(transaction.date);";
 
-        try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql)) {
+        try (Connection conn = JdbcUtils.getConn(); 
+            PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, year);
             stm.setInt(2, userId);
             stm.setString(3, type);
