@@ -20,8 +20,14 @@ public class UserSessionServices {
     private static UserSessionServices instance;
     private User currentUser;
     private String username;
+    private int id;
     
     public UserSessionServices(String username) {
+        this.username= username;
+    }
+    
+    public UserSessionServices(int id, String username) {
+        this.id = id;
         this.username= username;
     }
     
@@ -55,5 +61,9 @@ public class UserSessionServices {
     
     public String getUsername(){
         return username;
+    }
+    
+    public int getUserId(){
+        return id;
     }
 }
