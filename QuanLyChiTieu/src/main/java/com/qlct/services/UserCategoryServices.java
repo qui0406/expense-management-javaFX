@@ -16,6 +16,7 @@ import java.util.logging.Logger;
  * @author ttthu
  */
 public class UserCategoryServices {
+    
 
     public void addUserCategory(int userId, int categoryId) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
@@ -94,6 +95,26 @@ public class UserCategoryServices {
         }
         return false;
     }
+    
+    public int isUserDefaultCategoryExists(int userId, int categoryId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM user_cate WHERE user_id = ? AND category_id= ?";
+
+        try (Connection conn = JdbcUtils.getConn();
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setInt(1, userId);
+            stm.setInt(2, categoryId);
+
+            ResultSet rs = stm.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1); // Cột đầu tiên chứa COUNT(*)
+            }
+        }
+
+        return 0; // Nếu không có kết quả
+    }
+
 
     public boolean assignDefaultCategoriesToUser(int userId) throws SQLException {
         Connection conn = null;
@@ -152,4 +173,47 @@ public class UserCategoryServices {
             }
         }
     }
+    public boolean assignDefaultCategoriesToUser(int userId, int cateIdDefault) throws SQLException {
+        String sql = "INSERT INTO user_cate (user_id, category_id) VALUES (?, ?)";
+
+        try (Connection conn = JdbcUtils.getConn();
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+
+            stm.setInt(1, userId);
+            stm.setInt(2, cateIdDefault);
+
+            int rowsAffected = stm.executeUpdate(); 
+
+            return rowsAffected > 0; 
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    
+    public List<Integer> getListDefaultCategory() {
+        String sql = "SELECT id FROM category WHERE is_default = true"; // Chỉ chọn cột id
+        List<Integer> arrIdCate = new ArrayList<>();
+
+        try (Connection conn = JdbcUtils.getConn();
+             PreparedStatement stm = conn.prepareStatement(sql);
+             ResultSet rs = stm.executeQuery()) {
+
+            while (rs.next()) {
+                arrIdCate.add(rs.getInt("id")); // Lấy cột id
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Xử lý lỗi nếu có
+        }
+
+        return arrIdCate;
+    }
+
+    
+
+    
+    
 }
