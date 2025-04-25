@@ -131,7 +131,6 @@ public class BudgetController implements Initializable {
             }
             try {
                 int categoryId = budgetServices.getIdByName(selectedCate, currentUser.getId());
-                System.out.println("Category ID: " + categoryId);
                 if (budgetServices.isBudgetExistForCurrentMonth(categoryId, true)) {
                     budgetServices.updateStatus(lblStatus, "Ngân sách cho danh mục này đã tồn tại trong tháng!", "-fx-text-fill: red;");
                     return;
@@ -205,11 +204,6 @@ public class BudgetController implements Initializable {
             @Override
             protected void updateItem(String categoryName, boolean empty) {
                 super.updateItem(categoryName, empty);
-                if (getTableRow() != null) {
-                    System.out.println("TableRow Item: " + getTableRow().getItem()); // In ra item của TableRow
-                } else {
-                    System.out.println("TableRow is null");
-                }
                 if (empty || getTableRow() == null || getTableRow().getItem() == null) {
                     setText(null);
                 } else {
@@ -217,7 +211,7 @@ public class BudgetController implements Initializable {
                     int categoryId = budget.getCategoryId();
 
                     try {
-                        String name = categoryServices.getCategoryByIdForBudget(categoryId);
+                        String name = categoryServices.getCategoryNameById(categoryId);
                         setText(name != null ? name : "Không xác định");
                     } catch (Exception e) {
                         setText("Lỗi");
@@ -270,12 +264,10 @@ public class BudgetController implements Initializable {
 
     private void loadTableData() {
         List<Budget> budgets = budgetServices.getBudgetsForCurrentUser(); // Lấy danh sách ngân sách từ dịch vụ
-        System.out.println(budgets.size());
         List<Budget> filteredBudgets = budgets.stream()
                 .filter(budget -> {
                     // Kiểm tra xem ngân sách có tồn tại trong tháng hiện tại không
                     boolean isExists = budgetServices.isBudgetExistForCurrentMonth(budget.getId(), false);
-                    System.out.println("ID: " + budget.getId() + " exists in current month: " + isExists);
                     return isExists;
 
                 })
