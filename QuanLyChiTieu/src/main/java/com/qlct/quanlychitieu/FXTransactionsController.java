@@ -147,8 +147,6 @@ public class FXTransactionsController implements Initializable {
         listDefaultCategory = userCategoryServices.getListDefaultCategory();
         int currentUserId = UserSessionServices.getCurrentUser().getId();
         
-        System.out.println(currentUserId);
-        System.out.println(listDefaultCategory);
         for (int x : listDefaultCategory){
             if(userCategoryServices.isUserDefaultCategoryExists(currentUserId, x)==0){
                 userCategoryServices.assignDefaultCategoriesToUser(currentUserId, x);
