@@ -13,8 +13,10 @@ import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -84,6 +86,7 @@ public class BudgetController implements Initializable {
     private Text txtUsername;
     @FXML
     private Button btnLogoutBudget;
+
     /**
      * Initializes the controller class.
      */
@@ -107,10 +110,10 @@ public class BudgetController implements Initializable {
                 loadCategoriesByType(selectedType);
             }
         });
-        
+
         btnLogoutBudget.setOnAction(event -> Utils.logout(btnLogoutBudget, "login.fxml"));
 
-         //Hiển thị username của người dùng hiện tại
+        //Hiển thị username của người dùng hiện tại
         User currentUser = UserSessionServices.getCurrentUser();
         if (currentUser != null) {
             txtUsername.setText(currentUser.getUsername());
@@ -118,7 +121,6 @@ public class BudgetController implements Initializable {
             txtUsername.setText("Chưa đăng nhập");
         }
 
-        
         loadTableData();
         loadColumns();
 
@@ -152,7 +154,7 @@ public class BudgetController implements Initializable {
             }
         });
     }
-    
+
     @FXML
     public void switchTransaction() throws IOException {
         App.setRoot("FXTransactions", 1200, 800);
@@ -198,6 +200,21 @@ public class BudgetController implements Initializable {
         colAmount.setCellValueFactory(new PropertyValueFactory<>("amountBudget")); // Lấy giá trị từ thuộc tính amount
         colAmount.setPrefWidth(150);
 
+        // Format số tiền hiển thị dưới dạng: 1.000.000 VND
+        colAmount.setCellFactory(column -> new TableCell<>() {
+            private final NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+
+            @Override
+            protected void updateItem(Double amount, boolean empty) {
+                super.updateItem(amount, empty);
+                if (empty || amount == null) {
+                    setText(null);
+                } else {
+                    setText(currencyFormat.format(amount.intValue()) + " VND");
+                }
+            }
+        });
+
         // Cột Loại
         TableColumn<Budget, String> colType = new TableColumn<>("Loại");
         colType.setCellValueFactory(new PropertyValueFactory<>("type")); // Lấy giá trị từ thuộc tính type
@@ -210,11 +227,6 @@ public class BudgetController implements Initializable {
             @Override
             protected void updateItem(String categoryName, boolean empty) {
                 super.updateItem(categoryName, empty);
-                if (getTableRow() != null) {
-                    System.out.println("TableRow Item: " + getTableRow().getItem()); // In ra item của TableRow
-                } else {
-                    System.out.println("TableRow is null");
-                }
                 if (empty || getTableRow() == null || getTableRow().getItem() == null) {
                     setText(null);
                 } else {
@@ -285,7 +297,6 @@ public class BudgetController implements Initializable {
                 .filter(budget -> {
                     // Kiểm tra xem ngân sách có tồn tại trong tháng hiện tại không
                     boolean isExists = budgetServices.isBudgetExistForCurrentMonth(budget.getId(), false);
-                    System.out.println("ID: " + budget.getId() + " exists in current month: " + isExists);
                     return isExists;
 
                 })
@@ -329,16 +340,16 @@ public class BudgetController implements Initializable {
         if (chiTieuHienTai <= nganSach * 0.8) {
             return;
         }
-    
+
         // Nếu vượt quá 80%, mới hiện cảnh báo
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Cảnh báo ngân sách");
         alert.setHeaderText(null);
         alert.setContentText("Chi tiêu đã vượt quá 80% ngân sách!\nVui lòng kiểm tra lại kế hoạch chi tiêu.");
-    
+
         ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         alert.getButtonTypes().setAll(okButton);
-    
+
         alert.showAndWait(); // Chỉ hiện nếu đủ điều kiện
     }
 
@@ -374,7 +385,7 @@ public class BudgetController implements Initializable {
 
             double totalUsed = budgetServices.getTotalExpensesForCategory(categoryId, currentUserId);
             System.out.println("Total Used: " + totalUsed);
-            
+
             if (budgetServices.isBudgetExistForCurrentMonth(categoryId, true)) {
                 // Kiểm tra xem ngân sách mới có đang đủ bù đắp phần thiếu hay không
                 double needToAdd = totalUsed - totalBudget;  // Tính số tiền thiếu cần thêm vào
@@ -384,7 +395,7 @@ public class BudgetController implements Initializable {
                     return;
                 }
             }
-            
+
             // Trường hợp chưa đủ ngân sách hoặc chưa có ngân sách trong tháng hiện tại
             boolean success = budgetServices.tryInsertBudget(input, budgetType, categoryName);
             if (success) {
@@ -407,6 +418,6 @@ public class BudgetController implements Initializable {
         alert.setContentText(content);
         alert.getDialogPane().setStyle("-fx-text-fill: " + color + ";");
         alert.showAndWait();
-    }    
+    }
 
 }
