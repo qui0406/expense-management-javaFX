@@ -334,7 +334,7 @@ public class EditBudgetController implements Initializable {
     }
 
     public double validateInput(String input) {
-        try {
+        try {   
             return budgetServices.validateAmount(input);
         } catch (IllegalArgumentException e) {
             Platform.runLater(() -> {
