@@ -1,8 +1,10 @@
 package com.qlct.quanlychitieu;
 
 import com.qlct.pojo.Expense;
+import com.qlct.pojo.User;
 import com.qlct.services.ChartServices;
 import com.qlct.services.StatsServices;
+import com.qlct.services.UserSessionServices;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -14,7 +16,6 @@ import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -33,6 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DateCell;
+import javafx.scene.text.Text;
 
 public class ChartController implements Initializable {
 
@@ -44,7 +46,7 @@ public class ChartController implements Initializable {
     @FXML public DatePicker fromDateChart;
     @FXML public DatePicker toDateChart;
     @FXML public Button btnFilterChart;
-    @FXML public Label lbUsernameChart;
+    @FXML public Text txtUsername;
     @FXML public ImageView imgViewChart;
     @FXML private Button logoutChart;
     @FXML private ComboBox<String> cbChoseYear;
@@ -59,8 +61,12 @@ public class ChartController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Initialize username
-        Utils.loadUsername(lbUsernameChart);
+        User currentUser = UserSessionServices.getCurrentUser();
+        if (currentUser != null) {
+            txtUsername.setText(currentUser.getUsername());
+        } else {
+            txtUsername.setText("Chưa đăng nhập");
+        }
 
         loadComboBoxChart();
         loadComboBoxType();
@@ -71,7 +77,7 @@ public class ChartController implements Initializable {
         logoutChart.setOnAction(event -> Utils.logout(logoutChart, "login.fxml"));
 
         try {
-            loadData(statsServices.getExpenseCurrentMonth(cbTypeChart.getValue()));
+            loadData(chartServices.getExpenseCurrentMonthChart(cbTypeChart.getValue()));
             loadDataByMonth();
         } catch (SQLException ex) {
             Logger.getLogger(ChartController.class.getName()).log(Level.SEVERE, null, ex);
@@ -135,7 +141,7 @@ public class ChartController implements Initializable {
             try {
                 fromDateChart.setValue(null);
                 toDateChart.setValue(null);
-                loadData(statsServices.getExpenseCurrentMonth(cbTypeChart.getValue()));
+                loadData(chartServices.getExpenseCurrentMonthChart(cbTypeChart.getValue()));
                 loadDataByMonth();
             } catch (SQLException ex) {
                 Logger.getLogger(ChartController.class.getName()).log(Level.SEVERE, null, ex);
@@ -168,7 +174,7 @@ public class ChartController implements Initializable {
         LocalDate selectedToDate = toDateChart.getValue();
 
         if (selectedFromDate != null && selectedToDate != null) {
-            List<Expense> filteredExpenses = statsServices.getExpensesFilterByDate(selectedFromDate, selectedToDate, cbTypeChart.getValue());
+            List<Expense> filteredExpenses = chartServices.getExpensesFilterByDateChart(selectedFromDate, selectedToDate, cbTypeChart.getValue());
             loadData(filteredExpenses);
         } else {
             Utils.showAlert("Vui lòng chọn cả hai ngày bắt đầu và kết thúc!", null, "Vui lòng chọn cả hai ngày bắt đầu và kết thúc!");
@@ -210,16 +216,13 @@ public class ChartController implements Initializable {
     public void loadData(List<Expense> expenseList) throws SQLException {
         if (expenseList == null || expenseList.isEmpty()) {
             pieChart.setVisible(false);
-            lineChart.setVisible(false);
             barChart.setVisible(false);
             pieChart.getData().clear();
-            lineChart.getData().clear();
             barChart.getData().clear();
             return;
         }
 
         pieChart.setVisible(true);
-        lineChart.setVisible(true);
         barChart.setVisible(true);
 
         ObservableList<Expense> expenses = FXCollections.observableArrayList(expenseList);

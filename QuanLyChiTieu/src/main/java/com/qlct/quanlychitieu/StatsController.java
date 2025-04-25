@@ -1,20 +1,16 @@
 package com.qlct.quanlychitieu;
 
 import com.qlct.pojo.Expense;
+import com.qlct.pojo.User;
 import com.qlct.services.StatsServices;
 import com.qlct.services.UserSessionServices;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -23,6 +19,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.text.Text;
 
 /**
  * @author QUI
@@ -37,7 +34,7 @@ public class StatsController implements Initializable {
     @FXML private Button btnSwitchAddTransaction;
     @FXML private Button btnSwitchBudget;
     @FXML private Button logoutStats;
-    @FXML private Label lbUsername;
+    @FXML private Text txtUsername;
     @FXML private TableView<Expense> tbExpenses;
     @FXML private TableView<Expense> tbStatsByMonth;
     @FXML private ComboBox<String> cbChoseYearStats;
@@ -50,7 +47,12 @@ public class StatsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        Utils.loadUsername(lbUsername);
+        User currentUser = UserSessionServices.getCurrentUser();
+        if (currentUser != null) {
+            txtUsername.setText(currentUser.getUsername());
+        } else {
+            txtUsername.setText("Chưa đăng nhập");
+        }
         try {
             loadComboBoxType(); // cbType cần được gán giá trị trước
             loadComboBoxTableCurrentMonth();
@@ -58,7 +60,6 @@ public class StatsController implements Initializable {
             cbChoseTable.setOnAction(event -> handleComboBoxTable());
 
             if (cbType.getValue() != null) {
-//                statsServices.getValidatedFilteredExpenses(fromDate, toDate, cbType.getValue());
                 loadColumnsCurrentMonth();
                 loadData(statsServices.getExpenseCurrentMonth(cbType.getValue()));
             }
@@ -72,7 +73,6 @@ public class StatsController implements Initializable {
         } catch (SQLException ex) {
             Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         checkChoseFutureDate();
     }
 
@@ -117,7 +117,6 @@ public class StatsController implements Initializable {
                 Logger.getLogger(ChartController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-
     }
     
     private void loadComboBoxChoseYear() {
@@ -159,7 +158,6 @@ public class StatsController implements Initializable {
     }
     
     
-
     public void handleComboBoxTable() {
         String selectedOption = cbChoseTable.getValue();
         try {
@@ -178,7 +176,6 @@ public class StatsController implements Initializable {
         }
     }
 
-
     public void loadColumnsCurrentMonth() {
         tbExpenses.getColumns().setAll(createCommonColumns());
     }
@@ -192,16 +189,16 @@ public class StatsController implements Initializable {
         colCategoryId.setCellValueFactory(new PropertyValueFactory<>("categoryId"));
         colCategoryId.setPrefWidth(100);
 
-        TableColumn<Expense, String> colCategoryName = new TableColumn<>("Danh mục / Tháng");
+        TableColumn<Expense, String> colCategoryName = new TableColumn<>("Danh mục");
         colCategoryName.setCellValueFactory(new PropertyValueFactory<>("categoryName"));
-        colCategoryName.setPrefWidth(200);
+        colCategoryName.setPrefWidth(320);
 
         TableColumn<Expense, Double> colAmount = new TableColumn<>("Số tiền");
         colAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
-        colAmount.setPrefWidth(300);
+        colAmount.setPrefWidth(460);
         colAmount.setCellFactory(column -> new TableCell<>() {
             private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-
+            
             @Override
             protected void updateItem(Double amount, boolean empty) {
                 super.updateItem(amount, empty);
@@ -235,7 +232,7 @@ public class StatsController implements Initializable {
         LocalDate today = LocalDate.now();
 
         if (selectedFromDate == null || selectedToDate == null) {
-            Utils.showAlert("Thiếu thông tin!", null, "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc.");
+            Utils.showAlert("Vui lòng chọn ngày bắt đầu và ngày kết thúc!", null, "Vui lòng chọn đầy đủ ngày bắt đầu và ngày kết thúc.");
             return;
         }
 
@@ -253,15 +250,4 @@ public class StatsController implements Initializable {
         loadData(filteredExpenses);
     }
     
-//    public void loadDataByMonthFiltered(LocalDate from, LocalDate to) {
-//        try {
-//            List<Expense> expensesByMonth = statsServices.getMonthlyExpenses(from, to, cbType.getValue());
-//            ObservableList<Expense> expenses = FXCollections.observableArrayList(expensesByMonth);
-//            tbStatsByMonth.setItems(expenses);
-//        } catch (SQLException ex) {
-//            Logger.getLogger(StatsController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-
-
 }

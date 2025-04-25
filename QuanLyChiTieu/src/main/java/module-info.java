@@ -10,4 +10,6 @@ module com.qlct.quanlychitieu {
     requires jbcrypt;
     requires java.base;
     requires javafx.swingEmpty;
+    requires org.apache.commons.validator;
+    
 }

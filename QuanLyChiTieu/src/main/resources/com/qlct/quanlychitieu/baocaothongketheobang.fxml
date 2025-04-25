@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -9,65 +8,29 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1172.0" style="-fx-background-color: aliceblue;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.StatsController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1172.0" style="-fx-background-color: alice;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.StatsController">
    <children>
-      <Label layoutX="406.0" layoutY="14.0" prefHeight="46.0" prefWidth="324.0" styleClass="Subject" text="BÁO CÁO THỐNG KÊ " textFill="#f43500">
+      <Label alignment="CENTER" layoutX="202.0" layoutY="25.0" prefHeight="46.0" prefWidth="973.0" styleClass="Subject" text="BÁO CÁO THỐNG KÊ " textFill="#3c04f4">
          <font>
-            <Font name="System Bold" size="31.0" />
+            <Font name="System Bold" size="24.0" />
          </font>
       </Label>
       <ComboBox fx:id="cbChoseTable" layoutX="970.0" layoutY="72.0" prefHeight="35.0" prefWidth="160.0" promptText="Thống kê theo bảng" />
       <DatePicker fx:id="fromDate" layoutX="333.0" layoutY="72.0" prefHeight="35.0" prefWidth="190.0" />
       <DatePicker fx:id="toDate" layoutX="698.0" layoutY="72.0" prefHeight="35.0" prefWidth="190.0" />
-      <Label layoutX="272.0" layoutY="81.0" text="Từ ngày" />
-      <Label layoutX="631.0" layoutY="81.0" text="Đến ngày" />
-      <Pane layoutY="-3.0" prefHeight="807.0" prefWidth="200.0" style="-fx-background-color: skyblue;" styleClass="txtSidebar" stylesheets="@style/baocaothongketheobang.css">
-         <children>
-            <ImageView fitHeight="58.0" fitWidth="71.0" layoutX="61.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@Screenshot%202025-03-15%20150924.png" />
-               </image>
-            </ImageView>
-            <Label fx:id="lbUsername" alignment="CENTER" layoutY="100.0" prefHeight="25.0" prefWidth="200.0" text="Username" textFill="#fffbfb">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-               <styleClass>
-                  <String fx:value="txtUsername" />
-                  <String fx:value="txtUsername" />
-               </styleClass>
-            </Label>
-
-            <Button layoutX="12.0" layoutY="150.0" mnemonicParsing="false" onAction="#switchTransaction" prefHeight="40.0" prefWidth="175.0" stylesheets="@style/transaction.css" text="Thêm giao dịch" textFill="#34ebff">
-               <styleClass>
-                  <String fx:value="btnSideBar" />
-                  <String fx:value="btnFont" />
-               </styleClass></Button>
-            <Button layoutX="12.0" layoutY="215.0" mnemonicParsing="false" onAction="#switchBudget" prefHeight="40.0" prefWidth="175.0" text="Thiết lập ngân sách ">
-               <styleClass>
-                  <String fx:value="btnSideBar" />
-                  <String fx:value="btnFont" />
-               </styleClass></Button>
-            <Button layoutX="12.0" layoutY="280.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" text="Báo cáo thống kê">
-               <styleClass>
-                  <String fx:value="btnActive" />
-                  <String fx:value="btnFontActive" />
-               </styleClass></Button>
-            <ImageView fitHeight="45.0" fitWidth="60.0" layoutX="75.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../icons/User.png" />
-               </image>
-            </ImageView>
-            <Button fx:id="logoutStats" layoutX="12.0" layoutY="345.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" text="Đăng xuất">
-               <styleClass>
-                  <String fx:value="btnSideBar" />
-                  <String fx:value="btnFont" />
-               </styleClass></Button>
-         </children>
-      </Pane>
+      <Label layoutX="272.0" layoutY="81.0" text="Từ ngày">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+      <Label layoutX="631.0" layoutY="81.0" text="Đến ngày">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
       <Label layoutX="441.0" layoutY="708.0" text="Thống kê theo các tháng trong năm hiện tại " textFill="#3613e4">
          <font>
             <Font size="18.0" />
@@ -82,6 +45,44 @@
             <Font size="18.0" />
          </font></Label>
       <ComboBox fx:id="cbChoseYearStats" layoutX="227.0" layoutY="421.0" prefWidth="150.0" />
+      <AnchorPane minWidth="200.0" prefHeight="800.0" prefWidth="200.0" styleClass="sideBar">
+         <children>
+            <Text fx:id="txtUsername" fill="#1e1b1b" layoutY="116.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="txtUsername" text="Username" textAlignment="CENTER" wrappingWidth="201.0765380859375">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Text>
+            <Button layoutX="12.0" layoutY="150.0" mnemonicParsing="false" onAction="#switchTransaction" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Thêm giao dịch">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button layoutX="12.0" layoutY="215.0" mnemonicParsing="false" onAction="#switchBudget" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Thêm ngân sách">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <ImageView fitHeight="45.0" fitWidth="60.0" layoutX="75.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../icons/User.png" />
+               </image>
+            </ImageView>
+            <Button layoutX="12.0" layoutY="280.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" styleClass="btnActive" text="Báo cáo thống kê">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="logoutStats" layoutX="12.0" layoutY="345.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Đăng xuất">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+         </children>
+         <stylesheets>
+            <URL value="@style/budget.css" />
+            <URL value="@style/main.css" />
+         </stylesheets>
+      </AnchorPane>
    </children>
    <stylesheets>
       <URL value="@style/transaction.css" />

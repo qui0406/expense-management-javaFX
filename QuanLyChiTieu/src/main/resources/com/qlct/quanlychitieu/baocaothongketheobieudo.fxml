@@ -32,6 +32,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
@@ -44,23 +45,31 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="796.0" prefWidth="1150.0" style="-fx-background-color: aliceblue;" stylesheets="@style/chart.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.ChartController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="796.0" prefWidth="1150.0" style="-fx-background-color: alice;" stylesheets="@style/chart.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.ChartController">
    <children>
-      <Label layoutX="532.0" layoutY="14.0" prefHeight="46.0" prefWidth="254.0" styleClass="Subject" text="Báo cáo thống kê">
+      <Label alignment="CENTER" layoutX="202.0" layoutY="25.0" prefHeight="46.0" prefWidth="951.0" styleClass="Subject" text="BÁO CÁO THỐNG KÊ" textFill="#3c04f4">
          <font>
-            <Font size="31.0" />
+            <Font name="System Bold" size="24.0" />
          </font>
       </Label>
-      <PieChart fx:id="pieChart" layoutX="245.0" layoutY="139.0" prefHeight="251.0" prefWidth="254.0" style="-fx-background-color: bisque;">
+      <PieChart fx:id="pieChart" layoutX="221.0" layoutY="128.0" prefHeight="273.0" prefWidth="349.0" style="-fx-background-color: alice;">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
       </PieChart>
-      <Label layoutX="283.0" layoutY="91.0" text="Từ ngày" />
-      <Label layoutX="634.0" layoutY="91.0" text="Đến ngày" />
+      <Label layoutX="283.0" layoutY="91.0" text="Từ ngày">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+      <Label layoutX="634.0" layoutY="91.0" text="Đến ngày">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
       <BarChart fx:id="barChart" layoutX="560.0" layoutY="151.0" prefHeight="264.0" prefWidth="337.0">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
@@ -69,7 +78,7 @@
           <NumberAxis prefHeight="230.0" prefWidth="30.0" side="LEFT" />
         </yAxis>
       </BarChart>
-      <LineChart fx:id="lineChart" layoutX="245.0" layoutY="437.0" prefHeight="213.0" prefWidth="629.0" style="-fx-background-color: sklyblue;" stylesheets="@style/chart.css">
+      <LineChart fx:id="lineChart" layoutX="230.0" layoutY="437.0" prefHeight="213.0" prefWidth="679.0" style="-fx-background-color: sklyblue;" stylesheets="@style/chart.css">
          <xAxis>
             <CategoryAxis side="BOTTOM" />
          </xAxis>
@@ -77,34 +86,49 @@
             <NumberAxis side="LEFT" />
          </yAxis>
       </LineChart>
-      <Pane prefHeight="796.0" prefWidth="200.0" style="-fx-background-color: skyblue;" styleClass="txtSidebar" stylesheets="@style/baocaothongketheobang.css">
-         <children>
-            <ImageView fitHeight="58.0" fitWidth="71.0" layoutX="61.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@Screenshot%202025-03-15%20150924.png" />
-               </image>
-            </ImageView>
-            <Label fx:id="lbUsernameChart" alignment="CENTER" layoutY="100.0" prefHeight="25.0" prefWidth="200.0" styleClass="txtSidebar" text="Username">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Label>
-            <Button layoutX="12.0" layoutY="150.0" mnemonicParsing="false" onAction="#switchTransaction" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Thêm giao dịch" />
-            <Button layoutX="12.0" layoutY="215.0" mnemonicParsing="false" onAction="#switchBudget" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Thiết lập ngân sách " />
-            <Button layoutX="12.0" layoutY="280.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" style="-fx-background-color: blue;" styleClass="btnSideBar" text="Báo cáo thống kê" textFill="WHITE" />
-            <ImageView fitHeight="45.0" fitWidth="60.0" layoutX="75.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../icons/User.png" />
-               </image>
-            </ImageView>
-            <Button fx:id="logoutChart" layoutX="12.0" layoutY="345.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Đăng xuất" />
-         </children>
-      </Pane>
       <DatePicker fx:id="fromDateChart" layoutX="343.0" layoutY="82.0" prefHeight="35.0" prefWidth="190.0" />
       <DatePicker fx:id="toDateChart" layoutX="708.0" layoutY="82.0" prefHeight="35.0" prefWidth="190.0" />
       <ComboBox fx:id="cbChoseChart" layoutX="980.0" layoutY="82.0" prefHeight="35.0" prefWidth="160.0" promptText="Thống kê theo bảng" />
       <ComboBox fx:id="cbTypeChart" layoutX="980.0" layoutY="128.0" prefHeight="34.0" prefWidth="95.0" promptText="Chi" />
       <Button fx:id="btnFilterChart" layoutX="1094.0" layoutY="128.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" text="Lọc" />
       <ComboBox fx:id="cbChoseYear" layoutX="245.0" layoutY="437.0" prefWidth="150.0" />
+      <AnchorPane minWidth="200.0" prefHeight="800.0" prefWidth="200.0" styleClass="sideBar">
+         <children>
+            <Text fx:id="txtUsername" fill="#1e1b1b" layoutY="116.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="txtUsername" text="Username" textAlignment="CENTER" wrappingWidth="201.0765380859375">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Text>
+            <Button layoutX="12.0" layoutY="150.0" mnemonicParsing="false" onAction="#switchTransaction" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Thêm giao dịch">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button layoutX="12.0" layoutY="215.0" mnemonicParsing="false" onAction="#switchBudget" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Thêm ngân sách">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <ImageView fitHeight="45.0" fitWidth="60.0" layoutX="75.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../icons/User.png" />
+               </image>
+            </ImageView>
+            <Button layoutX="12.0" layoutY="280.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" styleClass="btnActive" text="Báo cáo thống kê">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="logoutChart" layoutX="12.0" layoutY="345.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Đăng xuất">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+         </children>
+         <stylesheets>
+            <URL value="@style/budget.css" />
+            <URL value="@style/main.css" />
+         </stylesheets>
+      </AnchorPane>
    </children>
 </Pane>
