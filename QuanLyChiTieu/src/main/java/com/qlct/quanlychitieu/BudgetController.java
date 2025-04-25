@@ -13,16 +13,24 @@ import com.qlct.services.UserSessionServices;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -38,6 +46,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -66,6 +75,8 @@ public class BudgetController implements Initializable {
     @FXML
     Label lblTotalMoneyUsed;
     @FXML
+    Label lblRemainingBudget;
+    @FXML
     ProgressBar progressBarTotal;
     @FXML
     ProgressBar progressBarUsed;
@@ -75,6 +86,7 @@ public class BudgetController implements Initializable {
     private Text txtUsername;
     @FXML
     private Button btnLogoutBudget;
+
     /**
      * Initializes the controller class.
      */
@@ -84,6 +96,7 @@ public class BudgetController implements Initializable {
         budgetServices.setLblStatus(lblStatus);
         budgetServices.setLblTotal(lblTotal);
         budgetServices.setLblTotalMoneyUsed(lblTotalMoneyUsed);
+        budgetServices.setLblRemainingBudget(lblRemainingBudget);
         Platform.runLater(() -> {
             showBudgetWarning(budgetServices.getTotalUsed(), budgetServices.getTotalBudget());
         });
@@ -97,10 +110,10 @@ public class BudgetController implements Initializable {
                 loadCategoriesByType(selectedType);
             }
         });
-        
+
         btnLogoutBudget.setOnAction(event -> Utils.logout(btnLogoutBudget, "login.fxml"));
 
-         //Hiển thị username của người dùng hiện tại
+        //Hiển thị username của người dùng hiện tại
         User currentUser = UserSessionServices.getCurrentUser();
         if (currentUser != null) {
             txtUsername.setText(currentUser.getUsername());
@@ -108,21 +121,19 @@ public class BudgetController implements Initializable {
             txtUsername.setText("Chưa đăng nhập");
         }
 
-        
         loadTableData();
         loadColumns();
 
         btnAddBudget.setOnAction(e -> {
-            btnAddBudget.setDisable(true);
             String selectedType = cbType.getValue(); // Lấy giá trị đã chọn từ ComboBox
             String selectedCate = cbCate.getValue();
             String inputText = txtInputBudget.getText();
             if (selectedType == null) {
-                budgetServices.updateStatus(lblStatus, "Vui lòng chọn loại ngân sách!", "-fx-text-fill: red;");
+                showAlert(Alert.AlertType.ERROR, "Lỗi", null, "Vui lòng chọn loại ngân sách!", "red");
                 return;
             }
             if (selectedCate == null) {
-                budgetServices.updateStatus(lblStatus, "Vui lòng chọn danh mục!", "-fx-text-fill: red;");
+                showAlert(Alert.AlertType.ERROR, "Lỗi", null, "Vui lòng chọn danh mục!", "red");
                 return;
             }
             double validatedAmount = validateInput(inputText);
@@ -131,22 +142,19 @@ public class BudgetController implements Initializable {
             }
             try {
                 int categoryId = budgetServices.getIdByName(selectedCate, currentUser.getId());
-                if (budgetServices.isBudgetExistForCurrentMonth(categoryId, true)) {
-                    budgetServices.updateStatus(lblStatus, "Ngân sách cho danh mục này đã tồn tại trong tháng!", "-fx-text-fill: red;");
-                    return;
-                }
+                System.out.println("Category ID: " + categoryId);
                 handleAddBudget(inputText, selectedType, selectedCate);
                 budgetServices.setLblTotal(lblTotal);
+                budgetServices.setLblRemainingBudget(lblRemainingBudget);
                 updateBudgetProgress(progressBarTotal, progressBarUsed, budgetServices.getTotalBudget(), budgetServices.getTotalUsed());
+                loadTableData();
             } catch (SQLException ex) {
-                budgetServices.updateStatus(lblStatus, "Lỗi kết nối CSDL", "-fx-text-fill: red;");
+                showAlert(Alert.AlertType.ERROR, "Lỗi kết nối CSDL", null, "Vui lòng kiểm tra kết nối hoặc thử lại sau.", "red");
                 ex.printStackTrace(); //In ra lỗi console để debug
-            } finally {
-                btnAddBudget.setDisable(false); // Luôn bật lại sau khi xử lý xong
             }
         });
     }
-    
+
     @FXML
     public void switchTransaction() throws IOException {
         App.setRoot("FXTransactions", 1200, 800);
@@ -171,7 +179,7 @@ public class BudgetController implements Initializable {
             cbCate.setItems(FXCollections.observableArrayList(categoryNames));
         } catch (SQLException ex) {
             // Cập nhật thông báo lỗi nếu không thể tải danh mục
-            budgetServices.updateStatus(lblStatus, "Không thể tải danh mục", "-fx-text-fill: red;");
+            showAlert(Alert.AlertType.ERROR, "Lỗi", null, "Không thể tải danh mục", "red");
             ex.printStackTrace(); // In ra lỗi console để debug
         }
     }
@@ -191,6 +199,21 @@ public class BudgetController implements Initializable {
         TableColumn<Budget, Double> colAmount = new TableColumn<>("Số tiền");
         colAmount.setCellValueFactory(new PropertyValueFactory<>("amountBudget")); // Lấy giá trị từ thuộc tính amount
         colAmount.setPrefWidth(150);
+
+        // Format số tiền hiển thị dưới dạng: 1.000.000 VND
+        colAmount.setCellFactory(column -> new TableCell<>() {
+            private final NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+
+            @Override
+            protected void updateItem(Double amount, boolean empty) {
+                super.updateItem(amount, empty);
+                if (empty || amount == null) {
+                    setText(null);
+                } else {
+                    setText(currencyFormat.format(amount.intValue()) + " VND");
+                }
+            }
+        });
 
         // Cột Loại
         TableColumn<Budget, String> colType = new TableColumn<>("Loại");
@@ -239,6 +262,11 @@ public class BudgetController implements Initializable {
                     Budget selectedBudget = getTableView().getItems().get(getIndex());
                     try {
                         switchToEditBudget(e, selectedBudget);
+                        budgetServices.setLblStatus(lblStatus);
+                        budgetServices.setLblTotal(lblTotal);
+                        budgetServices.setLblTotalMoneyUsed(lblTotalMoneyUsed);
+                        budgetServices.setLblRemainingBudget(lblRemainingBudget);
+                        updateBudgetProgress(progressBarTotal, progressBarUsed, budgetServices.getTotalBudget(), budgetServices.getTotalUsed());
                         loadTableData();
                     } catch (IOException ex) {
                     }
@@ -264,6 +292,7 @@ public class BudgetController implements Initializable {
 
     private void loadTableData() {
         List<Budget> budgets = budgetServices.getBudgetsForCurrentUser(); // Lấy danh sách ngân sách từ dịch vụ
+        System.out.println(budgets.size());
         List<Budget> filteredBudgets = budgets.stream()
                 .filter(budget -> {
                     // Kiểm tra xem ngân sách có tồn tại trong tháng hiện tại không
@@ -311,16 +340,16 @@ public class BudgetController implements Initializable {
         if (chiTieuHienTai <= nganSach * 0.8) {
             return;
         }
-    
+
         // Nếu vượt quá 80%, mới hiện cảnh báo
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Cảnh báo ngân sách");
         alert.setHeaderText(null);
         alert.setContentText("Chi tiêu đã vượt quá 80% ngân sách!\nVui lòng kiểm tra lại kế hoạch chi tiêu.");
-    
+
         ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         alert.getButtonTypes().setAll(okButton);
-    
+
         alert.showAndWait(); // Chỉ hiện nếu đủ điều kiện
     }
 
@@ -344,16 +373,51 @@ public class BudgetController implements Initializable {
 
     public void handleAddBudget(String input, String budgetType, String categoryName) {
         try {
+            double amount = budgetServices.validateAmount(input);
+            int currentUserId = UserSessionServices.getCurrentUser().getId();
+            System.out.println("CurrentUserId: " + currentUserId);
+
+            int categoryId = budgetServices.getIdByName(categoryName, currentUserId);
+            System.out.println("Category ID: " + categoryId);
+
+            double totalBudget = budgetServices.getTotalBudgetForCategory(categoryId, currentUserId);
+            System.out.println("Total Budget: " + totalBudget);
+
+            double totalUsed = budgetServices.getTotalExpensesForCategory(categoryId, currentUserId);
+            System.out.println("Total Used: " + totalUsed);
+
+            if (budgetServices.isBudgetExistForCurrentMonth(categoryId, true)) {
+                // Kiểm tra xem ngân sách mới có đang đủ bù đắp phần thiếu hay không
+                double needToAdd = totalUsed - totalBudget;  // Tính số tiền thiếu cần thêm vào
+                if (needToAdd > 0 && amount < needToAdd) {
+                    // Nếu số tiền nhập vào ít hơn số tiền thiếu
+                    showAlert(Alert.AlertType.WARNING, "Thiếu ngân sách", null, "Bạn cần nhập ít nhất " + String.format("%,.0f", needToAdd) + " để bù phần ngân sách thiếu cho danh mục \"" + categoryName + "\".", "orange");
+                    return;
+                }
+            }
+
+            // Trường hợp chưa đủ ngân sách hoặc chưa có ngân sách trong tháng hiện tại
             boolean success = budgetServices.tryInsertBudget(input, budgetType, categoryName);
             if (success) {
-                updateStatus(lblStatus, "Thêm ngân sách thành công!", "-fx-text-fill: green;");
+                showAlert(Alert.AlertType.INFORMATION, "Thêm ngân sách thành công!", null, "Ngân sách cho danh mục \"" + categoryName + "\" đã được thêm.", "green");
                 loadTableData();
             } else {
-                updateStatus(lblStatus, "Thêm ngân sách thất bại!", "-fx-text-fill: red;");
+                showAlert(Alert.AlertType.ERROR, "Thêm ngân sách thất bại!", null, "Đã xảy ra lỗi khi thêm ngân sách cho danh mục \"" + categoryName + "\". Vui lòng thử lại.", "red");
             }
         } catch (Exception e) {
-            updateStatus(lblStatus, "Dữ liệu không hợp lệ!", "-fx-text-fill: orange;");
+            showAlert(Alert.AlertType.WARNING, "Dữ liệu không hợp lệ!", null, "Vui lòng kiểm tra lại thông tin bạn đã nhập.", "orange");
+            e.printStackTrace(); // In ra lỗi console để debug
         }
+    }
+
+    public void showAlert(Alert.AlertType type, String title, String header, String content, String color) {
+        // Tạo một Alert với kiểu thông báo, tiêu đề, tiêu đề phụ và nội dung
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.getDialogPane().setStyle("-fx-text-fill: " + color + ";");
+        alert.showAndWait();
     }
 
 }

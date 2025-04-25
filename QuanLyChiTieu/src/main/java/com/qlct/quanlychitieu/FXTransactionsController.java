@@ -17,6 +17,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +49,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 /**
  * FXML Controller class
@@ -108,6 +110,13 @@ public class FXTransactionsController implements Initializable {
 
         cbFilterType.setItems(FXCollections.observableArrayList("Ngày", "Tuần", "Tháng", "Quý", "Năm"));
         dpFilterDate.setValue(LocalDate.now());
+// Định dạng DatePicker
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        btDate.setConverter(new StringConverter<LocalDate>() {
+            @Override
+            public String toString(LocalDate date) {
+                return date != null ? dateFormatter.format(date) : "";
+            }
         
         try {
             addCategoryDefault();
@@ -116,6 +125,22 @@ public class FXTransactionsController implements Initializable {
         }
 
 
+            @Override
+            public LocalDate fromString(String string) {
+                return string != null && !string.isEmpty() ? LocalDate.parse(string, dateFormatter) : null;
+            }
+        });
+        dpFilterDate.setConverter(new StringConverter<LocalDate>() {
+            @Override
+            public String toString(LocalDate date) {
+                return date != null ? dateFormatter.format(date) : "";
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                return string != null && !string.isEmpty() ? LocalDate.parse(string, dateFormatter) : null;
+            }
+        });
         // Tải danh mục vào cache
         try {
             categoryCache.clear();
@@ -127,6 +152,10 @@ public class FXTransactionsController implements Initializable {
             Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        // Listener cho cbType để cập nhật cbCates cho loại danh mục khi thay đổi
+//        cbType.valueProperty().addListener((obs, oldValue, newValue) -> {
+//            updateCategoryCombobox(null);
+//        });
         // Hiển thị username của người dùng hiện tại
         User currentUser = UserSessionServices.getCurrentUser();
         if (currentUser != null) {
@@ -280,6 +309,19 @@ public class FXTransactionsController implements Initializable {
 
         TableColumn<Transaction, LocalDate> colDate = new TableColumn<>("Ngày");
         colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+        colDate.setCellFactory(column -> new TableCell<Transaction, LocalDate>() {
+            private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+            @Override
+            protected void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                if (empty || date == null) {
+                    setText(null);
+                } else {
+                    setText(formatter.format(date));
+                }
+            }
+        });
         colDate.setPrefWidth(100);
 
         TableColumn<Transaction, Integer> colCate = new TableColumn<>("Danh mục");
@@ -396,6 +438,11 @@ public class FXTransactionsController implements Initializable {
 
     public void addHandler(ActionEvent e) {
         try {
+            String amountText = txtAmount.getText();
+            if (amountText == null || amountText.trim().isEmpty()) {
+                Utils.getAlert("Không được để trống số tiền!").show();
+                return;
+            }
             double amount = Double.parseDouble(txtAmount.getText());
             String note = txtNote.getText();
             LocalDate date = btDate.getValue();
@@ -405,6 +452,7 @@ public class FXTransactionsController implements Initializable {
                 Utils.getAlert("Vui lòng chọn danh mục!").show();
                 return;
             }
+
             TransactionServices ts = new TransactionServices();
             Transaction transaction = new Transaction(amount, selectedCategory.getId(),
                     date, note, UserSessionServices.getCurrentUser().getId());

@@ -34,8 +34,11 @@ public class BudgetServices {
     Label lblTotal;
     @FXML
     Label lblTotalMoneyUsed;
+    @FXML
+    Label lblRemainingBudget;
     private double totalBudget;
     private double totalUsed;
+    private double totalRemainingBudget;
 
     public void setLblStatus(Label lblStatus) {
         this.lblStatus = lblStatus;
@@ -55,6 +58,12 @@ public class BudgetServices {
         totalUsed = sumMoneyUsedInMonth();
         lblTotalMoneyUsed.setText(String.format("%,d VND", (int) totalUsed));
         this.lblTotalMoneyUsed = lblTotalMoneyUsed;
+    }
+
+    public void setLblRemainingBudget(Label lblRemainingBudget) {
+        totalRemainingBudget = totalBudget - totalUsed;
+        lblRemainingBudget.setText(String.format("%,d VND", (int) totalRemainingBudget));
+        this.lblRemainingBudget = lblRemainingBudget;
     }
 
     /**
@@ -123,7 +132,7 @@ public class BudgetServices {
         int currentUserId = UserSessionServices.getCurrentUser().getId();
         int categoryId = getIdByName(categoryName, currentUserId);
 
-        // 👉 CHẶN LUÔN nếu không tìm thấy ID danh mục
+        // CHẶN LUÔN nếu không tìm thấy ID danh mục
         if (categoryId == -1) {
             throw new SQLException("Không tìm thấy danh mục có tên: " + categoryName + " cho userId: " + currentUserId);
         }
@@ -312,12 +321,69 @@ public class BudgetServices {
         return id;
     }
 
+    //Phương thức kiểm tra xem chi tiêu có nằm trong giới hạn ngân sách không
+    // Nếu chi tiêu lớn hơn 80% ngân sách thì trả về false, ngược lại trả về true
     public boolean isBudgetWithinLimit(double expenses, double budget) {
         if (budget == 0) {
             return false;
         }
         double percentage = (expenses / budget) * 100;
         return percentage < 80;
+    }
+
+    //Phương thức lấy tổng ngân sách cho một danh mục cụ thể theo tháng hiện tại
+    public double getTotalBudgetForCategory(int categoryId, int userId) {
+        LocalDate currentDate = LocalDate.now();
+        int currentMonth = currentDate.getMonthValue();
+        int currentYear = currentDate.getYear();
+        String sql = "SELECT SUM(b.amount) " +
+                     "FROM budget b " +
+                     "WHERE MONTH(b.date) = ? AND YEAR(b.date) = ? " +
+                     "AND b.user_id = ? AND b.category_id = ?";
+        try (Connection conn = JdbcUtils.getConn();
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setInt(1, currentMonth);
+            stm.setInt(2, currentYear);
+            stm.setInt(3, userId);
+            stm.setInt(4, categoryId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy tổng ngân sách: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    //Phương thức lấy tổng chi tiêu cho một danh mục cụ thể theo tháng hiện tại
+    public double getTotalExpensesForCategory(int categoryId, int userId) {
+        LocalDate currentDate = LocalDate.now();
+        int currentMonth = currentDate.getMonthValue();
+        int currentYear = currentDate.getYear();
+        String sql = "SELECT SUM(t.amount) "+
+                     "FROM transaction t " +
+                     "WHERE MONTH(t.date) = ? AND YEAR(t.date) = ? " +
+                     "AND t.user_id = ? AND t.category_id = ?";
+        try (Connection conn = JdbcUtils.getConn();
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setInt(1, currentMonth);
+            stm.setInt(2, currentYear);
+            stm.setInt(3, userId);
+            stm.setInt(4, categoryId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy tổng chi tiêu: " + e.getMessage());
+        }
+        return 0;
+    }
+    
+    //Phương thức kiểm tra xem chi tiêu có vượt quá giới hạn không
+    public boolean isOverBudget(double totalExpenses, double totalBudget) {
+        return !isBudgetWithinLimit(totalExpenses, totalBudget);
     }
 
 }
