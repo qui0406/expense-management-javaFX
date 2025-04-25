@@ -1,114 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.geometry.Insets?>
+<?import java.net.URL?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="936.0" stylesheets="@style/transaction.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.FXTransactionsController">
-   <left>
-      <AnchorPane minWidth="200.0" prefHeight="726.0" prefWidth="200.0" styleClass="sideBar" BorderPane.alignment="CENTER">
+<BorderPane prefHeight="706.0" prefWidth="824.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.qlct.quanlychitieu.FXTransactionsController">
+   <top>
+      <Pane minHeight="800.0" minWidth="1200.0" prefHeight="800.0" prefWidth="1064.0" style="-fx-background-color: alice;" styleClass="mainFxmlClass" stylesheets="@style/budget.css" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="btnEditCategory" layoutX="12.0" layoutY="150.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" text="Thêm giao dịch" textFill="#443fd7">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <styleClass>
-                  <String fx:value="btnActive" />
-                  <String fx:value="btnFont" />
-               </styleClass></Button>
-            <Button layoutX="12.0" layoutY="215.0" mnemonicParsing="false" onAction="#switchBudget" prefHeight="40.0" prefWidth="175.0" text="Thêm ngân sách">
-               <styleClass>
-                  <String fx:value="btnSideBar" />
-                  <String fx:value="btnFont" />
-               </styleClass>
-               <font>
-                  <Font size="14.0" />
-               </font></Button>
-            <ImageView fitHeight="45.0" fitWidth="60.0" layoutX="75.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../icons/User.png" />
-               </image>
-            </ImageView>
-            <Button layoutX="12.0" layoutY="280.0" mnemonicParsing="false" onAction="#switchBCTK" prefHeight="40.0" prefWidth="175.0" text="Báo cáo thống kê">
-               <styleClass>
-                  <String fx:value="btnSideBar" />
-                  <String fx:value="btnFont" />
-               </styleClass>
-               <font>
-                  <Font size="14.0" />
-               </font></Button>
-            <Button fx:id="logoutBtnTransaction" layoutX="12.0" layoutY="345.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" text="Đăng xuất ">
-               <styleClass>
-                  <String fx:value="btnSideBar" />
-                  <String fx:value="btnFont" />
-               </styleClass>
-               <font>
-                  <Font size="14.0" />
-               </font></Button>
-            <Text fx:id="txtUsername" fill="#1e1b1b" layoutX="-1.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="txtUsername" text="Username" textAlignment="CENTER" wrappingWidth="201.0765380859375">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Text>
-         </children>
-      </AnchorPane>
-   </left>
-   <center>
-      <AnchorPane prefHeight="758.0" prefWidth="896.0" stylesheets="@style/transaction.css" BorderPane.alignment="CENTER">
-         <children>
-            <Text fill="#0c0ef2" layoutX="63.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="Subject" text="THÊM GIAO DỊCH" textAlignment="CENTER" wrappingWidth="706.3461990356445" />
-            <HBox layoutX="63.0" layoutY="87.0" prefHeight="35.0" prefWidth="646.0">
+            <Label fx:id="lblStatus" layoutX="130.0" layoutY="231.0" />
+            <AnchorPane minWidth="200.0" prefHeight="800.0" prefWidth="200.0" styleClass="sideBar">
                <children>
-                  <ComboBox fx:id="cbType" onAction="#updateCategoryCombobox" prefHeight="38.0" prefWidth="182.0" promptText="Chi tiêu" styleClass="btnType">
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                  </ComboBox>
-                  <ComboBox fx:id="cbCates" prefHeight="35.0" prefWidth="178.0" promptText="Danh mục" />
-                  <ImageView fitHeight="34.0" fitWidth="40.0" onMouseClicked="#editCategory" pickOnBounds="true" preserveRatio="true">
+                  <Text fx:id="txtUsername" fill="#1e1b1b" layoutY="116.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="txtUsername" text="Username" textAlignment="CENTER" wrappingWidth="201.0765380859375">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Text>
+                  <Button fx:id="btnEditCategory" layoutX="12.0" layoutY="150.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" styleClass="btnActive" text="Thêm giao dịch">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button layoutX="12.0" layoutY="215.0" mnemonicParsing="false" onAction="#switchBudget" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Thêm ngân sách">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <ImageView fitHeight="45.0" fitWidth="60.0" layoutX="75.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../icons/pencil.png" />
+                        <Image url="@../../../icons/User.png" />
                      </image>
                   </ImageView>
-               </children>
-            </HBox>
-            <TextField fx:id="txtAmount" layoutX="63.0" layoutY="134.0" prefHeight="30.0" prefWidth="430.0" promptText="Số tiền" />
-            <TextField fx:id="txtNote" layoutX="63.0" layoutY="177.0" prefHeight="30.0" prefWidth="430.0" promptText="Ghi chú" />
-            <DatePicker fx:id="btDate" layoutX="63.0" layoutY="218.0" prefHeight="43.0" prefWidth="429.0" promptText="Ngày giao dịch" />
-            <HBox layoutX="61.0" layoutY="273.0" prefHeight="35.0" prefWidth="600.0">
-               <children>
-                  <Button fx:id="btnSave" mnemonicParsing="false" onAction="#addHandler" prefHeight="38.0" prefWidth="94.0" text="Ghi nhận" textFill="#58bc3c">
+                  <Button layoutX="12.0" layoutY="280.0" mnemonicParsing="false" onAction="#switchBCTK" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Báo cáo thống kê">
                      <font>
                         <Font size="14.0" />
-                     </font></Button>
-                  <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#clearHandler" prefHeight="40.0" prefWidth="84.0" text="Hủy" textFill="#b91717">
+                     </font>
+                  </Button>
+                  <Button fx:id="logoutBtnTransaction" layoutX="12.0" layoutY="345.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="175.0" styleClass="btnSideBar" text="Đăng xuất">
                      <font>
                         <Font size="14.0" />
-                     </font></Button>
+                     </font>
+                  </Button>
                </children>
-            </HBox>
-            <HBox layoutX="61.0" layoutY="318.0" prefHeight="35.0" prefWidth="600.0">
-               <children>
-                  <ComboBox fx:id="cbFilterType" prefHeight="33.0" prefWidth="138.0" promptText="Lọc theo" />
-                  <DatePicker fx:id="dpFilterDate" promptText="Chọn ngày" />
-                  <Button fx:id="btnFilter" mnemonicParsing="false" onAction="#filterTransactions" onMouseClicked="#filterTransactions" prefHeight="40.0" prefWidth="47.0" text="Lọc" />
-               </children>
-            </HBox>
-            <TableView fx:id="tbTransaction" layoutX="61.0" layoutY="373.0" prefHeight="298.0" prefWidth="773.0" styleClass="table-row-cell" stylesheets="@style/transaction.css" />
-            <Text fx:id="txtTotalAmount" fill="#2D82B5" layoutX="203.0" layoutY="692.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="129.0" />
-            <Text fx:id="txtExpenseAmount" fill="RED" layoutX="203.0" layoutY="715.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="129.0" />
+               <stylesheets>
+                  <URL value="@style/budget.css" />
+                  <URL value="@style/main.css" />
+               </stylesheets>
+            </AnchorPane>
+            <Label alignment="CENTER" layoutX="202.0" layoutY="25.0" prefHeight="35.0" prefWidth="996.0" text="THÊM GIAO DỊCH" textFill="#3c04f4">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="cbType" layoutX="318.0" layoutY="83.0" onAction="#updateCategoryCombobox" prefHeight="36.0" prefWidth="220.0" promptText="Chi tiêu" />
+            <ComboBox fx:id="cbCates" layoutX="689.0" layoutY="83.0" prefHeight="37.0" prefWidth="228.0" promptText="Danh mục" />
+            <ImageView fitHeight="42.0" fitWidth="46.0" layoutX="940.0" layoutY="80.0" onMouseClicked="#editCategory" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../icons/pencil.png" />
+               </image>
+            </ImageView>
+            <TextField fx:id="txtAmount" layoutX="318.0" layoutY="150.0" prefHeight="37.0" prefWidth="746.0" promptText="Số tiền">
+               <font>
+                  <Font size="14.0" />
+               </font></TextField>
+            <TextField fx:id="txtNote" layoutX="318.0" layoutY="214.0" prefHeight="35.0" prefWidth="745.0" promptText="Ghi chú">
+               <font>
+                  <Font size="14.0" />
+               </font></TextField>
+            <DatePicker fx:id="btDate" layoutX="318.0" layoutY="266.0" prefHeight="37.0" prefWidth="317.0" promptText="Ngày giao dịch" />
+            <Button fx:id="btnSave" layoutX="752.0" layoutY="265.0" mnemonicParsing="false" onAction="#addHandler" prefHeight="35.0" prefWidth="137.0" text="Ghi nhận">
+               <font>
+                  <Font size="14.0" />
+               </font></Button>
+            <Button fx:id="btnCancel" layoutX="931.0" layoutY="266.0" mnemonicParsing="false" onAction="#clearHandler" prefHeight="36.0" prefWidth="132.0" text="Hủy">
+               <font>
+                  <Font size="14.0" />
+               </font></Button>
+            <ComboBox fx:id="cbFilterType" layoutX="318.0" layoutY="337.0" prefHeight="36.0" prefWidth="191.0" promptText="Lọc theo" />
+            <DatePicker fx:id="dpFilterDate" layoutX="700.0" layoutY="334.0" prefHeight="35.0" prefWidth="269.0" promptText="Chọn ngày" />
+            <Button fx:id="btnFilter" layoutX="997.0" layoutY="333.0" mnemonicParsing="false" onAction="#filterTransactions" prefHeight="32.0" prefWidth="68.0" text="Lọc">
+               <font>
+                  <Font size="14.0" />
+               </font></Button>
+            <TableView fx:id="tbTransaction" layoutX="318.0" layoutY="406.0" maxHeight="245.0" prefHeight="245.0" prefWidth="750.0" styleClass="table-row-cell" />
+            <Text fx:id="txtTotalAmount" fill="#2D82B5" layoutX="480.0" layoutY="719.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" wrappingWidth="322.5999755859375">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font></Text>
+            <Text fx:id="txtExpenseAmount" fill="RED" layoutX="476.0" layoutY="756.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" wrappingWidth="329.79998779296875">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font></Text>
+            <Label layoutX="386.0" layoutY="699.0" text="Tổng thu" textFill="#2d82b5">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="386.0" layoutY="736.0" text="Tổng chi" textFill="RED">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
          </children>
-      </AnchorPane>
-   </center>
+      </Pane>
+   </top>
 </BorderPane>
