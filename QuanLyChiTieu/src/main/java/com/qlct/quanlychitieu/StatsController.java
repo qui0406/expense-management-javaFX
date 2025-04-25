@@ -1,6 +1,7 @@
 package com.qlct.quanlychitieu;
 
 import com.qlct.pojo.Expense;
+import com.qlct.pojo.User;
 import com.qlct.services.StatsServices;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.text.Text;
 
 /**
  * @author QUI
@@ -31,7 +33,7 @@ public class StatsController implements Initializable {
     @FXML private Button btnSwitchAddTransaction;
     @FXML private Button btnSwitchBudget;
     @FXML private Button logoutStats;
-    @FXML private Label lbUsername;
+    @FXML private Text txtUsername;
     @FXML private TableView<Expense> tbExpenses;
     @FXML private TableView<Expense> tbStatsByMonth;
     @FXML private ComboBox<String> cbChoseYearStats;
@@ -44,7 +46,12 @@ public class StatsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        Utils.loadUsername(lbUsername);
+        User currentUser = UserSessionServices.getCurrentUser();
+        if (currentUser != null) {
+            txtUsername.setText(currentUser.getUsername());
+        } else {
+            txtUsername.setText("Chưa đăng nhập");
+        }
         try {
             loadComboBoxType(); // cbType cần được gán giá trị trước
             loadComboBoxTableCurrentMonth();
@@ -181,13 +188,13 @@ public class StatsController implements Initializable {
         colCategoryId.setCellValueFactory(new PropertyValueFactory<>("categoryId"));
         colCategoryId.setPrefWidth(100);
 
-        TableColumn<Expense, String> colCategoryName = new TableColumn<>("Danh mục / Tháng");
+        TableColumn<Expense, String> colCategoryName = new TableColumn<>("Danh mục");
         colCategoryName.setCellValueFactory(new PropertyValueFactory<>("categoryName"));
-        colCategoryName.setPrefWidth(200);
+        colCategoryName.setPrefWidth(320);
 
         TableColumn<Expense, Double> colAmount = new TableColumn<>("Số tiền");
         colAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
-        colAmount.setPrefWidth(300);
+        colAmount.setPrefWidth(460);
         colAmount.setCellFactory(column -> new TableCell<>() {
             private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
             
