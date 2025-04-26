@@ -210,9 +210,6 @@ public class BudgetServices {
         return total;
     }
 
-    public boolean isBudgetValid(double newBudget, double oldBudget) {
-        return newBudget >= oldBudget;
-    }
 
     public void updateBudgetTODB(String input, int budgetId) throws SQLException {
         int currentUserId = UserSessionServices.getCurrentUser().getId();
