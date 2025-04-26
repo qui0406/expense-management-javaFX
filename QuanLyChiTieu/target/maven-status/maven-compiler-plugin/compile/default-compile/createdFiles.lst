@@ -2,6 +2,7 @@ com\qlct\pojo\UserCategory.class
 com\qlct\services\UserCategoryServices.class
 com\qlct\pojo\Expense.class
 com\qlct\pojo\Transaction.class
+com\qlct\quanlychitieu\EditBudgetController$2.class
 com\qlct\quanlychitieu\FXTransactionsController$4.class
 com\qlct\quanlychitieu\ChartController$2.class
 com\qlct\services\CategoryServices.class
@@ -11,6 +12,7 @@ com\qlct\pojo\User.class
 com\qlct\quanlychitieu\StatsController$2.class
 com\qlct\quanlychitieu\BudgetController$1.class
 com\qlct\quanlychitieu\ChartController.class
+com\qlct\quanlychitieu\BudgetController$3.class
 com\qlct\pojo\Category.class
 com\qlct\quanlychitieu\FXEditCategoryController$1.class
 com\qlct\quanlychitieu\EditBudgetController.class
