@@ -94,13 +94,11 @@ public class FXTransactionsController implements Initializable {
      * Initializes the controller class.
      */
     private Map<Integer, Category> categoryCache = new HashMap<>();
-    
+
     private UserCategoryServices userCategoryServices = new UserCategoryServices();
-    
+
     private List<Integer> listDefaultCategory = new ArrayList<>();
     private static final int DEFAULT_CATEGORY = 6;
-
-
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -117,13 +115,6 @@ public class FXTransactionsController implements Initializable {
             public String toString(LocalDate date) {
                 return date != null ? dateFormatter.format(date) : "";
             }
-        
-        try {
-            addCategoryDefault();
-        } catch (SQLException ex) {
-            Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
 
             @Override
             public LocalDate fromString(String string) {
@@ -141,6 +132,11 @@ public class FXTransactionsController implements Initializable {
                 return string != null && !string.isEmpty() ? LocalDate.parse(string, dateFormatter) : null;
             }
         });
+        try {
+            addCategoryDefault();
+        } catch (SQLException ex) {
+            Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         // Tải danh mục vào cache
         try {
             categoryCache.clear();
@@ -171,15 +167,15 @@ public class FXTransactionsController implements Initializable {
         btnSave.setOnAction(this::addHandler);
 
     }
-    
-    public void addCategoryDefault() throws SQLException{
+
+    public void addCategoryDefault() throws SQLException {
         listDefaultCategory = userCategoryServices.getListDefaultCategory();
         int currentUserId = UserSessionServices.getCurrentUser().getId();
-        
+
         System.out.println(currentUserId);
         System.out.println(listDefaultCategory);
-        for (int x : listDefaultCategory){
-            if(userCategoryServices.isUserDefaultCategoryExists(currentUserId, x)==0){
+        for (int x : listDefaultCategory) {
+            if (userCategoryServices.isUserDefaultCategoryExists(currentUserId, x) == 0) {
                 userCategoryServices.assignDefaultCategoriesToUser(currentUserId, x);
             }
         }
