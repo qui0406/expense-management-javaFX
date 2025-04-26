@@ -46,8 +46,6 @@ public class EditBudgetController implements Initializable {
     @FXML
     Button btnEditBudget;
     @FXML
-    Label lblStatusInEdit;
-    @FXML
     TableView<Budget> tbBudget;
 
     /**
@@ -56,7 +54,6 @@ public class EditBudgetController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        budgetServices.setLblStatusInEdit(lblStatusInEdit);
         loadTableData();
         loadColumns();
         btnEditBudget.setOnAction((var e) -> {
@@ -155,19 +152,12 @@ public class EditBudgetController implements Initializable {
         tbBudget.setItems(FXCollections.observableList(filteredBudgets));
     }
 
-    public void updateStatus(Label label, String message, String style) {
-        Platform.runLater(() -> {
-            label.setText(message);
-            label.setStyle(style);
-        });
-    }
-
     public double validateInput(String input) {
         try {
             return budgetServices.validateAmount(input);
         } catch (IllegalArgumentException e) {
             Platform.runLater(() -> {
-                updateStatus(lblStatusInEdit, e.getMessage(), "-fx-text-fill: red;");
+                showAlert(Alert.AlertType.ERROR, "Lỗi ngân sách nhập vào", null, e.getMessage(), "red");
             });
             return 0.0;
         }

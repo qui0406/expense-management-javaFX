@@ -349,13 +349,6 @@ public class BudgetController implements Initializable {
         alert.showAndWait(); // Chỉ hiện nếu đủ điều kiện
     }
 
-    public void updateStatus(Label label, String message, String style) {
-        Platform.runLater(() -> {
-            label.setText(message);
-            label.setStyle(style);
-        });
-    }
-
     public double validateInput(String input) {
         try {
             return budgetServices.validateAmount(input);
