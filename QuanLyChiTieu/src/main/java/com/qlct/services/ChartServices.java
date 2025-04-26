@@ -30,11 +30,11 @@ public class ChartServices {
             data.add(new PieChart.Data(expense.getCategoryName(), expense.getAmount()));
         }
 
-        chart.setData(data);
+        chart.setData(data); 
         chart.setLabelsVisible(false);
         chart.setLegendVisible(true);
         chart.setMinSize(350, 320);
-        chart.setPrefSize(100, 100);
+        chart.setPrefSize(100, 100);   
 
         for (PieChart.Data d : chart.getData()) {
             double percent = (d.getPieValue() / total) * 100;

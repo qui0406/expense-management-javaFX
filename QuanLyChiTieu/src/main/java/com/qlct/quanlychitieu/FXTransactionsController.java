@@ -110,19 +110,19 @@ public class FXTransactionsController implements Initializable {
 
         cbFilterType.setItems(FXCollections.observableArrayList("Ngày", "Tuần", "Tháng", "Quý", "Năm"));
         dpFilterDate.setValue(LocalDate.now());
-// Định dạng DatePicker
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        try {
+            addCategoryDefault();
+        } catch (SQLException ex) {
+            Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         btDate.setConverter(new StringConverter<LocalDate>() {
             @Override
             public String toString(LocalDate date) {
                 return date != null ? dateFormatter.format(date) : "";
             }
         
-        try {
-            addCategoryDefault();
-        } catch (SQLException ex) {
-            Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            
 
 
             @Override

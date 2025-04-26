@@ -31,7 +31,7 @@
          <font>
             <Font size="14.0" />
          </font></Label>
-      <Label layoutX="441.0" layoutY="708.0" text="Thống kê theo các tháng trong năm hiện tại " textFill="#3613e4">
+      <Label layoutX="511.0" layoutY="715.0" text="Thống kê theo chi tiêu của các tháng trong năm" textFill="#3613e4">
          <font>
             <Font size="18.0" />
          </font>
@@ -40,7 +40,7 @@
       <TableView fx:id="tbStatsByMonth" layoutX="227.0" layoutY="449.0" prefHeight="247.0" prefWidth="896.0" />
       <Button fx:id="filter" layoutX="1084.0" layoutY="118.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="46.0" text="Lọc" />
       <ComboBox fx:id="cbType" layoutX="970.0" layoutY="118.0" prefHeight="34.0" prefWidth="95.0" promptText="Chi" />
-      <Label layoutX="478.0" layoutY="404.0" text="Thống kê theo tháng hiện tại" textFill="#5020a1">
+      <Label layoutX="513.0" layoutY="408.0" text="Thống kê các danh mục đã chi tiêu theo tháng" textFill="#5020a1">
          <font>
             <Font size="18.0" />
          </font></Label>
