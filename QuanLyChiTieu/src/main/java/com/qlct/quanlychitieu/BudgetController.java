@@ -63,8 +63,6 @@ public class BudgetController implements Initializable {
     @FXML
     Button btnAddBudget;
     @FXML
-    Label lblStatus;
-    @FXML
     ComboBox<String> cbType;
     @FXML
     ComboBox<String> cbCate;
@@ -93,7 +91,6 @@ public class BudgetController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        budgetServices.setLblStatus(lblStatus);
         budgetServices.setLblTotal(lblTotal);
         budgetServices.setLblTotalMoneyUsed(lblTotalMoneyUsed);
         budgetServices.setLblRemainingBudget(lblRemainingBudget);
@@ -262,7 +259,6 @@ public class BudgetController implements Initializable {
                     Budget selectedBudget = getTableView().getItems().get(getIndex());
                     try {
                         switchToEditBudget(e, selectedBudget);
-                        budgetServices.setLblStatus(lblStatus);
                         budgetServices.setLblTotal(lblTotal);
                         budgetServices.setLblTotalMoneyUsed(lblTotalMoneyUsed);
                         budgetServices.setLblRemainingBudget(lblRemainingBudget);
@@ -365,7 +361,7 @@ public class BudgetController implements Initializable {
             return budgetServices.validateAmount(input);
         } catch (IllegalArgumentException e) {
             Platform.runLater(() -> {
-                updateStatus(lblStatus, e.getMessage(), "-fx-text-fill: red;");
+                showAlert(AlertType.ERROR, "Lỗi ngân sách nhập vào", null, e.getMessage(), "red");
             });
             return 0.0;
         }
