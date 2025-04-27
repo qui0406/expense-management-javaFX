@@ -40,7 +40,7 @@ public class CategoryServices {
         }
         return cates;
     }
-    
+
 //    public String getCategoryByIdForBudget(int id) {
 //        String name = null; // Giá trị mặc định nếu không tìm thấy
 //        String query = "SELECT name FROM category WHERE id = ?"; // Câu truy vấn SQL
@@ -58,8 +58,6 @@ public class CategoryServices {
 //        }
 //        return name; // Trả về tên danh mục hoặc null
 //    }
-
-
     public List<Category> getCateByType(String type) throws SQLException {
         List<Category> cates = new ArrayList<>();
         int currentUserId = UserSessionServices.getCurrentUser().getId();
@@ -164,7 +162,16 @@ public class CategoryServices {
         if (!isCategoryBelongToUser(categoryId, currentUserId)) {
             throw new IllegalArgumentException("Bạn không có quyền xóa danh mục này!");
         }
-
+        // Kiểm tra xem danh mục có đang được sử dụng trong bảng transaction không
+        try (Connection conn = JdbcUtils.getConn()) {
+            String checkTransactionSql = "SELECT COUNT(*) FROM transaction WHERE category_id = ?";
+            PreparedStatement stm = conn.prepareStatement(checkTransactionSql);
+            stm.setInt(1, categoryId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                throw new IllegalArgumentException("Không thể xóa danh mục vì nó đang được sử dụng trong các giao dịch!");
+            }
+        }
         Connection conn = null;
         PreparedStatement stm = null;
         try {
@@ -297,10 +304,10 @@ public class CategoryServices {
         try (Connection conn = JdbcUtils.getConn()) {
             // Chỉ chọn những category có type tồn tại trong bảng budget
             String sql = "SELECT c.* FROM category c "
-                   + "LEFT JOIN user_cate uc ON c.id = uc.category_id "
-                   + "WHERE c.type = ? "
-                   + "AND (c.is_default = 1 OR (c.is_default = 0 AND uc.user_id = ?)) "
-                   + "AND EXISTS (SELECT 1 FROM budget WHERE budget.type = c.type)";
+                    + "LEFT JOIN user_cate uc ON c.id = uc.category_id "
+                    + "WHERE c.type = ? "
+                    + "AND (c.is_default = 1 OR (c.is_default = 0 AND uc.user_id = ?)) "
+                    + "AND EXISTS (SELECT 1 FROM budget WHERE budget.type = c.type)";
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, type);
             stm.setInt(2, currentUserId);
@@ -341,11 +348,11 @@ public class CategoryServices {
     public String getCategoryByIdForBudget(int categoryId) {
         String name = null; // Giá trị mặc định nếu không tìm thấy
         int currentUserId = UserSessionServices.getCurrentUser().getId();
-        String query = "SELECT name FROM category " +
-                "WHERE id = ? AND (is_default = 1 OR id IN (SELECT category_id FROM user_cate WHERE user_id = ?))";
+        String query = "SELECT name FROM category "
+                + "WHERE id = ? AND (is_default = 1 OR id IN (SELECT category_id FROM user_cate WHERE user_id = ?))";
 
         try (Connection conn = JdbcUtils.getConn(); // Kết nối đến CSDL
-                PreparedStatement stm = conn.prepareStatement(query)) {
+                 PreparedStatement stm = conn.prepareStatement(query)) {
 
             stm.setInt(1, categoryId); // Thiết lập giá trị ID
             stm.setInt(2, currentUserId);
@@ -359,5 +366,4 @@ public class CategoryServices {
         return name; // Trả về tên danh mục hoặc null
     }
 
-    
 }

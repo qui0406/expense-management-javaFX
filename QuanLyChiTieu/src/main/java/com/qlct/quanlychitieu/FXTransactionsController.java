@@ -299,10 +299,24 @@ public class FXTransactionsController implements Initializable {
     }
 
     public void loadColumns() {
+        // Định dạng số tiền
+        NumberFormat currencyFormat = NumberFormat.getNumberInstance(new Locale("vi", "VN"));
+        currencyFormat.setMinimumFractionDigits(0); // Không hiển thị phần thập phân nếu không cần
+        currencyFormat.setMaximumFractionDigits(0); // Giới hạn phần thập phân
         TableColumn<Transaction, Double> colAmount = new TableColumn<>("Số tiền");
         colAmount.setCellValueFactory(new PropertyValueFactory<>("amount"));
         colAmount.setPrefWidth(100);
-
+        colAmount.setCellFactory(column -> new TableCell<Transaction, Double>() {
+            @Override
+            protected void updateItem(Double amount, boolean empty) {
+                super.updateItem(amount, empty);
+                if (empty || amount == null) {
+                    setText(null);
+                } else {
+                    setText(currencyFormat.format(amount) + " VND");
+                }
+            }
+        });
         TableColumn<Transaction, String> colNote = new TableColumn<>("Ghi chú");
         colNote.setCellValueFactory(new PropertyValueFactory<>("note"));
         colNote.setPrefWidth(140);
