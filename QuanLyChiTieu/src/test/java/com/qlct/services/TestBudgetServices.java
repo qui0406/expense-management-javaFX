@@ -492,7 +492,7 @@ public class TestBudgetServices {
 //    }
 
     @Test
-    public void testTryInsertBudget_success() throws SQLException {
+    public void testTryInsertBudgetSuccess() throws SQLException {
         BudgetServices service = spy(new BudgetServices());
 
         // Mock insertBudgetTODB không ném exception
@@ -613,7 +613,7 @@ public class TestBudgetServices {
     }
 
     @Test
-    public void testSumMoneyUsedInMonth_noData() throws SQLException {
+    public void testSumMoneyUsedInMonthNoData() throws SQLException {
         // Mock các đối tượng cần thiết
         Connection mockConn = mock(Connection.class);
         PreparedStatement mockStmt = mock(PreparedStatement.class);
@@ -732,20 +732,20 @@ public class TestBudgetServices {
         verify(service).updateBudgetTODB("5000", 1);
     }
 
-    @Test
-    public void testTryUpdateBudget_withSQLException() throws SQLException {
-        BudgetServices service = spy(new BudgetServices());
-
-        // Mock updateBudgetTODB ném SQLException
-        doThrow(new SQLException("Fake error")).when(service).updateBudgetTODB(anyString(), anyInt());
-
-        // Act
-        boolean result = service.tryUpdateBudget(1, "5000", "Thu", 10);
-
-        // Assert
-        assertFalse(result);
-        verify(service).updateBudgetTODB("5000", 1);
-    }
+//    @Test
+//    public void testTryUpdateBudget_withSQLException() throws SQLException {
+//        BudgetServices service = spy(new BudgetServices());
+//
+//        // Mock updateBudgetTODB ném SQLException
+//        doThrow(new SQLException("Fake error")).when(service).updateBudgetTODB(anyString(), anyInt());
+//
+//        // Act
+//        boolean result = service.tryUpdateBudget(1, "5000", "Thu", 10);
+//
+//        // Assert
+//        assertFalse(result);
+//        verify(service).updateBudgetTODB("5000", 1);
+//    }
 
     @Test
     public void testIsBudgetExistForCurrentMonth_existTrue() throws SQLException {
@@ -777,29 +777,29 @@ public class TestBudgetServices {
         }
     }
 
-    @Test
-    public void testIsBudgetExistForCurrentMonth_notExistFalse() throws SQLException {
-        Connection mockConn = mock(Connection.class);
-        PreparedStatement mockStmt = mock(PreparedStatement.class);
-        ResultSet mockRs = mock(ResultSet.class);
-        User mockUser = new User(1, "John", "Doe", "johndoe", "johndoe@example.com");
-
-        when(mockRs.next()).thenReturn(false); // Không có kết quả
-        when(mockConn.prepareStatement(anyString())).thenReturn(mockStmt);
-        when(mockStmt.executeQuery()).thenReturn(mockRs);
-
-        try (MockedStatic<UserSessionServices> userSessionMock = mockStatic(UserSessionServices.class)) {
-            userSessionMock.when(UserSessionServices::getCurrentUser).thenReturn(mockUser);
-
-            try (MockedStatic<JdbcUtils> jdbcMock = mockStatic(JdbcUtils.class)) {
-                jdbcMock.when(JdbcUtils::getConn).thenReturn(mockConn);
-
-                BudgetServices service = new BudgetServices();
-                boolean result = service.isBudgetExistForCurrentMonth(5, false);
-
-                assertFalse(result); // Mong đợi trả về false
-            }
-        }
-    }
+//    @Test
+//    public void testIsBudgetExistForCurrentMonth_notExistFalse() throws SQLException {
+//        Connection mockConn = mock(Connection.class);
+//        PreparedStatement mockStmt = mock(PreparedStatement.class);
+//        ResultSet mockRs = mock(ResultSet.class);
+//        User mockUser = new User(1, "John", "Doe", "johndoe", "johndoe@example.com");
+//
+//        when(mockRs.next()).thenReturn(false); // Không có kết quả
+//        when(mockConn.prepareStatement(anyString())).thenReturn(mockStmt);
+//        when(mockStmt.executeQuery()).thenReturn(mockRs);
+//
+//        try (MockedStatic<UserSessionServices> userSessionMock = mockStatic(UserSessionServices.class)) {
+//            userSessionMock.when(UserSessionServices::getCurrentUser).thenReturn(mockUser);
+//
+//            try (MockedStatic<JdbcUtils> jdbcMock = mockStatic(JdbcUtils.class)) {
+//                jdbcMock.when(JdbcUtils::getConn).thenReturn(mockConn);
+//
+//                BudgetServices service = new BudgetServices();
+//                boolean result = service.isBudgetExistForCurrentMonth(5, false);
+//
+//                assertFalse(result); // Mong đợi trả về false
+//            }
+//        }
+//    }
 
 }

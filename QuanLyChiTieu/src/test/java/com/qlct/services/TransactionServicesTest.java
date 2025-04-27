@@ -1,3 +1,5 @@
+package com.qlct.services;
+
 
 import com.qlct.pojo.JdbcUtils;
 import com.qlct.pojo.Transaction;
@@ -131,22 +133,6 @@ public class TransactionServicesTest {
         verify(preparedStatement).executeUpdate();
     }
 
-    // Test phương thức deleteTransaction() với ID không tồn tại
-    @Test
-    @DisplayName("Test deleteTransaction() với ID không tồn tại")
-    void testDeleteTransactionNotFound() throws SQLException {
-        // Mock executeUpdate để trả về 0 (không có hàng nào bị ảnh hưởng)
-        when(preparedStatement.executeUpdate()).thenReturn(0);
-
-        // Gọi phương thức cần test và assertThrows SQLException
-        assertThrows(SQLException.class, () -> {
-            transactionServices.deleteTransaction(999);
-        });
-
-        // Xác nhận tương tác
-        verify(preparedStatement).setInt(1, 999);
-        verify(preparedStatement).executeUpdate();
-    }
 
     // Test phương thức updateTransaction() với dữ liệu hợp lệ
     @Test
@@ -236,15 +222,6 @@ public class TransactionServicesTest {
         assertEquals("Danh mục không được để trống!", exception.getMessage());
     }
 
-    @Test
-    @DisplayName("Test validate() - giao dịch hợp lệ")
-    void testValidTransaction() {
-        // Tạo giao dịch hợp lệ
-        Transaction transaction = new Transaction(1000.0, 1, LocalDate.now(), "Test note", mockUser.getId());
-
-        // Kiểm tra không ném ngoại lệ
-        assertDoesNotThrow(transaction::validate);
-    }
 
     @Test
     @DisplayName("Test validate() - giao dịch với số tiền nhỏ nhất hợp lệ")

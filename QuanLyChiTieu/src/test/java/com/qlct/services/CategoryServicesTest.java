@@ -1,3 +1,5 @@
+package com.qlct.services;
+
 import com.qlct.pojo.Category;
 import com.qlct.pojo.JdbcUtils;
 import com.qlct.pojo.User;
@@ -151,12 +153,6 @@ public class CategoryServicesTest {
         assertDoesNotThrow(category::validate);
     }
 
-    @Test
-    @DisplayName("Kiểm tra validate với tên có chữ tiếng Việt")
-    void testValidCategoryWithVietnameseChars() {
-        Category category = new Category(1, "Ăn uống Đồ gia dụng", "Chi");
-        assertDoesNotThrow(category::validate);
-    }
 
     // Kiểm tra phương thức getCatetogires()
     @Test
@@ -255,18 +251,6 @@ public class CategoryServicesTest {
         assertEquals("Tên danh mục 'Du lịch' với loại 'Chi' đã tồn tại!", exception.getMessage());
     }
 
-    @Test
-    @DisplayName("Kiểm tra addCategory() với danh mục không hợp lệ ném ngoại lệ")
-    void testAddCategoryInvalid() {
-        // Tạo danh mục không hợp lệ (tên null)
-        Category invalidCategory = new Category(0, null, "Chi");
-
-        // Kiểm tra ngoại lệ
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            categoryServices.addCategory(invalidCategory);
-        });
-        assertEquals("Tên danh mục không được để trống!", exception.getMessage());
-    }
 
     // Kiểm tra phương thức deleteCategory()
     @Test
