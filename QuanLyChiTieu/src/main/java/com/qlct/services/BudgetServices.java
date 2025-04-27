@@ -27,10 +27,6 @@ import javafx.scene.control.Label;
 public class BudgetServices {
 
     @FXML
-    Label lblStatus;
-    @FXML
-    Label lblStatusInEdit;
-    @FXML
     Label lblTotal;
     @FXML
     Label lblTotalMoneyUsed;
@@ -39,14 +35,6 @@ public class BudgetServices {
     private double totalBudget;
     private double totalUsed;
     private double totalRemainingBudget;
-
-    public void setLblStatus(Label lblStatus) {
-        this.lblStatus = lblStatus;
-    }
-
-    public void setLblStatusInEdit(Label lblStatusInEdit) {
-        this.lblStatusInEdit = lblStatusInEdit;
-    }
 
     public void setLblTotal(Label lblTotal) {
         totalBudget = sumBudgetInMonth();
@@ -78,13 +66,6 @@ public class BudgetServices {
      */
     public double getTotalUsed() {
         return totalUsed;
-    }
-
-    public void updateStatus(Label label, String message, String style) {
-        Platform.runLater(() -> {
-            label.setText(message);
-            label.setStyle(style);
-        });
     }
 
     public boolean isValidAmount(String input) {
