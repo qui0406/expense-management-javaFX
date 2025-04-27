@@ -210,20 +210,17 @@ public class BudgetServices {
         return total;
     }
 
-    public boolean isBudgetValid(double newBudget, double oldBudget) {
-        return newBudget >= oldBudget;
-    }
 
     public void updateBudgetTODB(String input, int budgetId) throws SQLException {
         int currentUserId = UserSessionServices.getCurrentUser().getId();
         double amount = validateAmount(input);
         try (Connection conn = JdbcUtils.getConn()) {
-            try (PreparedStatement stm2 = conn
+            try (PreparedStatement stm = conn
                     .prepareCall("UPDATE budget SET amount =  ? WHERE id = ? AND user_id = ?")) {
-                stm2.setDouble(1, amount);
-                stm2.setInt(2, budgetId);
-                stm2.setInt(3, currentUserId);
-                stm2.executeUpdate();
+                stm.setDouble(1, amount);
+                stm.setInt(2, budgetId);
+                stm.setInt(3, currentUserId);
+                stm.executeUpdate();
             }
         } catch (SQLException e) {
             throw new SQLException("Không thể cập nhật ngân sách vào cơ sở dữ liệu!", e);
@@ -379,11 +376,6 @@ public class BudgetServices {
             System.out.println("Lỗi khi lấy tổng chi tiêu: " + e.getMessage());
         }
         return 0;
-    }
-    
-    //Phương thức kiểm tra xem chi tiêu có vượt quá giới hạn không
-    public boolean isOverBudget(double totalExpenses, double totalBudget) {
-        return !isBudgetWithinLimit(totalExpenses, totalBudget);
     }
 
 }

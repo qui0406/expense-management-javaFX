@@ -375,28 +375,21 @@ public class BudgetController implements Initializable {
         try {
             double amount = budgetServices.validateAmount(input);
             int currentUserId = UserSessionServices.getCurrentUser().getId();
-            System.out.println("CurrentUserId: " + currentUserId);
-
             int categoryId = budgetServices.getIdByName(categoryName, currentUserId);
-            System.out.println("Category ID: " + categoryId);
-
-            double totalBudget = budgetServices.getTotalBudgetForCategory(categoryId, currentUserId);
-            System.out.println("Total Budget: " + totalBudget);
-
             double totalUsed = budgetServices.getTotalExpensesForCategory(categoryId, currentUserId);
-            System.out.println("Total Used: " + totalUsed);
-
             if (budgetServices.isBudgetExistForCurrentMonth(categoryId, true)) {
-                // Kiểm tra xem ngân sách mới có đang đủ bù đắp phần thiếu hay không
-                double needToAdd = totalUsed - totalBudget;  // Tính số tiền thiếu cần thêm vào
-                if (needToAdd > 0 && amount < needToAdd) {
-                    // Nếu số tiền nhập vào ít hơn số tiền thiếu
-                    showAlert(Alert.AlertType.WARNING, "Thiếu ngân sách", null, "Bạn cần nhập ít nhất " + String.format("%,.0f", needToAdd) + " để bù phần ngân sách thiếu cho danh mục \"" + categoryName + "\".", "orange");
-                    return;
-                }
+                showAlert(Alert.AlertType.WARNING, "Ngân sách đã tồn tại", null,
+                        "Bạn đã thiết lập ngân sách cho danh mục \"" + categoryName + "\" trong tháng này.", "orange");
+                return;
+            }
+            if (totalUsed > 0 && amount < totalUsed) {
+                double needToAdd = totalUsed;
+                showAlert(Alert.AlertType.WARNING, "Thiếu ngân sách", null,
+                        "Bạn cần nhập ít nhất " + String.format("%,.0f", needToAdd)
+                        + " để bù phần ngân sách đã chi cho danh mục \"" + categoryName + "\".", "orange");
+                return;
             }
 
-            // Trường hợp chưa đủ ngân sách hoặc chưa có ngân sách trong tháng hiện tại
             boolean success = budgetServices.tryInsertBudget(input, budgetType, categoryName);
             if (success) {
                 showAlert(Alert.AlertType.INFORMATION, "Thêm ngân sách thành công!", null, "Ngân sách cho danh mục \"" + categoryName + "\" đã được thêm.", "green");
@@ -404,6 +397,7 @@ public class BudgetController implements Initializable {
             } else {
                 showAlert(Alert.AlertType.ERROR, "Thêm ngân sách thất bại!", null, "Đã xảy ra lỗi khi thêm ngân sách cho danh mục \"" + categoryName + "\". Vui lòng thử lại.", "red");
             }
+
         } catch (Exception e) {
             showAlert(Alert.AlertType.WARNING, "Dữ liệu không hợp lệ!", null, "Vui lòng kiểm tra lại thông tin bạn đã nhập.", "orange");
             e.printStackTrace(); // In ra lỗi console để debug

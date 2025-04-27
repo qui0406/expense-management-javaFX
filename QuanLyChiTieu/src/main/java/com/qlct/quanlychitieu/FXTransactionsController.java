@@ -132,16 +132,14 @@ public class FXTransactionsController implements Initializable {
                 return string != null && !string.isEmpty() ? LocalDate.parse(string, dateFormatter) : null;
             }
         });
+
+
         try {
             addCategoryDefault();
         } catch (SQLException ex) {
             Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        try {
-            addCategoryDefault();
-        } catch (SQLException ex) {
-            Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
 
         // Tải danh mục vào cache
         try {
