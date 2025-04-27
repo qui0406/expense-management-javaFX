@@ -169,7 +169,7 @@ public class BudgetController implements Initializable {
 
             // Chuyển đổi danh sách Category thành danh sách tên category
             List<String> categoryNames = categories.stream()
-                    .map(Category::getName) // Lấy tên từ đối tượng Category
+                    .map(Category::getName).distinct() // Lấy tên từ đối tượng Category
                     .collect(Collectors.toList()); // Thu thập vào danh sách
 
             // Đổ danh sách tên vào ComboBox

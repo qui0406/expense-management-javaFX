@@ -60,7 +60,6 @@ public class EditBudgetController implements Initializable {
             int budgetId = editingBudget.getId();
             double amount = editingBudget.getAmountBudget();
             String inputText = txtInputBudget.getText();
-            double input = Double.parseDouble(inputText);
             double validatedAmount = validateInput(inputText);
             if (validatedAmount <= 0) {
                 return;
