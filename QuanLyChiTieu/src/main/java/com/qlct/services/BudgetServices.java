@@ -203,9 +203,7 @@ public class BudgetServices {
                 stm.setInt(3, currentUserId);
                 stm.executeUpdate();
             }
-        } catch (SQLException e) {
-            throw new SQLException("Không thể cập nhật ngân sách vào cơ sở dữ liệu!", e);
-        }
+        } 
     }
 
     public boolean tryUpdateBudget(int budgetId, String input, String budgetType, int categoryId) {
