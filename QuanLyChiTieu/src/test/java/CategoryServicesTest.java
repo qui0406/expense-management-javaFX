@@ -344,4 +344,136 @@ public class CategoryServicesTest {
         });
         assertEquals("Không thể sửa danh mục cố định!", exception.getMessage());
     }
+    
+    @Test
+    @DisplayName("Kiểm tra getCateByTypeFromBudget trả về danh mục theo loại")
+    void testGetCateByTypeFromBudget() throws SQLException {
+        // Giả lập ResultSet trả về 2 danh mục với type "Chi"
+        when(resultSet.next()).thenReturn(true, true, false); // 2 danh mục
+        when(resultSet.getInt("id")).thenReturn(1, 2);
+        when(resultSet.getString("name")).thenReturn("Ăn uống", "Di chuyển");
+        when(resultSet.getString("type")).thenReturn("Chi", "Chi");
+        when(resultSet.getBoolean("is_default")).thenReturn(true, false);
+
+        // Gọi phương thức
+        List<Category> categories = categoryServices.getCateByTypeFromBudget("Chi");
+
+        // Kiểm tra kết quả trả về
+        assertEquals(2, categories.size());
+        assertEquals("Ăn uống", categories.get(0).getName());
+        assertEquals("Chi", categories.get(0).getType());
+        assertTrue(categories.get(0).isDefault());
+
+        assertEquals("Di chuyển", categories.get(1).getName());
+        assertEquals("Chi", categories.get(1).getType());
+        assertFalse(categories.get(1).isDefault());
+
+        // Kiểm tra tương tác với preparedStatement
+        verify(preparedStatement).setString(1, "Chi");
+        verify(preparedStatement).setInt(2, mockUser.getId());
+        verify(preparedStatement).executeQuery();
+    }
+
+    @Test
+    @DisplayName("Kiểm tra getCateByTypeFromBudget khi không có danh mục trả về")
+    void testGetCateByTypeFromBudget_noResults() throws SQLException {
+        // Giả lập ResultSet không có kết quả
+        when(resultSet.next()).thenReturn(false);
+
+        // Gọi phương thức
+        List<Category> categories = categoryServices.getCateByTypeFromBudget("Chi");
+
+        // Kiểm tra kết quả trả về rỗng
+        assertNotNull(categories);
+        assertEquals(0, categories.size());
+
+        // Kiểm tra tương tác với preparedStatement
+        verify(preparedStatement).setString(1, "Chi");
+        verify(preparedStatement).setInt(2, mockUser.getId());
+        verify(preparedStatement).executeQuery();
+    }
+
+    @Test
+    @DisplayName("Kiểm tra getCateByTypeFromBudget khi có lỗi SQLException")
+    void testGetCateByTypeFromBudget_sqlException() throws SQLException {
+        // Giả lập SQLException khi thực thi câu truy vấn
+        when(preparedStatement.executeQuery()).thenThrow(new SQLException("Database error"));
+
+        // Kiểm tra xem ngoại lệ SQLException có được ném ra không
+        assertThrows(SQLException.class, () -> categoryServices.getCateByTypeFromBudget("Chi"));
+    }
+    
+    @Test
+    @DisplayName("Kiểm tra getCategoryNameById trả về tên danh mục theo ID")
+    void testGetCategoryNameById() throws SQLException {
+        // Giả lập ResultSet trả về tên danh mục "Ăn uống"
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getString("name")).thenReturn("Ăn uống");
+
+        // Gọi phương thức
+        String categoryName = categoryServices.getCategoryNameById(1);
+
+        // Kiểm tra kết quả trả về
+        assertEquals("Ăn uống", categoryName);
+
+        // Kiểm tra tương tác với preparedStatement
+        verify(preparedStatement).setInt(1, 1);
+        verify(preparedStatement).executeQuery();
+    }
+
+    @Test
+    @DisplayName("Kiểm tra getCategoryNameById khi không tìm thấy danh mục")
+    void testGetCategoryNameById_noResult() throws SQLException {
+        // Giả lập ResultSet không có kết quả
+        when(resultSet.next()).thenReturn(false);
+
+        // Gọi phương thức
+        String categoryName = categoryServices.getCategoryNameById(1);
+
+        // Kiểm tra kết quả trả về là null
+        assertNull(categoryName);
+
+        // Kiểm tra tương tác với preparedStatement
+        verify(preparedStatement).setInt(1, 1);
+        verify(preparedStatement).executeQuery();
+    }
+
+    @Test
+    @DisplayName("Kiểm tra getCategoryByIdForBudget trả về tên danh mục cho user có quyền")
+    void testGetCategoryByIdForBudget() throws SQLException {
+        // Giả lập ResultSet trả về tên danh mục "Ăn uống"
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getString("name")).thenReturn("Ăn uống");
+
+        // Gọi phương thức
+        String categoryName = categoryServices.getCategoryByIdForBudget(1);
+
+        // Kiểm tra kết quả trả về
+        assertEquals("Ăn uống", categoryName);
+
+        // Kiểm tra tương tác với preparedStatement
+        verify(preparedStatement).setInt(1, 1);
+        verify(preparedStatement).setInt(2, mockUser.getId());
+        verify(preparedStatement).executeQuery();
+    }
+
+    @Test
+    @DisplayName("Kiểm tra getCategoryByIdForBudget khi không có quyền truy cập")
+    void testGetCategoryByIdForBudget_noResult() throws SQLException {
+        // Giả lập ResultSet không có kết quả
+        when(resultSet.next()).thenReturn(false);
+
+        // Gọi phương thức
+        String categoryName = categoryServices.getCategoryByIdForBudget(1);
+
+        // Kiểm tra kết quả trả về là null
+        assertNull(categoryName);
+
+        // Kiểm tra tương tác với preparedStatement
+        verify(preparedStatement).setInt(1, 1);
+        verify(preparedStatement).setInt(2, mockUser.getId());
+        verify(preparedStatement).executeQuery();
+    }
+
+
 }
