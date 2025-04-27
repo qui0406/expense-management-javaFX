@@ -6,11 +6,9 @@ import com.qlct.pojo.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
@@ -62,11 +60,8 @@ public class TestChartServices {
     }
     
     
-
-    // Tests for loadPieChart
     @Test
-    public void testLoadPieChartSetsCorrectDataAndProperties() {
-        // Arrange
+    public void testPieChartCorrect() {
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         when(pieChart.getData()).thenReturn(pieChartData);
         doAnswer(invocation -> {
@@ -74,7 +69,6 @@ public class TestChartServices {
             return null;
         }).when(pieChart).setData(any(ObservableList.class));
         chartServices.loadPieChart(pieChart, expenses);
-        // Assert
         assertEquals(3, pieChartData.size());
         double totalAmount = expenses.stream().mapToDouble(Expense::getAmount).sum();
         assertEquals("Ăn uống - " + String.format("%.1f", 100.0 / totalAmount * 100) + "%", pieChartData.get(0).getName());
@@ -90,7 +84,7 @@ public class TestChartServices {
         verify(pieChart).setPrefSize(100, 100);
     }
     @Test
-    public void testLoadPieChartEmptyExpensesSetsEmptyData() {
+    public void testPieChartEmpty() {
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         when(pieChart.getData()).thenReturn(pieChartData);
         chartServices.loadPieChart(pieChart, Arrays.asList());
@@ -101,11 +95,10 @@ public class TestChartServices {
         verify(pieChart).setMinSize(350, 320);
         verify(pieChart).setPrefSize(100, 100);
     }
-
-
+    
     
     @Test
-    public void testLoadBarChartSetsCorrectDataAndProperties() {
+    public void testLoadBarChartCorrect() {
         ObservableList<XYChart.Series<String, Number>> mockData = FXCollections.observableArrayList();
         when(barChart.getData()).thenReturn(mockData);
         chartServices.loadBarChart(barChart, expenses);
@@ -118,17 +111,13 @@ public class TestChartServices {
         verify(barChart).setPrefSize(600, 300);
     }
     @Test
-    public void testLoadBarChartNullExpensesThrowsException() {
-        // Arrange
+    public void testBarChartNull() {
         ObservableList<XYChart.Series<String, Number>> mockData = FXCollections.observableArrayList();
         when(barChart.getData()).thenReturn(mockData);
-
-        // Act & Assert
         assertThrows(NullPointerException.class, () -> chartServices.loadBarChart(barChart, null));
     }
     @Test
-    void testLoadBarChartEmptyExpensesSetsEmptyData() {
-        // Arrange
+    public void testBarChartEmpty() {
         ObservableList<XYChart.Series<String, Number>> mockData = FXCollections.observableArrayList();
         when(barChart.getData()).thenReturn(mockData);
         chartServices.loadBarChart(barChart, Arrays.asList());
@@ -136,9 +125,8 @@ public class TestChartServices {
         assertEquals(0, mockData.get(0).getData().size());
     }
     
-    
     @Test
-    public void testLoadLineChartSetsCorrectDataAndProperties() {
+    public void testLineChartCorrect() {
         ObservableList<XYChart.Series<String, Number>> mockData = FXCollections.observableArrayList();
         when(lineChart.getData()).thenReturn(mockData);
         chartServices.loadLineChart(lineChart, expenses);
@@ -152,17 +140,13 @@ public class TestChartServices {
         assertEquals(100.0, series.getData().get(0).getYValue());
     }
     @Test
-    public void testLoadLineChartNullExpensesThrowsException() {
-        // Arrange
+    public void testLineChartNull() {
         ObservableList<XYChart.Series<String, Number>> mockData = FXCollections.observableArrayList();
         when(lineChart.getData()).thenReturn(mockData);
-
-        // Act & Assert
         assertThrows(NullPointerException.class, () -> chartServices.loadLineChart(lineChart, null));
     }
     @Test
-    public void testLoadLineChartEmptyExpensesSetsEmptyData() {
-        // Arrange
+    public void testLineChartEmpty() {
         ObservableList<XYChart.Series<String, Number>> mockData = FXCollections.observableArrayList();
         when(lineChart.getData()).thenReturn(mockData);
         chartServices.loadLineChart(lineChart, Arrays.asList());
@@ -171,7 +155,7 @@ public class TestChartServices {
     }
     
     
-     @Test
+    @Test
     public void testGetExpenseCurrentMonthChart() throws Exception {
         when(conn.prepareStatement(anyString())).thenReturn(mockStatement);
         when(mockStatement.executeQuery()).thenReturn(mockResultSet);
@@ -188,15 +172,12 @@ public class TestChartServices {
             when(mockResultSet.next()).thenReturn(true, false);
             when(mockResultSet.getInt("id")).thenReturn(1);
             when(mockResultSet.getString("name")).thenReturn("Ăn uống");
-            when(mockResultSet.getDouble("amount")).thenReturn(500_000.0);
-
+            when(mockResultSet.getDouble("amount")).thenReturn(500000.0);
             List<Expense> result = chartServices.getExpenseCurrentMonthChart("Chi");
-
             assertEquals(1, result.size());
             assertEquals("Ăn uống", result.get(0).getCategoryName());
-            assertEquals(500_000.0, result.get(0).getAmount());
+            assertEquals(500000.0, result.get(0).getAmount());
         }
-        
     }
 
     @Test
@@ -215,41 +196,15 @@ public class TestChartServices {
             when(mockResultSet.next()).thenReturn(true, false);
             when(mockResultSet.getInt("id")).thenReturn(2);
             when(mockResultSet.getString("name")).thenReturn("Giải trí");
-            when(mockResultSet.getDouble("amount")).thenReturn(300_000.0);
+            when(mockResultSet.getDouble("amount")).thenReturn(300000.0);
 
             List<Expense> result = chartServices.getExpensesFilterByDateChart(
                     LocalDate.of(2025, 1, 1),
                     LocalDate.of(2025, 1, 31),
-                    "EXP");
-
+                    "Chi");
             assertEquals(1, result.size());
             assertEquals("Giải trí", result.get(0).getCategoryName());
             assertEquals(300_000.0, result.get(0).getAmount());
         }
     }
-
-//    @Test
-//    public void testGetMonthlyExpenses() throws Exception {
-//        when(conn.prepareStatement(anyString())).thenReturn(mockStatement);
-//        when(mockStatement.executeQuery()).thenReturn(mockResultSet);
-//        try (
-//            MockedStatic<JdbcUtils> jdbcMock = mockStatic(JdbcUtils.class);
-//            MockedStatic<UserSessionServices> userSessionMock = mockStatic(UserSessionServices.class)
-//        ) {
-//            User mockUser = mock(User.class);
-//            when(mockUser.getId()).thenReturn(1);
-//            userSessionMock.when(UserSessionServices::getCurrentUser).thenReturn(mockUser);
-//            jdbcMock.when(JdbcUtils::getConn).thenReturn(conn);
-//
-//            when(mockResultSet.next()).thenReturn(true, false);
-//            when(mockResultSet.getInt("month")).thenReturn(3);
-//            when(mockResultSet.getDouble("total_amount")).thenReturn(1200000.0);
-//
-//            List<Expense> result = chartServices.getMonthlyExpensesChart("Chi", 2025);
-//
-//            assertEquals(1, result.size());
-//            assertEquals("Tháng 3", result.get(0).getCategoryName());
-//            assertEquals(1200000.0, result.get(0).getAmount());
-//        }
-//    }
 }

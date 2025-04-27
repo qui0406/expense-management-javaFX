@@ -78,7 +78,7 @@ public class TestCaseCritical {
         userSessionServicesMock.when(UserSessionServices::getCurrentUser).thenReturn(testUser);
         // JdbcUtils trả về kết nối đã mock
         jdbcUtilsMock.when(JdbcUtils::getConn).thenReturn(mockConnection);
-        
+
         bcryptMock.when(() -> BCrypt.hashpw(anyString(), anyString())).thenReturn("hashedPassword");
         bcryptMock.when(() -> BCrypt.gensalt(anyInt())).thenReturn("salt");
     }
@@ -106,7 +106,7 @@ public class TestCaseCritical {
                 // gọi hàm sử dụng payload
                 chartServices.getExpenseCurrentMonthChart(payload);
 
-                 // Kiểm tra rằng hàm set các tham số đúng (không để lỗi SQL Injection)
+                // Kiểm tra rằng hàm set các tham số đúng (không để lỗi SQL Injection)
                 verify(mockPreparedStatement, atLeastOnce()).setInt(eq(1), eq(testUser.getId()));
                 verify(mockPreparedStatement, atLeastOnce()).setString(eq(2), eq(payload));
 
@@ -192,7 +192,7 @@ public class TestCaseCritical {
             // Sau đó reset lại: chỉ owner được đọc ghi
             try (RandomAccessFile raf = new RandomAccessFile(testFile, "rw"); FileInputStream fis = new FileInputStream(testFile)) {
 
-            // Khoá file và kiểm tra
+                // Khoá file và kiểm tra
                 java.nio.channels.FileLock lock = raf.getChannel().tryLock();
                 assertNotNull(lock, "File should be lockable");
 
@@ -212,7 +212,7 @@ public class TestCaseCritical {
             fail("File security test failed: " + e.getMessage());
         }
     }
-    
+
     //	Phát hiện thực thi mã độc nguy hiểm
     @Test
     public void testAdvancedFXMLScriptInjection_Revised() throws Exception {
@@ -264,13 +264,13 @@ public class TestCaseCritical {
                     System.out.println("⚠️ Exception khi load FXML (không bắt buộc): " + e.getMessage());
                 }
 
-                 // Sau load, kiểm tra xem có file độc nào được tạo ra không
+                // Sau load, kiểm tra xem có file độc nào được tạo ra không
                 boolean createdAfter1 = outputFile1.exists() && !existedBefore1;
                 boolean createdAfter2 = outputFile2.exists() && !existedBefore2;
 
                 assertFalse(createdAfter1, "❌ Phát hiện mã độc: file test.txt đã được tạo!");
                 assertFalse(createdAfter2, "❌ Phát hiện mã độc: file test2.txt đã được tạo!");
-                
+
                 //xóa file
                 outputFile1.delete();
                 outputFile2.delete();
@@ -280,24 +280,25 @@ public class TestCaseCritical {
         }
     }
 
-    // Kiểm tra rò rỉ kết nối database
-@Test
-public void testDatabaseConnectionLeakage() throws SQLException {
-    // Khởi tạo đối tượng ChartServices (lớp thao tác với DB)
-    ChartServices chartServices = new ChartServices();
-    
-    // Setup mock cho prepareStatement
-    when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
-    when(mockPreparedStatement.executeQuery()).thenReturn(mockResultSet);
+    @Test
+    public void testDatabaseConnectionLeakage() throws SQLException {
+        // Simulate a database connection issue
+        when(mockConnection.prepareStatement(anyString())).thenThrow(new SQLException("Connection error"));
 
-    // Gọi hàm lấy dữ liệu
-    chartServices.getExpenseCurrentMonthChart("food");
+        ChartServices chartServices = new ChartServices();
 
-    // Kiểm tra sau khi thao tác, statement phải được đóng (không gây rò rỉ)
-//    verify(mockPreparedStatement, times(1)).close();
+        Exception exception = assertThrows(SQLException.class, () -> {
+            chartServices.getExpenseCurrentMonthChart("Chi");
+        });
 
-    // (Nếu service đóng luôn cả connection, có thể thêm dòng dưới)
-    // verify(mockConnection, times(1)).close();
-}
+        // Check if the error message reveals sensitive information
+        String exceptionMessage = exception.getMessage();
+        assertFalse(exceptionMessage.contains("password"),
+                "Error should not expose database credentials");
+        assertFalse(exceptionMessage.contains("root"),
+                "Error should not expose database user");
+        assertFalse(exceptionMessage.contains("jdbc:"),
+                "Error should not expose connection string");
+    }
 
 }

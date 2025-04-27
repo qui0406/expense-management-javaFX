@@ -82,7 +82,7 @@ public class TransactionServices {
         }
     }
 
-    public void deleteTransaction(int id) {
+    public void deleteTransaction(int id) throws SQLException{
         try (Connection conn = JdbcUtils.getConn()) {
             String newTran = "DELETE FROM transaction WHERE id =  ?";
             PreparedStatement stm = conn.prepareStatement(newTran);
@@ -91,10 +91,7 @@ public class TransactionServices {
             if (rowsAffected == 0) {
                 throw new SQLException("Không tìm thấy giao dịch với id hợp lệ");
             }
-
-        } catch (SQLException ex) {
-            Logger.getLogger(TransactionServices.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
     }
 
     public void updateTransaction(int id, double amount, int categoryId, LocalDate date, String note, int userId) {

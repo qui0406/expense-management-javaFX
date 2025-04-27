@@ -93,7 +93,11 @@
                <font>
                   <Font size="14.0" />
                </font></Button>
+<<<<<<< HEAD
             <TableView fx:id="tbTransaction" layoutX="318.0" layoutY="406.0" maxHeight="245.0" prefHeight="245.0" prefWidth="750.0" styleClass="table-row-cell" stylesheets="@style/transaction.css" />
+=======
+            <TableView  fx:id="tbTransaction" layoutX="318.0" layoutY="406.0" maxHeight="245.0" prefHeight="245.0" prefWidth="750.0" styleClass="table-row-cell" stylesheets="@style/transaction.css"/>
+>>>>>>> 17899286c04ea0eb20028d4f278859de0b61632d
             <Text fx:id="txtTotalAmount" fill="#2D82B5" layoutX="480.0" layoutY="719.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" wrappingWidth="322.5999755859375">
                <font>
                   <Font name="System Bold" size="18.0" />

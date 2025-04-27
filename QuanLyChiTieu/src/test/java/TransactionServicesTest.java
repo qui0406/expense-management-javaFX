@@ -50,6 +50,7 @@ public class TransactionServicesTest {
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(connection.getAutoCommit()).thenReturn(true);
+
         transactionServices = new TransactionServices();
     }
 
@@ -137,8 +138,10 @@ public class TransactionServicesTest {
         // Mock executeUpdate để trả về 0 (không có hàng nào bị ảnh hưởng)
         when(preparedStatement.executeUpdate()).thenReturn(0);
 
-        // Gọi phương thức cần test
-        transactionServices.deleteTransaction(999);
+        // Gọi phương thức cần test và assertThrows SQLException
+        assertThrows(SQLException.class, () -> {
+            transactionServices.deleteTransaction(999);
+        });
 
         // Xác nhận tương tác
         verify(preparedStatement).setInt(1, 999);
@@ -238,7 +241,7 @@ public class TransactionServicesTest {
     void testValidTransaction() {
         // Tạo giao dịch hợp lệ
         Transaction transaction = new Transaction(1000.0, 1, LocalDate.now(), "Test note", mockUser.getId());
-        
+
         // Kiểm tra không ném ngoại lệ
         assertDoesNotThrow(transaction::validate);
     }
@@ -248,7 +251,7 @@ public class TransactionServicesTest {
     void testValidTransactionWithMinimumAmount() {
         // Tạo giao dịch với số tiền nhỏ nhất hợp lệ
         Transaction transaction = new Transaction(0.01, 1, LocalDate.now(), "Test note", mockUser.getId());
-        
+
         // Kiểm tra không ném ngoại lệ
         assertDoesNotThrow(transaction::validate);
     }
@@ -258,7 +261,7 @@ public class TransactionServicesTest {
     void testValidTransactionWithMaximumAmount() {
         // Tạo giao dịch với số tiền lớn nhất hợp lệ
         Transaction transaction = new Transaction(1_000_000_000_000.0, 1, LocalDate.now(), "Test note", mockUser.getId());
-        
+
         // Kiểm tra không ném ngoại lệ
         assertDoesNotThrow(transaction::validate);
     }
@@ -268,7 +271,7 @@ public class TransactionServicesTest {
     void testValidTransactionWithPastDate() {
         // Tạo giao dịch với ngày trong quá khứ
         Transaction transaction = new Transaction(1000.0, 1, LocalDate.now().minusDays(1), "Test note", mockUser.getId());
-        
+
         // Kiểm tra không ném ngoại lệ
         assertDoesNotThrow(transaction::validate);
     }

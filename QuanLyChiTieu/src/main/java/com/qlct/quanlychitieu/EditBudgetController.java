@@ -46,8 +46,6 @@ public class EditBudgetController implements Initializable {
     @FXML
     Button btnEditBudget;
     @FXML
-    Label lblStatusInEdit;
-    @FXML
     TableView<Budget> tbBudget;
 
     /**
@@ -56,7 +54,6 @@ public class EditBudgetController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        budgetServices.setLblStatusInEdit(lblStatusInEdit);
         loadTableData();
         loadColumns();
         btnEditBudget.setOnAction((var e) -> {
@@ -155,19 +152,12 @@ public class EditBudgetController implements Initializable {
         tbBudget.setItems(FXCollections.observableList(filteredBudgets));
     }
 
-    public void updateStatus(Label label, String message, String style) {
-        Platform.runLater(() -> {
-            label.setText(message);
-            label.setStyle(style);
-        });
-    }
-
     public double validateInput(String input) {
         try {
             return budgetServices.validateAmount(input);
         } catch (IllegalArgumentException e) {
             Platform.runLater(() -> {
-                updateStatus(lblStatusInEdit, e.getMessage(), "-fx-text-fill: red;");
+                showAlert(Alert.AlertType.ERROR, "Lỗi ngân sách nhập vào", null, e.getMessage(), "red");
             });
             return 0.0;
         }
@@ -194,8 +184,14 @@ public class EditBudgetController implements Initializable {
                 return;
             }
 
-            // Nếu ngân sách hiện tại > chi tiêu, có thể điều chỉnh giảm xuống thoải mái
+            // Nếu ngân sách hiện tại > chi tiêu, điều chỉnh tùy vào số tiền đã chi tiêu
             if (totalBudget > totalUsed) {
+                if (amount < totalUsed) {
+                    showAlert(Alert.AlertType.WARNING, "Thiếu ngân sách", null,
+                            "Bạn cần cập nhật ngân sách không dưới " + String.format("%,.0f", totalUsed)
+                            + " để bù phần đã chi tiêu cho danh mục \"" + categoryName + "\".", "orange");
+                    return;
+                }
                 boolean success = budgetServices.tryUpdateBudget(budgetId, input, budgetType, categoryId);
                 if (success) {
                     showAlert(Alert.AlertType.INFORMATION, "Chỉnh sửa ngân sách thành công!", null,
