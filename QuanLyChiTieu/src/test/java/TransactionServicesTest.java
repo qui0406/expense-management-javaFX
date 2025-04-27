@@ -1,163 +1,3 @@
-//import com.qlct.pojo.Transaction;
-//import com.qlct.services.TransactionServices;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.DisplayName;
-//
-//import java.time.LocalDate;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//public class TransactionServicesTest {
-//    
-//    private TransactionServices transactionServices;
-//    private int validCategoryId;
-//    private int validUserId;
-//    
-//    @BeforeEach
-//    public void setUp() {
-//        transactionServices = new TransactionServices();
-//        validCategoryId = 1; // Giả định ID hợp lệ cho test
-//        validUserId = 1; // Giả định ID hợp lệ cho test
-//    }
-//    
-//    @Test
-//    @DisplayName("Test amount validation - amount <= 0")
-//    public void testValidateAmountLessThanOrEqualToZero() {
-//        // Arrange
-//        double invalidAmount = 0;
-//        LocalDate validDate = LocalDate.now();
-//        Transaction transaction = new Transaction(invalidAmount, validCategoryId, validDate, "Test note", validUserId);
-//        
-//        // Act & Assert
-//        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-//            transaction.validate();
-//        });
-//        
-//        assertEquals("Số tiền phải lớn hơn 0 và không vượt quá 1,000,000,000,000!", exception.getMessage());
-//    }
-//    
-//    @Test
-//    @DisplayName("Test amount validation - amount > 1 trillion")
-//    public void testValidateAmountGreaterThanOneTrillion() {
-//        // Arrange
-//        double invalidAmount = 1_000_000_000_001.0;
-//        LocalDate validDate = LocalDate.now();
-//        Transaction transaction = new Transaction(invalidAmount, validCategoryId, validDate, "Test note", validUserId);
-//        
-//        // Act & Assert
-//        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-//            transaction.validate();
-//        });
-//        
-//        assertEquals("Số tiền phải lớn hơn 0 và không vượt quá 1,000,000,000,000!", exception.getMessage());
-//    }
-//    
-//    @Test
-//    @DisplayName("Test date validation - date is null")
-//    public void testValidateDateIsNull() {
-//        // Arrange
-//        double validAmount = 1000;
-//        LocalDate nullDate = null;
-//        Transaction transaction = new Transaction(validAmount, validCategoryId, nullDate, "Test note", validUserId);
-//        
-//        // Act & Assert
-//        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-//            transaction.validate();
-//        });
-//        
-//        assertEquals("Ngày giao dịch không được để trống!", exception.getMessage());
-//    }
-//    
-//    @Test
-//    @DisplayName("Test date validation - date in future")
-//    public void testValidateDateInFuture() {
-//        // Arrange
-//        double validAmount = 1000;
-//        LocalDate futureDate = LocalDate.now().plusDays(1);
-//        Transaction transaction = new Transaction(validAmount, validCategoryId, futureDate, "Test note", validUserId);
-//        
-//        // Act & Assert
-//        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-//            transaction.validate();
-//        });
-//        
-//        assertEquals("Ngày giao dịch không được vượt quá ngày hiện tại!", exception.getMessage());
-//    }
-//    
-//    @Test
-//    @DisplayName("Test category validation - category <= 0")
-//    public void testValidateCategoryIsInvalid() {
-//        // Arrange
-//        double validAmount = 1000;
-//        LocalDate validDate = LocalDate.now();
-//        int invalidCategoryId = 0;
-//        Transaction transaction = new Transaction(validAmount, invalidCategoryId, validDate, "Test note", validUserId);
-//        
-//        // Act & Assert
-//        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-//            transaction.validate();
-//        });
-//        
-//        assertEquals("Danh mục không được để trống!", exception.getMessage());
-//    }
-//    
-//    @Test
-//    @DisplayName("Test valid transaction")
-//    public void testValidTransaction() {
-//        // Arrange
-//        double validAmount = 1000;
-//        LocalDate validDate = LocalDate.now();
-//        Transaction transaction = new Transaction(validAmount, validCategoryId, validDate, "Test note", validUserId);
-//        
-//        // Act & Assert
-//        assertDoesNotThrow(() -> {
-//            transaction.validate();
-//        });
-//    }
-//    
-//    @Test
-//    @DisplayName("Test valid transaction with minimum amount")
-//    public void testValidTransactionWithMinimumAmount() {
-//        // Arrange
-//        double validAmount = 0.01; // Số tiền nhỏ nhất hợp lệ
-//        LocalDate validDate = LocalDate.now();
-//        Transaction transaction = new Transaction(validAmount, validCategoryId, validDate, "Test note", validUserId);
-//        
-//        // Act & Assert
-//        assertDoesNotThrow(() -> {
-//            transaction.validate();
-//        });
-//    }
-//    
-//    @Test
-//    @DisplayName("Test valid transaction with maximum amount")
-//    public void testValidTransactionWithMaximumAmount() {
-//        // Arrange
-//        double validAmount = 1_000_000_000_000.0; // Số tiền lớn nhất hợp lệ
-//        LocalDate validDate = LocalDate.now();
-//        Transaction transaction = new Transaction(validAmount, validCategoryId, validDate, "Test note", validUserId);
-//        
-//        // Act & Assert
-//        assertDoesNotThrow(() -> {
-//            transaction.validate();
-//        });
-//    }
-//    
-//    @Test
-//    @DisplayName("Test valid transaction with past date")
-//    public void testValidTransactionWithPastDate() {
-//        // Arrange
-//        double validAmount = 1000;
-//        LocalDate pastDate = LocalDate.now().minusDays(1);
-//        Transaction transaction = new Transaction(validAmount, validCategoryId, pastDate, "Test note", validUserId);
-//        
-//        // Act & Assert
-//        assertDoesNotThrow(() -> {
-//            transaction.validate();
-//        });
-//    }
-//}
 
 import com.qlct.pojo.JdbcUtils;
 import com.qlct.pojo.Transaction;
@@ -190,14 +30,14 @@ public class TransactionServicesTest {
 
     @BeforeEach
     void setUp() throws SQLException {
-        // Create a mock user
+        // Tạo mock user
         mockUser = new User(1, "testuser", "password", "Test User", "test@example.com");
 
         // Mock UserSessionServices.getCurrentUser()
         userSessionServicesMock = Mockito.mockStatic(UserSessionServices.class);
         userSessionServicesMock.when(UserSessionServices::getCurrentUser).thenReturn(mockUser);
 
-        // Mock JDBC components
+        // Mock các thành phần JDBC
         connection = mock(Connection.class);
         preparedStatement = mock(PreparedStatement.class);
         resultSet = mock(ResultSet.class);
@@ -206,7 +46,7 @@ public class TransactionServicesTest {
         jdbcUtilsMock = Mockito.mockStatic(JdbcUtils.class);
         jdbcUtilsMock.when(JdbcUtils::getConn).thenReturn(connection);
 
-        // Mock connection methods
+        // Mock các phương thức kết nối
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(connection.getAutoCommit()).thenReturn(true);
@@ -220,9 +60,9 @@ public class TransactionServicesTest {
         jdbcUtilsMock.close();
     }
 
-    // Test getTransactionsByDateRange()
+    // Test phương thức getTransactionsByDateRange()
     @Test
-    @DisplayName("Test getTransactionsByDateRange() returns transactions")
+    @DisplayName("Test getTransactionsByDateRange() trả về danh sách giao dịch")
     void testGetTransactionsByDateRange() throws SQLException {
         // Mock ResultSet
         LocalDate startDate = LocalDate.of(2023, 1, 1);
@@ -235,10 +75,10 @@ public class TransactionServicesTest {
         when(resultSet.getString("note")).thenReturn("Test note");
         when(resultSet.getInt("user_id")).thenReturn(mockUser.getId());
 
-        // Call the method
+        // Gọi phương thức cần test
         List<Transaction> transactions = transactionServices.getTransactionsByDateRange(startDate, endDate);
 
-        // Verify results
+        // Xác nhận kết quả
         assertEquals(1, transactions.size());
         assertEquals(1000.0, transactions.get(0).getAmount());
         assertEquals(1, transactions.get(0).getCategoryId());
@@ -246,29 +86,29 @@ public class TransactionServicesTest {
         assertEquals("Test note", transactions.get(0).getNote());
         assertEquals(mockUser.getId(), transactions.get(0).getUserId());
 
-        // Verify interactions
+        // Xác nhận tương tác
         verify(preparedStatement).setDate(1, Date.valueOf(startDate));
         verify(preparedStatement).setDate(2, Date.valueOf(endDate));
         verify(preparedStatement).setInt(3, mockUser.getId());
     }
 
-    // Test addTransaction() with valid data
+    // Test phương thức addTransaction() với dữ liệu hợp lệ
     @Test
-    @DisplayName("Test addTransaction() with valid transaction")
+    @DisplayName("Test addTransaction() với giao dịch hợp lệ")
     void testAddTransactionSuccess() throws SQLException {
         // Mock executeUpdate
         when(preparedStatement.executeUpdate()).thenReturn(1);
 
-        // Create a valid transaction
+        // Tạo giao dịch hợp lệ
         Transaction transaction = new Transaction(1000.0, 1, LocalDate.now(), "Test note", mockUser.getId());
 
-        // Call the method
+        // Gọi phương thức cần test
         boolean result = transactionServices.addTransaction(transaction);
 
-        // Verify results
+        // Xác nhận kết quả
         assertTrue(result);
 
-        // Verify interactions
+        // Xác nhận tương tác
         verify(preparedStatement).setDouble(1, 1000.0);
         verify(preparedStatement).setString(2, "Test note");
         verify(preparedStatement).setDate(3, Date.valueOf(LocalDate.now()));
@@ -276,46 +116,47 @@ public class TransactionServicesTest {
         verify(preparedStatement).setInt(5, mockUser.getId());
     }
 
-    // Test addTransaction() with invalid transaction (validation fails)
+    // Test phương thức deleteTransaction()
     @Test
-    @DisplayName("Test addTransaction() with invalid transaction")
-    void testAddTransactionInvalid() {
-        // Create an invalid transaction (amount <= 0)
-        Transaction invalidTransaction = new Transaction(0, 1, LocalDate.now(), "Test note", mockUser.getId());
-
-        // Verify exception
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            transactionServices.addTransaction(invalidTransaction);
-        });
-        assertEquals("Số tiền phải lớn hơn 0 và không vượt quá 1,000,000,000,000!", exception.getMessage());
-    }
-
-    // Test deleteTransaction()
-    @Test
-    @DisplayName("Test deleteTransaction() with valid ID")
+    @DisplayName("Test deleteTransaction() với ID hợp lệ")
     void testDeleteTransactionSuccess() throws SQLException {
         // Mock executeUpdate
         when(preparedStatement.executeUpdate()).thenReturn(1);
 
-        // Call the method
+        // Gọi phương thức cần test
         transactionServices.deleteTransaction(1);
 
-        // Verify interactions
+        // Xác nhận tương tác
         verify(preparedStatement).setInt(1, 1);
         verify(preparedStatement).executeUpdate();
     }
 
-    // Test updateTransaction() with valid data
+    // Test phương thức deleteTransaction() với ID không tồn tại
     @Test
-    @DisplayName("Test updateTransaction() with valid data")
+    @DisplayName("Test deleteTransaction() với ID không tồn tại")
+    void testDeleteTransactionNotFound() throws SQLException {
+        // Mock executeUpdate để trả về 0 (không có hàng nào bị ảnh hưởng)
+        when(preparedStatement.executeUpdate()).thenReturn(0);
+
+        // Gọi phương thức cần test
+        transactionServices.deleteTransaction(999);
+
+        // Xác nhận tương tác
+        verify(preparedStatement).setInt(1, 999);
+        verify(preparedStatement).executeUpdate();
+    }
+
+    // Test phương thức updateTransaction() với dữ liệu hợp lệ
+    @Test
+    @DisplayName("Test updateTransaction() với dữ liệu hợp lệ")
     void testUpdateTransactionSuccess() throws SQLException {
         // Mock executeUpdate
         when(preparedStatement.executeUpdate()).thenReturn(1);
 
-        // Call the method
+        // Gọi phương thức cần test
         transactionServices.updateTransaction(1, 2000.0, 2, LocalDate.now(), "Updated note", mockUser.getId());
 
-        // Verify interactions
+        // Xác nhận tương tác
         verify(preparedStatement).setDouble(1, 2000.0);
         verify(preparedStatement).setInt(2, 2);
         verify(preparedStatement).setDate(3, Date.valueOf(LocalDate.now()));
@@ -324,9 +165,37 @@ public class TransactionServicesTest {
         verify(preparedStatement).setInt(6, 1);
     }
 
-    // Test validation constraints for Transaction
+    // Test phương thức getAllTran()
     @Test
-    @DisplayName("Test validation - amount <= 0")
+    @DisplayName("Test getAllTran() trả về danh sách giao dịch")
+    void testGetAllTran() throws SQLException {
+        // Mock ResultSet
+        when(resultSet.next()).thenReturn(true, false);
+        when(resultSet.getInt("id")).thenReturn(1);
+        when(resultSet.getDouble("amount")).thenReturn(1000.0);
+        when(resultSet.getInt("category_id")).thenReturn(1);
+        when(resultSet.getDate("date")).thenReturn(Date.valueOf(LocalDate.now()));
+        when(resultSet.getString("note")).thenReturn("Test note");
+        when(resultSet.getInt("user_id")).thenReturn(mockUser.getId());
+
+        // Gọi phương thức cần test
+        List<Transaction> transactions = transactionServices.getAllTran();
+
+        // Xác nhận kết quả
+        assertEquals(1, transactions.size());
+        assertEquals(1000.0, transactions.get(0).getAmount());
+        assertEquals(1, transactions.get(0).getCategoryId());
+        assertEquals(LocalDate.now(), transactions.get(0).getDate());
+        assertEquals("Test note", transactions.get(0).getNote());
+        assertEquals(mockUser.getId(), transactions.get(0).getUserId());
+
+        // Xác nhận tương tác
+        verify(preparedStatement).setInt(1, mockUser.getId());
+    }
+
+    // Các test về constraints validate của Transaction
+    @Test
+    @DisplayName("Test validate() - số tiền <= 0")
     void testValidateAmountLessThanOrEqualToZero() {
         Transaction transaction = new Transaction(0, 1, LocalDate.now(), "Test note", mockUser.getId());
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, transaction::validate);
@@ -334,7 +203,7 @@ public class TransactionServicesTest {
     }
 
     @Test
-    @DisplayName("Test validation - amount > 1 trillion")
+    @DisplayName("Test validate() - số tiền > 1 nghìn tỷ")
     void testValidateAmountGreaterThanOneTrillion() {
         Transaction transaction = new Transaction(1_000_000_000_001.0, 1, LocalDate.now(), "Test note", mockUser.getId());
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, transaction::validate);
@@ -342,7 +211,7 @@ public class TransactionServicesTest {
     }
 
     @Test
-    @DisplayName("Test validation - date is null")
+    @DisplayName("Test validate() - ngày là null")
     void testValidateDateIsNull() {
         Transaction transaction = new Transaction(1000.0, 1, null, "Test note", mockUser.getId());
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, transaction::validate);
@@ -350,7 +219,7 @@ public class TransactionServicesTest {
     }
 
     @Test
-    @DisplayName("Test validation - date in future")
+    @DisplayName("Test validate() - ngày trong tương lai")
     void testValidateDateInFuture() {
         Transaction transaction = new Transaction(1000.0, 1, LocalDate.now().plusDays(1), "Test note", mockUser.getId());
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, transaction::validate);
@@ -358,10 +227,63 @@ public class TransactionServicesTest {
     }
 
     @Test
-    @DisplayName("Test validation - category <= 0")
+    @DisplayName("Test validate() - mã danh mục <= 0")
     void testValidateCategoryInvalid() {
         Transaction transaction = new Transaction(1000.0, 0, LocalDate.now(), "Test note", mockUser.getId());
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, transaction::validate);
         assertEquals("Danh mục không được để trống!", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Test validate() - giao dịch hợp lệ")
+    void testValidTransaction() {
+        // Tạo giao dịch hợp lệ
+        Transaction transaction = new Transaction(1000.0, 1, LocalDate.now(), "Test note", mockUser.getId());
+        
+        // Kiểm tra không ném ngoại lệ
+        assertDoesNotThrow(transaction::validate);
+    }
+
+    @Test
+    @DisplayName("Test validate() - giao dịch với số tiền nhỏ nhất hợp lệ")
+    void testValidTransactionWithMinimumAmount() {
+        // Tạo giao dịch với số tiền nhỏ nhất hợp lệ
+        Transaction transaction = new Transaction(0.01, 1, LocalDate.now(), "Test note", mockUser.getId());
+        
+        // Kiểm tra không ném ngoại lệ
+        assertDoesNotThrow(transaction::validate);
+    }
+
+    @Test
+    @DisplayName("Test validate() - giao dịch với số tiền lớn nhất hợp lệ")
+    void testValidTransactionWithMaximumAmount() {
+        // Tạo giao dịch với số tiền lớn nhất hợp lệ
+        Transaction transaction = new Transaction(1_000_000_000_000.0, 1, LocalDate.now(), "Test note", mockUser.getId());
+        
+        // Kiểm tra không ném ngoại lệ
+        assertDoesNotThrow(transaction::validate);
+    }
+
+    @Test
+    @DisplayName("Test validate() - giao dịch với ngày trong quá khứ")
+    void testValidTransactionWithPastDate() {
+        // Tạo giao dịch với ngày trong quá khứ
+        Transaction transaction = new Transaction(1000.0, 1, LocalDate.now().minusDays(1), "Test note", mockUser.getId());
+        
+        // Kiểm tra không ném ngoại lệ
+        assertDoesNotThrow(transaction::validate);
+    }
+
+    @Test
+    @DisplayName("Test addTransaction() với giao dịch không hợp lệ")
+    void testAddTransactionInvalid() {
+        // Tạo giao dịch không hợp lệ (số tiền <= 0)
+        Transaction invalidTransaction = new Transaction(0, 1, LocalDate.now(), "Test note", mockUser.getId());
+
+        // Kiểm tra ngoại lệ
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            transactionServices.addTransaction(invalidTransaction);
+        });
+        assertEquals("Số tiền phải lớn hơn 0 và không vượt quá 1,000,000,000,000!", exception.getMessage());
     }
 }
