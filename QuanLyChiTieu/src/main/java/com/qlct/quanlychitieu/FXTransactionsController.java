@@ -108,13 +108,18 @@ public class FXTransactionsController implements Initializable {
 
         cbFilterType.setItems(FXCollections.observableArrayList("Ngày", "Tuần", "Tháng", "Quý", "Năm"));
         dpFilterDate.setValue(LocalDate.now());
-// Định dạng DatePicker
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        try {
+            addCategoryDefault();
+        } catch (SQLException ex) {
+            Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         btDate.setConverter(new StringConverter<LocalDate>() {
             @Override
             public String toString(LocalDate date) {
                 return date != null ? dateFormatter.format(date) : "";
             }
+
 
             @Override
             public LocalDate fromString(String string) {
@@ -172,7 +177,7 @@ public class FXTransactionsController implements Initializable {
 
     }
 
-    public void addCategoryDefault() throws SQLException {
+     public void addCategoryDefault() throws SQLException {
         listDefaultCategory = userCategoryServices.getListDefaultCategory();
         int currentUserId = UserSessionServices.getCurrentUser().getId();
 
@@ -376,10 +381,14 @@ public class FXTransactionsController implements Initializable {
 
                     confirmation.showAndWait().ifPresent(response -> {
                         if (response == javafx.scene.control.ButtonType.OK) {
-                            TransactionServices ts = new TransactionServices();
-                            ts.deleteTransaction(tran.getIdTran());
-                            Utils.getAlert("Xóa thành công!").show();
-                            loadTableData();
+                            try {
+                                TransactionServices ts = new TransactionServices();
+                                ts.deleteTransaction(tran.getIdTran());
+                                Utils.getAlert("Xóa thành công!").show();
+                                loadTableData();
+                            } catch (SQLException ex) {
+                                Logger.getLogger(FXTransactionsController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                     });
                 });

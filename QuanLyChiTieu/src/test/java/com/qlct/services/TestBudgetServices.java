@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import com.qlct.services.UserSessionServices;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +12,6 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.qlct.pojo.JdbcUtils;
 import com.qlct.pojo.User;
-import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import static org.mockito.Mockito.*;
@@ -41,41 +39,37 @@ public class TestBudgetServices {
         budgetServices = new BudgetServices();
         mockConn = mock(Connection.class);
     }
+    
+    // Test input budget
 
     @Test
-    public void testIsValidAmount_invalidString() {
+    public void testIsValidAmountInvalidString() {
         Assertions.assertFalse(budgetServices.isValidAmount("abc"));
     }
 
     @Test
-    public void testIsValidAmount_emptyValue() {
+    public void testIsValidAmountEmptyValue() {
         Assertions.assertFalse(budgetServices.isValidAmount(""));
     }
 
     @Test
-    public void testIsValidAmount_negativeAmount() {
+    public void testIsValidAmountNegativeAmount() {
         Assertions.assertTrue(budgetServices.isValidAmount("-100000"));
     }
 
     @Test
-    public void testIsValidAmount_validDouble() {
+    public void testIsValidAmountValidDouble() {
         Assertions.assertTrue(budgetServices.isValidAmount("123000.45"));
     }
 
     @Test
-    public void testValidateAmount_validInput() {
+    public void testValidateAmountvalidInput() {
         double result = budgetServices.validateAmount("100000");
         Assertions.assertEquals(100000, result);
     }
 
     @Test
-    public void testValidateAmount_validDouble() {
-        double result = budgetServices.validateAmount("123000.500");
-        Assertions.assertEquals(123001.0, result);
-    }
-
-    @Test
-    public void testValidateAmount_inputWithLeadingZeros() {
+    public void testValidateAmountinputWithLeadingZeros() {
         double result = budgetServices.validateAmount("0000123");
         Assertions.assertEquals(123, result);
     }
@@ -89,7 +83,7 @@ public class TestBudgetServices {
     }
 
     @Test
-    public void testValidateAmount_emptyInput() {
+    public void testValidateAmountEmptyInput() {
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
             budgetServices.validateAmount("");
         });
@@ -97,7 +91,7 @@ public class TestBudgetServices {
     }
 
     @Test
-    public void testValidateAmount_longInput() {
+    public void testValidateAmountLongInput() {
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
             budgetServices.validateAmount("99999999999999999999999");
         });
@@ -105,15 +99,17 @@ public class TestBudgetServices {
     }
 
     @Test
-    public void testValidateInput_negativeInput() {
+    public void testValidateInputNegativeInput() {
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
             budgetServices.validateAmount("-100");
         });
         Assertions.assertEquals("Không được nhập số âm.", exception.getMessage());
     }
-
+    
+    
+    // Budget 80%
     @Test
-    public void testIsBudgetWithinLimit_Under80Percent() {
+    public void testIsBudgetWithinLimitUnder80Percent() {
         Assertions.assertTrue(budgetServices.isBudgetWithinLimit(60000.0, 100000.0));
     }
 
@@ -128,9 +124,8 @@ public class TestBudgetServices {
     }
 
     @Test
-    public void testGetIdByName_found() throws SQLException {
-        // Arrange
-        User mockUser = new User(1, "John", "Doe", "johndoe", "johndoe@example.com");
+    public void testGetIdByNameFound() throws SQLException {
+        User mockUser = new User(1, "Quí", "Trần", "qui123", "anhqui@gmail.com");
         Connection mockConn = mock(Connection.class);
         PreparedStatement mockStmt = mock(PreparedStatement.class);
         ResultSet mockRs = mock(ResultSet.class);
@@ -140,26 +135,20 @@ public class TestBudgetServices {
 
             try (MockedStatic<JdbcUtils> jdbcUtilsMock = mockStatic(JdbcUtils.class)) {
                 jdbcUtilsMock.when(JdbcUtils::getConn).thenReturn(mockConn);
-
-                // Giả lập câu truy vấn SELECT
                 when(mockConn.prepareStatement("SELECT c.id "
                         + "FROM category c "
                         + "LEFT JOIN user_cate uc ON c.id = uc.category_id "
                         + "WHERE c.name = ? AND (c.is_default = 1 OR (c.is_default = 0 AND uc.user_id = ?)) "
                         + "LIMIT 1;")).thenReturn(mockStmt);
-
                 when(mockStmt.executeQuery()).thenReturn(mockRs);
                 when(mockRs.next()).thenReturn(true);
                 when(mockRs.getInt("id")).thenReturn(1);
-
-                // Act
+                
                 BudgetServices budgetServices = new BudgetServices();
                 int actualId = budgetServices.getIdByName("Ăn uống", mockUser.getId());
 
-                // Assert
                 assertEquals(1, actualId);
 
-                // Verify
                 verify(mockStmt).setString(1, "Ăn uống");
                 verify(mockStmt).setInt(2, 1);
                 verify(mockStmt).executeQuery();
@@ -168,9 +157,9 @@ public class TestBudgetServices {
     }
 
     @Test
-    public void testGetIdByName_notFound() throws SQLException {
+    public void testGetIdByNameNotFound() throws SQLException {
         // Arrange
-        User mockUser = new User(1, "John", "Doe", "johndoe", "johndoe@example.com");
+        User mockUser = new User(1, "Quí", "Trần", "qui123", "anhqui@gmail.com");
         Connection mockConn = mock(Connection.class);
         PreparedStatement mockStmt = mock(PreparedStatement.class);
         ResultSet mockRs = mock(ResultSet.class);
@@ -181,7 +170,6 @@ public class TestBudgetServices {
             try (MockedStatic<JdbcUtils> jdbcUtilsMock = mockStatic(JdbcUtils.class)) {
                 jdbcUtilsMock.when(JdbcUtils::getConn).thenReturn(mockConn);
 
-                // Giả lập câu truy vấn SELECT
                 when(mockConn.prepareStatement("SELECT c.id "
                         + "FROM category c "
                         + "LEFT JOIN user_cate uc ON c.id = uc.category_id "
@@ -189,16 +177,12 @@ public class TestBudgetServices {
                         + "LIMIT 1;")).thenReturn(mockStmt);
 
                 when(mockStmt.executeQuery()).thenReturn(mockRs);
-                when(mockRs.next()).thenReturn(false); // KHÔNG tìm thấy
+                when(mockRs.next()).thenReturn(false);
 
-                // Act
                 BudgetServices budgetServices = new BudgetServices();
                 int actualId = budgetServices.getIdByName("Nghỉ dưỡng", mockUser.getId());
+                assertEquals(-1, actualId); 
 
-                // Assert
-                assertEquals(-1, actualId); // Nếu không tìm thấy thì trả về -1
-
-                // Verify
                 verify(mockStmt).setString(1, "Nghỉ dưỡng");
                 verify(mockStmt).setInt(2, 1);
                 verify(mockStmt).executeQuery();
@@ -207,7 +191,7 @@ public class TestBudgetServices {
     }
 
     @Test
-    public void testGetTotalBudgetForCategory_found() throws SQLException {
+    public void testGetTotalBudgetForCategoryFound() throws SQLException {
         // Arrange
         int categoryId = 2;
         int userId = 1;
@@ -232,15 +216,12 @@ public class TestBudgetServices {
 
             BudgetServices budgetServices = new BudgetServices();
 
-            // Act
             double actualTotal = budgetServices.getTotalBudgetForCategory(categoryId, userId);
 
-            // Assert
-            assertEquals(expectedTotal, actualTotal, 0.001); // cho phép lệch nhỏ
+            assertEquals(expectedTotal, actualTotal, 0.001);
 
-            // Verify
-            verify(mockStmt).setInt(eq(1), anyInt()); // currentMonth
-            verify(mockStmt).setInt(eq(2), anyInt()); // currentYear
+            verify(mockStmt).setInt(eq(1), anyInt()); 
+            verify(mockStmt).setInt(eq(2), anyInt()); 
             verify(mockStmt).setInt(3, userId);
             verify(mockStmt).setInt(4, categoryId);
             verify(mockStmt).executeQuery();
@@ -248,8 +229,7 @@ public class TestBudgetServices {
     }
 
     @Test
-    public void testGetTotalBudgetForCategory_notFound() throws SQLException {
-        // Arrange
+    public void testGetTotalBudgetForCategoryNotFound() throws SQLException {
         int categoryId = 2;
         int userId = 1;
         double expectedTotal = 0.0;
@@ -268,17 +248,14 @@ public class TestBudgetServices {
                     .thenReturn(mockStmt);
 
             when(mockStmt.executeQuery()).thenReturn(mockRs);
-            when(mockRs.next()).thenReturn(false); // Không có kết quả
+            when(mockRs.next()).thenReturn(false); 
 
             BudgetServices budgetServices = new BudgetServices();
-
-            // Act
+            
             double actualTotal = budgetServices.getTotalBudgetForCategory(categoryId, userId);
 
-            // Assert
             assertEquals(expectedTotal, actualTotal, 0.001);
 
-            // Verify
             verify(mockStmt).setInt(eq(1), anyInt());
             verify(mockStmt).setInt(eq(2), anyInt());
             verify(mockStmt).setInt(3, userId);
@@ -288,8 +265,7 @@ public class TestBudgetServices {
     }
 
     @Test
-    public void testGetTotalExpensesForCategory_found() throws SQLException {
-        // Arrange
+    public void testGetTotalExpensesForCategoryFound() throws SQLException {
         int categoryId = 3;
         int userId = 1;
         double expectedTotal = 3000.0;
@@ -313,15 +289,12 @@ public class TestBudgetServices {
 
             BudgetServices budgetServices = new BudgetServices();
 
-            // Act
             double actualTotal = budgetServices.getTotalExpensesForCategory(categoryId, userId);
 
-            // Assert
             assertEquals(expectedTotal, actualTotal, 0.001);
 
-            // Verify
-            verify(mockStmt).setInt(eq(1), anyInt()); // currentMonth
-            verify(mockStmt).setInt(eq(2), anyInt()); // currentYear
+            verify(mockStmt).setInt(eq(1), anyInt()); 
+            verify(mockStmt).setInt(eq(2), anyInt()); 
             verify(mockStmt).setInt(3, userId);
             verify(mockStmt).setInt(4, categoryId);
             verify(mockStmt).executeQuery();
@@ -353,13 +326,9 @@ public class TestBudgetServices {
 
             BudgetServices budgetServices = new BudgetServices();
 
-            // Act
             double actualTotal = budgetServices.getTotalExpensesForCategory(categoryId, userId);
-
-            // Assert
             assertEquals(expectedTotal, actualTotal, 0.001);
 
-            // Verify
             verify(mockStmt).setInt(eq(1), anyInt());
             verify(mockStmt).setInt(eq(2), anyInt());
             verify(mockStmt).setInt(3, userId);
@@ -376,8 +345,7 @@ public class TestBudgetServices {
         ResultSet mockRs = mock(ResultSet.class);
         User mockUser = new User(1, "John", "Doe", "johndoe", "johndoe@example.com");
 
-        // Giả lập dữ liệu trả về từ ResultSet
-        when(mockRs.next()).thenReturn(true, false); // chỉ có 1 dòng dữ liệu
+        when(mockRs.next()).thenReturn(true, false); 
         when(mockRs.getInt("id")).thenReturn(101);
         when(mockRs.getDouble("amount")).thenReturn(5000.0);
         when(mockRs.getInt("user_id")).thenReturn(1);

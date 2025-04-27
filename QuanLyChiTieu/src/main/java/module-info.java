@@ -7,6 +7,7 @@ module com.qlct.quanlychitieu {
     exports com.qlct.quanlychitieu;
     exports com.qlct.pojo;
     exports com.qlct.services;
+    opens com.qlct.services;
     requires jbcrypt;
     requires java.base;
     requires javafx.swingEmpty;

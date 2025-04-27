@@ -1,7 +1,7 @@
+
 import com.qlct.pojo.JdbcUtils;
 import com.qlct.pojo.User;
 import com.qlct.services.ChartServices;
-import com.qlct.services.LoginServices;
 import com.qlct.services.UserSessionServices;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -19,10 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -48,6 +45,7 @@ public class TestCaseCritical {
     private MockedStatic<BCrypt> bcryptMock;
 
     private User testUser;
+    // Các payload tấn công SQL Injection phổ biến
     private final String[] SQLInjectionPayloads = {
         "' OR '1'='1",
         "'; DROP TABLE user; --",
@@ -55,6 +53,7 @@ public class TestCaseCritical {
         "admin'--",
         "1'; INSERT INTO user VALUES('hacker','hacker','hacker@evil.com','$2a$12$hacked','Hacker','Hacker',NOW()); --"
     };
+    // --- Khởi tạo JavaFX Platform (do cần load FXMLLoader trong test)
 
     @BeforeAll
     public static void initJavaFX() {
@@ -74,9 +73,12 @@ public class TestCaseCritical {
         testUser.setId(1);
         testUser.setUsername("test_user");
 
-        // Thiết lập mock
+        // Thiết lập hành vi mock:
+        // UserSessionServices trả về testUser
         userSessionServicesMock.when(UserSessionServices::getCurrentUser).thenReturn(testUser);
+        // JdbcUtils trả về kết nối đã mock
         jdbcUtilsMock.when(JdbcUtils::getConn).thenReturn(mockConnection);
+
         bcryptMock.when(() -> BCrypt.hashpw(anyString(), anyString())).thenReturn("hashedPassword");
         bcryptMock.when(() -> BCrypt.gensalt(anyInt())).thenReturn("salt");
     }
@@ -88,34 +90,35 @@ public class TestCaseCritical {
         bcryptMock.close();
     }
 
-    // 1. Advanced SQL Injection Tests
+    // 1. Kiểm tra chống SQL Injection
     @Test
     public void testAdvancedSQLInjectionInChartServices() throws SQLException {
         ChartServices chartServices = new ChartServices();
         LocalDate currentDate = LocalDate.now();
 
-        // Setup mocks
+        // Mock các method chuẩn bị truy vấn
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
         when(mockPreparedStatement.executeQuery()).thenReturn(mockResultSet);
 
-        // Test multiple SQL injection payloads
+        // Lặp qua từng payload SQL Injection để test
         for (String payload : SQLInjectionPayloads) {
             try {
-                // Test with harmful type parameter
+                // gọi hàm sử dụng payload
                 chartServices.getExpenseCurrentMonthChart(payload);
 
-                // Verify that injection doesn't change the SQL behavior
+                // Kiểm tra rằng hàm set các tham số đúng (không để lỗi SQL Injection)
                 verify(mockPreparedStatement, atLeastOnce()).setInt(eq(1), eq(testUser.getId()));
                 verify(mockPreparedStatement, atLeastOnce()).setString(eq(2), eq(payload));
 
-                // Test with harmful date range
+                // Gọi hàm lọc theo ngày
                 chartServices.getExpensesFilterByDateChart(currentDate, currentDate, payload);
+                // Kiểm tra các tham số đúng
                 verify(mockPreparedStatement, atLeastOnce()).setDate(eq(1), any(Date.class));
                 verify(mockPreparedStatement, atLeastOnce()).setDate(eq(2), any(Date.class));
                 verify(mockPreparedStatement, atLeastOnce()).setInt(eq(3), eq(testUser.getId()));
                 verify(mockPreparedStatement, atLeastOnce()).setString(eq(4), eq(payload));
             } catch (Exception e) {
-                // Should not throw dangerous exceptions that reveal SQL structure
+                // Nếu lỗi xuất hiện, đảm bảo lỗi không tiết lộ cấu trúc database
                 assertFalse(e.getMessage().contains("syntax error"),
                         "SQL error message might reveal database structure: " + e.getMessage());
                 assertFalse(e.getMessage().contains("table"),
@@ -127,7 +130,7 @@ public class TestCaseCritical {
     // 4. 	Bảo vệ file server
     @Test
     public void testAdvancedPathTraversal() {
-        // Extended path traversal payloads
+        // Các payload tấn công path traversal
         String[] pathTraversalPayloads = {
             "../../../etc/passwd",
             "..\\..\\..\\Windows\\System32\\drivers\\etc\\hosts",
@@ -146,7 +149,7 @@ public class TestCaseCritical {
             boolean canAccess = file.exists() && file.canRead();
             assertFalse(canAccess, "Should not access sensitive path: " + path);
 
-            // Try more operations that could be dangerous
+            // Tạo file tạm và thử kết hợp đường dẫn nguy hiểm
             try {
                 // Create a temporary file using the path
                 Path tempPath = Paths.get(System.getProperty("java.io.tmpdir"), "test_security_" + new Random().nextInt(1000) + ".txt");
@@ -165,20 +168,20 @@ public class TestCaseCritical {
         }
     }
 
-    //Bảo vệ quyền file, ngăn truy cập trái phép
+    //Kiểm tra khoá file và phân quyền file để chống truy cập trái phép
     @Test
     public void testFileLockingAndPermissions() {
         try {
-            // Create a test file
+            // Tạo file tạm để test
             File testFile = File.createTempFile("security_test", ".txt");
             testFile.deleteOnExit();
 
-            // Write some data
+            // Ghi dữ liệu vào file
             try (FileWriter writer = new FileWriter(testFile)) {
                 writer.write("Test security data");
             }
 
-            // Check file permissions
+            // Check quyền file
             boolean isReadOnly = !testFile.canWrite();
             boolean isWorldReadable = testFile.setReadable(true, false);
 
@@ -186,22 +189,22 @@ public class TestCaseCritical {
             testFile.setReadable(true, true);  // Only owner can read
             testFile.setWritable(true, true);  // Only owner can write
 
-            // Try file locking mechanism
+            // Sau đó reset lại: chỉ owner được đọc ghi
             try (RandomAccessFile raf = new RandomAccessFile(testFile, "rw"); FileInputStream fis = new FileInputStream(testFile)) {
 
-                // Lock the file
+                // Khoá file và kiểm tra
                 java.nio.channels.FileLock lock = raf.getChannel().tryLock();
                 assertNotNull(lock, "File should be lockable");
 
                 if (lock != null) {
-                    // Verify that the file is locked by trying another stream
+                    // Khi file đang bị lock, nếu mở ghi sẽ phải lỗi
                     assertThrows(IOException.class, () -> {
                         try (FileOutputStream fos = new FileOutputStream(testFile, true)) {
                             fos.write("This should fail".getBytes());
                         }
                     });
 
-                    // Release lock
+                    // GIải phóng file
                     lock.release();
                 }
             }
@@ -209,8 +212,8 @@ public class TestCaseCritical {
             fail("File security test failed: " + e.getMessage());
         }
     }
-    //	Phát hiện thực thi mã độc nguy hiểm
 
+    //	Phát hiện thực thi mã độc nguy hiểm
     @Test
     public void testAdvancedFXMLScriptInjection_Revised() throws Exception {
         String[] fxmlPayloads = {
@@ -242,17 +245,18 @@ public class TestCaseCritical {
         for (String payload : fxmlPayloads) {
             File fxmlFile = new File("test-malicious-" + System.currentTimeMillis() + ".fxml");
             try {
+                // Ghi nội dung payload vào file FXML
                 try (FileWriter fw = new FileWriter(fxmlFile)) {
                     fw.write(payload);
                 }
 
-                // Check trạng thái file trước khi test
+                // Kiểm tra trước xem có file test.txt / test2.txt tồn tại không
                 File outputFile1 = new File("test.txt");
                 File outputFile2 = new File("test2.txt");
                 boolean existedBefore1 = outputFile1.exists();
                 boolean existedBefore2 = outputFile2.exists();
 
-                // Load FXML
+                // Load FXML => nếu có lỗi cũng ok (miễn đừng tạo file)
                 try {
                     FXMLLoader loader = new FXMLLoader(fxmlFile.toURI().toURL());
                     loader.load();
@@ -260,13 +264,14 @@ public class TestCaseCritical {
                     System.out.println("⚠️ Exception khi load FXML (không bắt buộc): " + e.getMessage());
                 }
 
-                // Kiểm tra có tạo file độc hại không
+                // Sau load, kiểm tra xem có file độc nào được tạo ra không
                 boolean createdAfter1 = outputFile1.exists() && !existedBefore1;
                 boolean createdAfter2 = outputFile2.exists() && !existedBefore2;
 
                 assertFalse(createdAfter1, "❌ Phát hiện mã độc: file test.txt đã được tạo!");
                 assertFalse(createdAfter2, "❌ Phát hiện mã độc: file test2.txt đã được tạo!");
 
+                //xóa file
                 outputFile1.delete();
                 outputFile2.delete();
             } finally {
@@ -275,7 +280,6 @@ public class TestCaseCritical {
         }
     }
 
-    // 6. 	Ngăn rò rỉ dữ liệu DB khi lỗi
     @Test
     public void testDatabaseConnectionLeakage() throws SQLException {
         // Simulate a database connection issue
@@ -296,4 +300,5 @@ public class TestCaseCritical {
         assertFalse(exceptionMessage.contains("jdbc:"),
                 "Error should not expose connection string");
     }
+
 }

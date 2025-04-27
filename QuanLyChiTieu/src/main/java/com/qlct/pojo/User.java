@@ -22,6 +22,10 @@ public class User {
     private String avatar;
     private LocalDateTime createdDate;
     
+    public User(int id){
+        this.id = id;
+    }
+    
 
     public User(int id, String firstName, String lastName, String username, String password, String email, String avatar, LocalDateTime createdDate) {
         this.id = id;

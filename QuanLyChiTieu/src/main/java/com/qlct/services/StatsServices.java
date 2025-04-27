@@ -67,7 +67,7 @@ public class StatsServices {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
 
-//        String sql = "{call stats_filter_by_date(?, ?, ?, ?)}";
+     //   String sql = "{call stats_filter_by_date(?, ?, ?, ?)}";
         String sql = "SELECT \n"
                 + "    category.id, \n"
                 + "    category.name AS name, \n"
@@ -113,7 +113,7 @@ public class StatsServices {
     public List<Expense> getMonthlyExpenses(String type, int year) throws SQLException {
         List<Expense> expenseList = new ArrayList<>();
         int userId = UserSessionServices.getCurrentUser().getId();
-        // String sql = "{call stats_month_expense(?, ?)}";
+      //  String sql = "{call stats_month_expense(?, ?, ?)}";
         String sql = "SELECT \n"
                 + "    MONTH(transaction.date) AS month, \n"
                 + "    COALESCE(SUM(transaction.amount), 0) AS total_amount\n"
@@ -134,9 +134,9 @@ public class StatsServices {
 
         try (Connection conn = JdbcUtils.getConn(); 
             PreparedStatement stm = conn.prepareStatement(sql)) {
-            stm.setInt(1, year);
-            stm.setInt(2, userId);
-            stm.setString(3, type);
+            stm.setInt(1, userId);
+            stm.setString(2, type);
+            stm.setInt(3, year);
 
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
