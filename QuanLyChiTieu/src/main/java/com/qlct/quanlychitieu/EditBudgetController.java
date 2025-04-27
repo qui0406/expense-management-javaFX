@@ -10,8 +10,10 @@ import com.qlct.services.BudgetServices;
 import com.qlct.services.CategoryServices;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
@@ -91,6 +93,21 @@ public class EditBudgetController implements Initializable {
         colAmount.setCellValueFactory(new PropertyValueFactory<>("amountBudget"));
         colAmount.setPrefWidth(150);
 
+        // Format số tiền hiển thị dưới dạng: 1.000.000 VND
+        colAmount.setCellFactory(column -> new TableCell<>() {
+            private final NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+
+            @Override
+            protected void updateItem(Double amount, boolean empty) {
+                super.updateItem(amount, empty);
+                if (empty || amount == null) {
+                    setText(null);
+                } else {
+                    setText(currencyFormat.format(amount.intValue()) + " VND");
+                }
+            }
+        });
+        
         // Cột Loại
         TableColumn<Budget, String> colType = new TableColumn<>("Loại");
         colType.setCellValueFactory(new PropertyValueFactory<>("type"));
@@ -153,7 +170,7 @@ public class EditBudgetController implements Initializable {
     }
 
     public double validateInput(String input) {
-        try {
+        try {   
             return budgetServices.validateAmount(input);
         } catch (IllegalArgumentException e) {
             Platform.runLater(() -> {
