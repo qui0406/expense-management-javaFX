@@ -25,17 +25,17 @@
             <Font size="22.0" />
          </font>
       </Label>
-      <TextField fx:id="txtUsernameRegister" layoutX="24.0" layoutY="134.0" prefHeight="38.0" prefWidth="302.0" promptText="Username" />
-      <PasswordField fx:id="txtPasswordRegister" layoutX="24.0" layoutY="238.0" prefHeight="38.0" prefWidth="302.0" promptText="Mật khẩu" />
-      <Button fx:id="btnRegister" layoutX="24.0" layoutY="344.0" mnemonicParsing="false" onAction="#btnRegisterHandler" prefHeight="38.0" prefWidth="302.0" stylesheets="@style/register.css" text="Đăng ký ngay" textFill="#f4f2f2">
+      <TextField id="txtUsernameRegister" fx:id="txtUsernameRegister" layoutX="24.0" layoutY="134.0" prefHeight="38.0" prefWidth="302.0" promptText="Username" />
+      <PasswordField id="txtPasswordRegister" fx:id="txtPasswordRegister" layoutX="24.0" layoutY="238.0" prefHeight="38.0" prefWidth="302.0" promptText="Mật khẩu" />
+      <Button id="btnRegister" fx:id="btnRegister" layoutX="24.0" layoutY="344.0" mnemonicParsing="false" onAction="#btnRegisterHandler" prefHeight="38.0" prefWidth="302.0" stylesheets="@style/register.css" text="Đăng ký ngay" textFill="#f4f2f2">
          <font>
             <Font size="16.0" />
          </font>
       </Button>
-      <PasswordField fx:id="txtCofirmPassword" layoutX="24.0" layoutY="290.0" prefHeight="38.0" prefWidth="302.0" promptText="Xâc nhận mật khẩu" />
-      <TextField fx:id="txtEmail" layoutX="24.0" layoutY="187.0" prefHeight="38.0" prefWidth="302.0" promptText="Email" />
-      <TextField fx:id="txtLastName" layoutX="24.0" layoutY="81.0" prefHeight="38.0" prefWidth="186.0" promptText="Họ và tên lót" styleClass="textfield" />
-      <TextField fx:id="txtFirstName" layoutX="223.0" layoutY="81.0" prefHeight="38.0" prefWidth="102.0" promptText="Tên" />
+      <PasswordField id="txtCofirmPassword" fx:id="txtCofirmPassword" layoutX="24.0" layoutY="290.0" prefHeight="38.0" prefWidth="302.0" promptText="Xâc nhận mật khẩu" />
+      <TextField id="txtEmail" fx:id="txtEmail" layoutX="24.0" layoutY="187.0" prefHeight="38.0" prefWidth="302.0" promptText="Email" />
+      <TextField id="txtLastName" fx:id="txtLastName" layoutX="24.0" layoutY="81.0" prefHeight="38.0" prefWidth="186.0" promptText="Họ và tên lót" styleClass="textfield" />
+      <TextField id="txtFirstName" fx:id="txtFirstName" layoutX="223.0" layoutY="81.0" prefHeight="38.0" prefWidth="102.0" promptText="Tên" />
       <Label layoutX="36.0" layoutY="411.0" text="Bạn đã có tài khoản?" textFill="#0615b7">
          <font>
             <Font size="14.0" />
@@ -46,7 +46,7 @@
             <Image url="@../../../icons/logo.png" />
          </image>
       </ImageView>
-      <Button layoutX="175.0" layoutY="401.0" mnemonicParsing="false" onAction="#switchLogin" prefHeight="38.0" prefWidth="149.0" styleClass="btnSwitchLogin" stylesheets="@style/register.css" text="Đăng nhập">
+      <Button id="btnSwitchLogin" fx:id="btnSwitchLogin" layoutX="175.0" layoutY="401.0" mnemonicParsing="false" onAction="#switchLogin" prefHeight="38.0" prefWidth="149.0" styleClass="btnSwitchLogin" stylesheets="@style/register.css" text="Đăng nhập">
          <font>
             <Font size="14.0" />
          </font>

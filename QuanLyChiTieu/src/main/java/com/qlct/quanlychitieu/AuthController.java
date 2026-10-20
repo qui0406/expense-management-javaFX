@@ -47,12 +47,26 @@ public class AuthController implements Initializable {
 
     @FXML
     private void switchRegister() throws IOException {
-        App.setRoot("register", 650, 500);
+        try {
+            System.out.println(">>> Switching to register screen...");
+            App.setRoot("register", 650, 500);
+            System.out.println(">>> Switched to register screen successfully!");
+        } catch (Throwable t) {
+            System.err.println(">>> FAILED to switch to register screen: " + t.getMessage());
+            t.printStackTrace();
+        }
     }
 
     @FXML
     private void switchLogin() throws IOException {
-        App.setRoot("login", 650, 500);
+        try {
+            System.out.println(">>> Switching to login screen...");
+            App.setRoot("login", 650, 500);
+            System.out.println(">>> Switched to login screen successfully!");
+        } catch (Throwable t) {
+            System.err.println(">>> FAILED to switch to login screen: " + t.getMessage());
+            t.printStackTrace();
+        }
     }
 
     @FXML

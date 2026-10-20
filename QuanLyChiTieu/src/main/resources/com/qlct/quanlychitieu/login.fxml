@@ -25,9 +25,9 @@
             <Font size="22.0" />
          </font>
       </Label>
-      <TextField fx:id="txtUsername" layoutX="325.0" layoutY="119.0" prefHeight="38.0" prefWidth="262.0" promptText="Tên đăng nhập" />
-      <PasswordField id="inputPassword" fx:id="txtPassword" layoutX="325.0" layoutY="178.0" prefHeight="38.0" prefWidth="262.0" promptText="Mật khẩu" />
-      <Button fx:id="btnLogin" layoutX="447.0" layoutY="239.0" mnemonicParsing="false" onAction="#checkLogin" prefHeight="38.0" prefWidth="140.0" styleClass="BtnLogin" stylesheets="@login.css" text="Đăng nhập" textFill="#101010">
+      <TextField id="txtUsername" fx:id="txtUsername" layoutX="325.0" layoutY="119.0" prefHeight="38.0" prefWidth="262.0" promptText="Tên đăng nhập" />
+      <PasswordField id="txtPassword" fx:id="txtPassword" layoutX="325.0" layoutY="178.0" prefHeight="38.0" prefWidth="262.0" promptText="Mật khẩu" />
+      <Button id="btnLogin" fx:id="btnLogin" layoutX="447.0" layoutY="239.0" mnemonicParsing="false" onAction="#checkLogin" prefHeight="38.0" prefWidth="140.0" styleClass="BtnLogin" stylesheets="@style/login.css" text="Đăng nhập" textFill="#101010">
          <font>
             <Font size="14.0" />
          </font>
@@ -37,7 +37,7 @@
             <Font name="System Italic" size="13.0" />
          </font>
       </Label>
-      <Button fx:id="btnSwitchRegister" layoutX="327.0" layoutY="339.0" mnemonicParsing="false" onAction="#switchRegister" prefHeight="38.0" prefWidth="262.0" styleClass="BtnSwitchRegister" stylesheets="@login.css" text="Đăng ký ngay" textFill="#201414">
+      <Button id="btnSwitchRegister" fx:id="btnSwitchRegister" layoutX="327.0" layoutY="339.0" mnemonicParsing="false" onAction="#switchRegister" prefHeight="38.0" prefWidth="262.0" styleClass="BtnSwitchRegister" stylesheets="@style/login.css" text="Đăng ký ngay" textFill="#201414">
          <font>
             <Font size="16.0" />
          </font>
