@@ -77,6 +77,32 @@
             <version>3.25.3</version>
             <scope>test</scope>
         </dependency>
+        <!-- H2 In-Memory Database for Fast Integration Testing (MySQL Compatibility Mode) -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Testcontainers for Real Containerized Integration Testing -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.19.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>1.19.7</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <version>1.19.7</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
@@ -106,6 +132,11 @@
                         --add-opens java.base/java.util=ALL-UNNAMED
                         --add-opens java.sql/java.sql=ALL-UNNAMED
                     </argLine>
+                    <systemPropertyVariables>
+                        <db.url>jdbc:h2:mem:qlct_default;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER,TRANSACTION;INIT=RUNSCRIPT FROM 'classpath:schema.sql'\;RUNSCRIPT FROM 'classpath:test-data.sql'</db.url>
+                        <db.user>sa</db.user>
+                        <db.password></db.password>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
