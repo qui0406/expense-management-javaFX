@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="434.0" prefWidth="628.0" style="-fx-background-color: aliceblue;" stylesheets="@style/login.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.expensemanagement.AuthController">
+   <children>
+      <AnchorPane layoutY="-2.0" />
+      <Label layoutX="24.0" layoutY="34.0" styleClass="Subject" text="QUẢN LÝ CHI TIÊU " textFill="#1e14cc">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <Line endX="100.0" startX="-100.0" />
+      <Line endX="40.9000244140625" endY="208.0" layoutX="220.0" layoutY="174.0" startX="40.9000244140625" startY="-97.0" stroke="#b7bbd9" />
+      <Label layoutX="393.0" layoutY="70.0" styleClass="txtLogin" text="ĐĂNG NHẬP" textFill="#2d82b5">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <TextField id="txtUsername" fx:id="txtUsername" layoutX="325.0" layoutY="119.0" prefHeight="38.0" prefWidth="262.0" promptText="Tên đăng nhập" />
+      <PasswordField id="txtPassword" fx:id="txtPassword" layoutX="325.0" layoutY="178.0" prefHeight="38.0" prefWidth="262.0" promptText="Mật khẩu" />
+      <Button id="btnLogin" fx:id="btnLogin" layoutX="447.0" layoutY="239.0" mnemonicParsing="false" onAction="#checkLogin" prefHeight="38.0" prefWidth="140.0" styleClass="BtnLogin" stylesheets="@style/login.css" text="Đăng nhập" textFill="#101010">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Label layoutX="326.0" layoutY="306.0" text="Bạn chưa có tài khoản?" textFill="#2e11b1">
+         <font>
+            <Font name="System Italic" size="13.0" />
+         </font>
+      </Label>
+      <Button id="btnSwitchRegister" fx:id="btnSwitchRegister" layoutX="327.0" layoutY="339.0" mnemonicParsing="false" onAction="#switchRegister" prefHeight="38.0" prefWidth="262.0" styleClass="BtnSwitchRegister" stylesheets="@style/login.css" text="Đăng ký ngay" textFill="#201414">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Button>
+      <Label layoutX="325.0" layoutY="249.0" text="Quên mật khẩu ?" textFill="#2e11b1" />
+      <ImageView fitHeight="183.0" fitWidth="182.0" layoutX="36.0" layoutY="106.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../icons/logo.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

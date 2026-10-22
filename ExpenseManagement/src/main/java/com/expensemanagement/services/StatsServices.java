@@ -1,0 +1,152 @@
+package com.expensemanagement.services;
+
+import com.expensemanagement.pojo.Expense;
+import com.expensemanagement.pojo.JdbcUtils;
+import com.expensemanagement.services.UserSessionServices;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+public class StatsServices {
+
+    private Expense expense;
+
+    public List<Expense> getExpenseCurrentMonth(String type) throws SQLException {
+        List<Expense> expenseList = new ArrayList<>();
+        int userId = UserSessionServices.getCurrentUser().getId();
+
+        String sql = "{call stats_current_month(?, ?)}";
+//        String sql
+//                = "SELECT \n"
+//                + "    category.id, \n"
+//                + "    category.name AS name, \n"
+//                + "    COALESCE(SUM(transaction.amount), 0) AS amount\n"
+//                + "FROM \n"
+//                + "    user\n"
+//                + "JOIN \n"
+//                + "    user_cate ON user.id = user_cate.user_id\n"
+//                + "JOIN \n"
+//                + "    category ON category.id = user_cate.category_id\n"
+//                + "LEFT JOIN \n"
+//                + "    transaction ON transaction.user_id = user.id \n"
+//                + "               AND transaction.category_id = category.id\n"
+//                + "               AND MONTH(transaction.date) = MONTH(CURRENT_DATE)\n"
+//                + "               AND YEAR(transaction.date) = YEAR(CURRENT_DATE)\n"
+//                + "WHERE \n"
+//                + "    user.id = ? AND category.type = ?\n"
+//                + "GROUP BY \n"
+//                + "    category.id, category.name\n"
+//                + "HAVING \n"
+//                + "    amount > 0\n"
+//                + "ORDER BY \n"
+//                + "    category.id;";
+
+        try (Connection conn = JdbcUtils.getConn()) {
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setInt(1, userId);
+            stm.setString(2, type);
+
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                int category_id = rs.getInt("id");
+                String categoriesName = rs.getString("name");
+                double sumAmount = rs.getDouble("amount");
+                expense = new Expense(category_id, categoriesName, sumAmount);
+                expenseList.add(expense);
+            }
+        }
+        return expenseList;
+    }
+
+    public List<Expense> getExpensesFilterByDate(LocalDate fromDate, LocalDate toDate, String type) throws SQLException {
+        List<Expense> expenseList = new ArrayList<>();
+        int userId = UserSessionServices.getCurrentUser().getId();
+
+        String sql = "{call stats_filter_by_date(?, ?, ?, ?)}";
+//        String sql = "SELECT \n"
+//                + "    category.id, \n"
+//                + "    category.name AS name, \n"
+//                + "    COALESCE(SUM(transaction.amount), 0) AS amount\n"
+//                + "FROM \n"
+//                + "    user\n"
+//                + "JOIN \n"
+//                + "    user_cate ON user.id = user_cate.user_id\n"
+//                + "JOIN \n"
+//                + "    category ON category.id = user_cate.category_id\n"
+//                + "LEFT JOIN \n"
+//                + "    transaction ON transaction.user_id = user.id \n"
+//                + "               AND transaction.category_id = category.id\n"
+//                + "               AND transaction.date BETWEEN ? AND ?\n"
+//                + "WHERE \n"
+//                + "    user.id = ? AND category.type = ?\n"
+//                + "GROUP BY \n"
+//                + "    category.id, category.name\n"
+//                + "HAVING \n"
+//                + "    amount > 0\n"
+//                + "ORDER BY \n"
+//                + "    category.id;";
+        try (Connection conn = JdbcUtils.getConn()) {
+            PreparedStatement stm = conn.prepareStatement(sql);
+
+            stm.setDate(1, Date.valueOf(fromDate));
+            stm.setDate(2, Date.valueOf(toDate));
+            stm.setInt(3, userId);
+            stm.setString(4, type);
+            ResultSet rs = stm.executeQuery();
+
+            while (rs.next()) {
+                int category_id = rs.getInt("id");
+                String categoriesName = rs.getString("name");
+                double sumAmount = rs.getDouble("amount");
+                expense = new Expense(category_id, categoriesName, sumAmount);
+                expenseList.add(expense);
+            }
+        }
+        return expenseList;
+    }
+
+    public List<Expense> getMonthlyExpenses(String type, int year) throws SQLException {
+        List<Expense> expenseList = new ArrayList<>();
+        int userId = UserSessionServices.getCurrentUser().getId();
+          String sql = "{call stats_month_expense(?, ?, ?)}";
+//        String sql = "SELECT \n"
+//                + "    MONTH(t.date) AS month, \n"
+//                + "    COALESCE(SUM(t.amount), 0) AS total_amount\n"
+//                + "FROM \n"
+//                + "    user u\n"
+//                + "JOIN \n"
+//                + "    user_cate uc ON u.id = uc.user_id\n"
+//                + "JOIN \n"
+//                + "    category c ON uc.category_id = c.id\n"
+//                + "JOIN \n"
+//                + "    transaction t ON c.id = t.category_id AND t.user_id = u.id\n"
+//                + "WHERE \n"
+//                + "    u.id = ? \n"
+//                + "    AND c.type = CONVERT(? USING utf8mb4) COLLATE utf8mb4_general_ci\n"
+//                + "    AND YEAR(t.date) = ?\n"
+//                + "GROUP BY \n"
+//                + "    MONTH(t.date)";
+
+        try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql)) {
+            stm.setInt(1, userId);
+            stm.setString(2, type);
+            stm.setInt(3, year);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    int month = rs.getInt("month");
+                    double totalAmount = rs.getDouble("total_amount");
+                    Expense expense = new Expense(month, "Tháng " + month, totalAmount);
+                    expenseList.add(expense);
+                }
+            }
+        }
+        return expenseList;
+    }
+
+}
